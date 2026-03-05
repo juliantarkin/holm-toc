@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TOC Hub — LTC Holm</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+[data-theme="dark"]{--bg:#080810;--surface:#0f0f1a;--s2:#15151f;--s3:#1c1c28;--border:#252535;--text:#cccce0;--dim:#5a5a72;--bright:#f0f0ff;--shadow:rgba(0,0,0,.5);}
+[data-theme="light"]{--bg:#f0f0f5;--surface:#fff;--s2:#f5f5fa;--s3:#eaeaf2;--border:#d0d0e0;--text:#2a2a40;--dim:#7070a0;--bright:#0a0a20;--shadow:rgba(0,0,0,.08);}
+[data-theme="dark"]{--gold:#e8c547;--blue:#4fc3f7;--pink:#f06292;--green:#69f0ae;--orange:#ffab40;--purple:#b39ddb;--red:#ff5252;}
+[data-theme="light"]{--gold:#9a7800;--blue:#0277bd;--pink:#c2185b;--green:#1a7a4a;--orange:#c05000;--purple:#4527a0;--red:#b71c1c;}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;min-height:100vh;padding:0;transition:background .2s,color .2s;}
+
+/* HEADER */
+.hub-header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.hub-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:5px;color:var(--gold);}
+[data-theme="dark"] .hub-logo{text-shadow:0 0 16px rgba(232,197,71,.4);}
+.hub-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:2px;margin-top:-2px;}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.theme-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;border:1px solid var(--border);border-radius:16px;background:var(--s2);cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);transition:all .15s;}
+.theme-btn:hover{border-color:var(--gold);color:var(--gold);}
+.pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite;display:inline-block;}
+[data-theme="dark"] .pulse-dot{box-shadow:0 0 8px var(--green);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* MAIN CONTENT */
+.hub-content{max-width:800px;margin:0 auto;padding:16px;}
+
+/* DATE BAR */
+.date-bar{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.date-main{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gold);}
+.date-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:1px;}
+.status-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:3px 8px;border-radius:12px;border:1px solid;letter-spacing:1px;}
+.chip-g{color:var(--green);border-color:rgba(105,240,174,.3);}
+.chip-o{color:var(--orange);border-color:rgba(255,171,64,.3);}
+
+/* TONIGHT FOCUS */
+.focus-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:14px;cursor:pointer;transition:all .15s;}
+.focus-card:hover{border-color:var(--gold);}
+.focus-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.focus-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.tonight-items{display:flex;flex-direction:column;gap:6px;}
+.tonight-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--s2);border-radius:3px;border:1px solid var(--border);}
+.ti-rank{font-family:'Bebas Neue',sans-serif;font-size:20px;line-height:1;}
+.ti-rank.r1{color:var(--gold);}
+.ti-rank.r2{color:var(--blue);}
+.ti-rank.r3{color:var(--pink);}
+.ti-info{flex:1;}
+.ti-cat{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:1px;}
+.ti-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--bright);}
+.ti-step{font-size:10px;color:var(--text);margin-top:1px;}
+.ti-who{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;border:1px solid;white-space:nowrap;flex-shrink:0;}
+.tw-can{color:var(--green);border-color:rgba(105,240,174,.3);}
+.tw-you{color:var(--orange);border-color:rgba(255,171,64,.3);}
+.focus-empty{text-align:center;padding:16px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);}
+.gen-btn{width:100%;margin-top:10px;padding:10px;background:var(--gold);color:var(--bg);border:none;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;cursor:pointer;border-radius:2px;transition:all .15s;}
+[data-theme="light"] .gen-btn{color:#fff;}
+.gen-btn:hover{opacity:.9;}
+
+/* TOOLS GRID */
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:8px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:6px;}
+.tool-tile{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:12px 14px;cursor:pointer;transition:all .18s;text-decoration:none;display:block;position:relative;overflow:hidden;}
+.tool-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.tool-tile:hover{border-color:var(--border);transform:translateY(-2px);box-shadow:0 4px 16px var(--shadow);}
+.tt-projects::before{background:linear-gradient(90deg,var(--gold),var(--orange));}
+.tt-personal::before{background:linear-gradient(90deg,var(--blue),var(--purple));}
+.tt-writing::before{background:linear-gradient(90deg,var(--pink),var(--purple));}
+.tt-home::before{background:linear-gradient(90deg,#80cbc4,#66bb6a);}
+.tile-icon{font-size:20px;margin-bottom:6px;}
+.tile-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--bright);}
+.tile-desc{font-size:10px;color:var(--dim);margin-top:2px;line-height:1.4;}
+.tile-status{font-family:'IBM Plex Mono',monospace;font-size:8px;margin-top:6px;padding:2px 6px;border-radius:2px;display:inline-block;border:1px solid;}
+.ts-live{color:var(--green);border-color:rgba(105,240,174,.3);}
+.ts-setup{color:var(--orange);border-color:rgba(255,171,64,.3);}
+.ts-planned{color:var(--dim);border-color:var(--border);}
+
+/* QUICK TASKS */
+.tasks-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:14px;}
+.task-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.task-item:last-child{border-bottom:none;}
+.task-check{width:16px;height:16px;border:1px solid var(--border);border-radius:2px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;}
+.task-check:hover{border-color:var(--gold);}
+.task-check.done{background:var(--green);border-color:var(--green);}
+[data-theme="light"] .task-check.done{background:var(--green);border-color:var(--green);}
+.task-check.done::after{content:'✓';font-size:10px;color:var(--bg);font-weight:bold;}
+.task-text{flex:1;font-size:12px;color:var(--text);line-height:1.4;}
+.task-text.done-text{text-decoration:line-through;color:var(--dim);}
+.task-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);margin-top:2px;}
+.task-cat{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 5px;border:1px solid var(--border);border-radius:2px;color:var(--dim);flex-shrink:0;margin-top:2px;}
+
+/* DEPLOY GUIDE */
+.deploy-card{background:var(--surface);border:1px solid rgba(232,197,71,.2);border-radius:4px;overflow:hidden;margin-bottom:14px;}
+[data-theme="light"] .deploy-card{border-color:rgba(155,120,0,.2);}
+.deploy-header{background:var(--s2);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.deploy-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold);}
+.deploy-toggle{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);}
+.deploy-body{padding:14px 16px;display:none;}
+.deploy-body.open{display:block;}
+.deploy-step{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.deploy-step:last-child{border-bottom:none;}
+.deploy-num{font-family:'IBM Plex Mono',monospace;color:var(--gold);font-size:10px;min-width:22px;flex-shrink:0;padding-top:2px;}
+.deploy-txt{color:var(--text);line-height:1.6;}
+.deploy-txt code{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--s3);padding:1px 5px;border-radius:2px;color:var(--blue);}
+.deploy-note{font-size:10px;color:var(--dim);margin-top:4px;font-style:italic;}
+
+/* PERSONAL SYSTEMS */
+.sys-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:10px;}
+.sys-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;}
+.sys-status-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.sys-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border-radius:2px;border:1px solid;letter-spacing:1px;}
+.sb-setup{color:var(--orange);border-color:rgba(255,171,64,.3);}
+.sb-planned{color:var(--dim);border-color:var(--border);}
+.sb-live{color:var(--green);border-color:rgba(105,240,174,.3);}
+.sys-desc{font-size:12px;color:var(--text);line-height:1.7;margin-bottom:10px;}
+.sys-steps-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:6px;}
+.sys-step{display:flex;gap:8px;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);}
+.sys-step:last-child{border-bottom:none;}
+.sys-n{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--gold);min-width:20px;}
+.sys-t{color:var(--text);}
+.sys-who{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 5px;border-radius:2px;border:1px solid;margin-left:auto;flex-shrink:0;}
+.sw-c{color:var(--green);border-color:rgba(105,240,174,.3);}
+.sw-y{color:var(--orange);border-color:rgba(255,171,64,.3);}
+.sw-a{color:var(--blue);border-color:rgba(79,195,247,.3);}
+.sys-claude-note{font-size:10px;color:var(--dim);font-style:italic;margin-top:3px;}
+.workflow-box{background:var(--s2);border-radius:3px;padding:10px;margin-top:10px;font-size:11px;color:var(--text);line-height:1.7;border-left:3px solid var(--blue);}
+.workflow-box strong{color:var(--gold);}
+.tool-needed-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.tn-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border-radius:2px;border:1px solid;}
+.tn-have{color:var(--green);border-color:rgba(105,240,174,.3);}
+.tn-need{color:var(--orange);border-color:rgba(255,171,64,.3);}
+
+/* FOOTER */
+.hub-footer{text-align:center;padding:20px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);border-top:1px solid var(--border);margin-top:8px;}
+</style>
+</head>
+<body>
+
+<div class="hub-header">
+  <div>
+    <div class="hub-logo">TOC HUB</div>
+    <div class="hub-sub">LTC JAMIE HOLM // TACTICAL OPERATIONS CENTER</div>
+  </div>
+  <div class="hdr-right">
+    <span class="pulse-dot"></span>
+    <div class="theme-btn" onclick="toggleTheme()"><span id="ti">☀️</span><span id="tl">LIGHT</span></div>
+  </div>
+</div>
+
+<div class="hub-content">
+
+  <!-- DATE / STATUS -->
+  <div class="date-bar">
+    <div>
+      <div class="date-main" id="datestr">LOADING...</div>
+      <div class="date-sub" id="timestr">--:--</div>
+    </div>
+    <div class="status-chips">
+      <span class="chip chip-g">TOC NOMINAL</span>
+      <span class="chip chip-o">n8n: PENDING SETUP</span>
+      <span class="chip chip-o">CALENDAR: SEED NEEDED</span>
+    </div>
+  </div>
+
+  <!-- TONIGHT'S FOCUS -->
+  <div class="focus-card" onclick="genBrief()">
+    <div class="focus-label">Tonight's Focus</div>
+    <div id="focus-content">
+      <div class="focus-empty">Tap to generate tonight's G3 brief</div>
+    </div>
+    <button class="gen-btn" onclick="event.stopPropagation();genBrief()">⚡ G3 — GENERATE BRIEF</button>
+  </div>
+
+  <!-- QUICK TASKS -->
+  <div class="section-label">Priority Tasks</div>
+  <div class="tasks-card">
+    <div id="task-list"></div>
+  </div>
+
+  <!-- TOOL LINKS -->
+  <div class="section-label">Command Tools</div>
+  <div class="tools-grid">
+    <a class="tool-tile tt-projects" href="TOC-v3.html" target="_blank">
+      <div class="tile-icon">⚔</div>
+      <div class="tile-name">TOC</div>
+      <div class="tile-desc">Full project command, G3 brief, all project sitreps</div>
+      <span class="tile-status ts-live">LIVE</span>
+    </a>
+    <a class="tool-tile tt-personal" href="#" onclick="sw('seneschal');return false;">
+      <div class="tile-icon">🗝</div>
+      <div class="tile-name">Seneschal</div>
+      <div class="tile-desc">Critical docs, ID cards, licenses, rapid access</div>
+      <span class="tile-status ts-setup">SETUP NEEDED</span>
+    </a>
+    <a class="tool-tile tt-personal" href="#" onclick="sw('librarian');return false;">
+      <div class="tile-icon">📚</div>
+      <div class="tile-name">Librarian</div>
+      <div class="tile-desc">Book index, Drive files, resource mapping</div>
+      <span class="tile-status ts-setup">SETUP NEEDED</span>
+    </a>
+    <a class="tool-tile tt-personal" href="#" onclick="sw('photos');return false;">
+      <div class="tile-icon">📷</div>
+      <div class="tile-name">Photo DB</div>
+      <div class="tile-desc">Google Photos + iCloud, tagged, accessible by Claude</div>
+      <span class="tile-status ts-planned">PLANNED</span>
+    </a>
+    <a class="tool-tile tt-writing" href="#" onclick="sw('journal');return false;">
+      <div class="tile-icon">📓</div>
+      <div class="tile-name">Journal</div>
+      <div class="tile-desc">Voice-to-text capture, Claude parses + tags + stores</div>
+      <span class="tile-status ts-planned">PLANNED</span>
+    </a>
+    <a class="tool-tile tt-writing" href="#" onclick="sw('autobiography');return false;">
+      <div class="tile-icon">📖</div>
+      <div class="tile-name">Autobiography</div>
+      <div class="tile-desc">Memory entries, tagged, sortable for future writing</div>
+      <span class="tile-status ts-planned">PLANNED</span>
+    </a>
+    <a class="tool-tile tt-personal" href="#" onclick="sw('correspondence');return false;">
+      <div class="tile-icon">✉</div>
+      <div class="tile-name">Correspondence</div>
+      <div class="tile-desc">Email management via Claude, Jamie@jamieholm.com</div>
+      <span class="tile-status ts-setup">SETUP NEEDED</span>
+    </a>
+    <a class="tool-tile tt-personal" href="#" onclick="sw('engagements');return false;">
+      <div class="tile-icon">👥</div>
+      <div class="tile-name">Engagements</div>
+      <div class="tile-desc">Social targets, family, friends, Vancouver contacts</div>
+      <span class="tile-status ts-planned">PLANNED</span>
+    </a>
+  </div>
+
+  <!-- SYSTEM TABS -->
+  <div class="section-label">System Details</div>
+  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;">
+    <button class="theme-btn on" onclick="swTab(this,'deploy')" id="tab-deploy">📡 Deployment</button>
+    <button class="theme-btn" onclick="swTab(this,'correspondence')" id="tab-correspondence">✉ Correspondence</button>
+    <button class="theme-btn" onclick="swTab(this,'engagements')" id="tab-engagements">👥 Engagements</button>
+    <button class="theme-btn" onclick="swTab(this,'photos')" id="tab-photos">📷 Photo DB</button>
+    <button class="theme-btn" onclick="swTab(this,'seneschal')" id="tab-seneschal">🗝 Seneschal</button>
+    <button class="theme-btn" onclick="swTab(this,'librarian')" id="tab-librarian">📚 Librarian</button>
+    <button class="theme-btn" onclick="swTab(this,'autobiography')" id="tab-autobiography">📖 Autobiography</button>
+    <button class="theme-btn" onclick="swTab(this,'journal')" id="tab-journal">📓 Journal</button>
+  </div>
+  <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;">
+    <div id="tab-content-deploy" class="tab-pane" style="display:block;padding:16px;">
+
+      <!-- DEPLOYMENT -->
+      <div class="deploy-card">
+        <div class="deploy-header" onclick="togDeploy(this)">
+          <div class="deploy-title">Option 1 — GitHub Pages (Recommended)</div>
+          <div class="deploy-toggle">▸ EXPAND</div>
+        </div>
+        <div class="deploy-body">
+          <div class="deploy-step"><span class="deploy-num">01</span><div class="deploy-txt">Go to <code>github.com</code> → Sign in or create free account<div class="deploy-note">Free forever, no credit card required</div></div></div>
+          <div class="deploy-step"><span class="deploy-num">02</span><div class="deploy-txt">Create new repository → name it <code>toc</code> → set to Public</div></div>
+          <div class="deploy-step"><span class="deploy-num">03</span><div class="deploy-txt">Upload <code>TOC-v3.html</code> and <code>toc-hub.html</code> → rename TOC-v3.html to <code>index.html</code><div class="deploy-note">index.html is what GitHub Pages serves as the root URL</div></div></div>
+          <div class="deploy-step"><span class="deploy-num">04</span><div class="deploy-txt">Settings → Pages → Source: Deploy from branch → Branch: main → Folder: / (root) → Save</div></div>
+          <div class="deploy-step"><span class="deploy-num">05</span><div class="deploy-txt">Your URL: <code>yourusername.github.io/toc</code> — live in ~60 seconds</div></div>
+          <div class="deploy-step"><span class="deploy-num">06</span><div class="deploy-txt">On iPhone: open URL in Safari → Share → Add to Home Screen → name it "TOC"<div class="deploy-note">This creates a full-screen web app icon on your home screen — looks and feels like a native app</div></div></div>
+        </div>
+      </div>
+
+      <div class="deploy-card">
+        <div class="deploy-header" onclick="togDeploy(this)">
+          <div class="deploy-title">Option 2 — Notion Hub Page</div>
+          <div class="deploy-toggle">▸ EXPAND</div>
+        </div>
+        <div class="deploy-body">
+          <div class="deploy-step"><span class="deploy-num">01</span><div class="deploy-txt">Create a new Notion page called "TOC Hub"</div></div>
+          <div class="deploy-step"><span class="deploy-num">02</span><div class="deploy-txt">Add a "Bookmark" block with your GitHub Pages TOC URL → this embeds a clickable link card<div class="deploy-note">One tap from Notion → opens the TOC in browser</div></div></div>
+          <div class="deploy-step"><span class="deploy-num">03</span><div class="deploy-txt">Add a "Database — Inline" block → name it "Tonight's Tasks" → columns: Task, Project, Claude Can Do (checkbox), Done (checkbox)</div></div>
+          <div class="deploy-step"><span class="deploy-num">04</span><div class="deploy-txt">On iPhone: install Notion app → open the database → tap ••• → Add to home screen widget<div class="deploy-note">Shows your task database as a live widget — tap to open Notion, tap the TOC link to open full command</div></div></div>
+          <div class="deploy-step"><span class="deploy-num">05</span><div class="deploy-txt">Long-press iPhone home screen → + widget → Notion → select your "Tonight's Tasks" database<div class="deploy-note">Medium widget (2×2) shows 4 tasks. Large (4×4) shows full database.</div></div></div>
+        </div>
+      </div>
+
+      <div class="deploy-card">
+        <div class="deploy-header" onclick="togDeploy(this)">
+          <div class="deploy-title">Option 3 — Netlify Drop (Easiest)</div>
+          <div class="deploy-toggle">▸ EXPAND</div>
+        </div>
+        <div class="deploy-body">
+          <div class="deploy-step"><span class="deploy-num">01</span><div class="deploy-txt">Go to <code>app.netlify.com/drop</code></div></div>
+          <div class="deploy-step"><span class="deploy-num">02</span><div class="deploy-txt">Drag and drop your HTML files onto the page<div class="deploy-note">Make sure to name your main file index.html first</div></div></div>
+          <div class="deploy-step"><span class="deploy-num">03</span><div class="deploy-txt">Get a URL like <code>random-name.netlify.app</code> instantly — no account required</div></div>
+          <div class="deploy-step"><span class="deploy-num">04</span><div class="deploy-txt">Create free account to claim a custom subdomain: <code>holm-toc.netlify.app</code></div></div>
+        </div>
+      </div>
+
+      <div class="deploy-card">
+        <div class="deploy-header" onclick="togDeploy(this)">
+          <div class="deploy-title">Recommended Stack</div>
+          <div class="deploy-toggle">▸ EXPAND</div>
+        </div>
+        <div class="deploy-body">
+          <div class="deploy-step"><span class="deploy-num">→</span><div class="deploy-txt"><strong>Primary access:</strong> GitHub Pages URL bookmarked on iPhone home screen as web app<div class="deploy-note">Works offline once cached. No app store required.</div></div></div>
+          <div class="deploy-step"><span class="deploy-num">→</span><div class="deploy-txt"><strong>Phone widget:</strong> Notion "Tonight's Tasks" database as home screen widget<div class="deploy-note">Quick task view without opening anything. Tap to update.</div></div></div>
+          <div class="deploy-step"><span class="deploy-num">→</span><div class="deploy-txt"><strong>Notion Hub page:</strong> TOC link + task DB + project quick links<div class="deploy-note">The connective layer between phone widget and full TOC</div></div></div>
+          <div class="deploy-step"><span class="deploy-num">→</span><div class="deploy-txt"><strong>Future:</strong> n8n pushes G3 brief to Notion "Tonight's Tasks" automatically<div class="deploy-note">When n8n is set up, Clodius generates the brief and populates the widget</div></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CORRESPONDENCE -->
+    <div id="tab-content-correspondence" class="tab-pane" style="display:none;padding:16px;">
+      <div class="sys-card">
+        <div class="sys-title">Correspondence System</div>
+        <div class="sys-status-row"><span class="sys-badge sb-setup">SETUP NEEDED</span></div>
+        <div class="sys-desc">Centralized email management through a Claude-accessible address. <strong>Jamie@jamieholm.com</strong> forwards to a managed inbox where Clodius monitors, triages, drafts responses, and flags for your attention. You stay out of email; Claude handles the filter layer.</div>
+        <div class="sys-steps-label">SETUP STEPS</div>
+        <div class="sys-step"><span class="sys-n">01</span><div><div class="sys-t">Register jamieholm.com if not owned — Namecheap or Cloudflare (~$10/yr)</div><div class="sys-claude-note">Claude can walk you through domain registration and DNS setup</div></div><span class="sys-who sw-a">CLAUDE ASSISTS</span></div>
+        <div class="sys-step"><span class="sys-n">02</span><div><div class="sys-t">Set up email forwarding: Jamie@jamieholm.com → your Gmail via Cloudflare Email Routing (free)</div></div><span class="sys-who sw-a">CLAUDE ASSISTS</span></div>
+        <div class="sys-step"><span class="sys-n">03</span><div><div class="sys-t">Create a dedicated Gmail label/filter "TOC-Correspondence" for forwarded mail</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">04</span><div><div class="sys-t">Configure n8n workflow: new email → Clodius reads → categorizes → drafts reply → sends to Notion queue for your approval</div></div><span class="sys-who sw-a">CLAUDE ASSISTS</span></div>
+        <div class="sys-step"><span class="sys-n">05</span><div><div class="sys-t">Define response categories: military/professional, personal, vendors, AUSA, family</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="workflow-box"><strong>Workflow:</strong> Email arrives → forwarded to Gmail → n8n triggers → Clodius reads and categorizes → drafts response if routine → flags urgent items → you see a daily digest in Notion with draft replies ready to approve or modify. You never open email unless something needs your decision.</div>
+        <div class="tool-needed-row">
+          <span class="tn-tag tn-have">Gmail (existing)</span>
+          <span class="tn-tag tn-have">Google Workspace</span>
+          <span class="tn-tag tn-need">jamieholm.com domain</span>
+          <span class="tn-tag tn-need">Cloudflare Email Routing (free)</span>
+          <span class="tn-tag tn-need">n8n configured</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENGAGEMENTS -->
+    <div id="tab-content-engagements" class="tab-pane" style="display:none;padding:16px;">
+      <div class="sys-card">
+        <div class="sys-title">Engagements System</div>
+        <div class="sys-status-row"><span class="sys-badge sb-planned">PLANNED</span></div>
+        <div class="sys-desc">Social target list — structured relationship maintenance. Friends in Vancouver, family, professional contacts, old colleagues. Tracks last contact, preferred cadence, and prompts you when someone is overdue. Not a CRM — a conscience.</div>
+        <div class="sys-steps-label">SETUP STEPS</div>
+        <div class="sys-step"><span class="sys-n">01</span><div><div class="sys-t">Create "Engagements" database in Notion: Name, Category, Last Contact, Cadence (monthly/quarterly), Next Due, Notes</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">02</span><div><div class="sys-t">Brain-dump everyone who should be in it — family, Vancouver friends, Army colleagues, mentors, AUSA contacts</div></div><span class="sys-who sw-y">YOU LEAD</span></div>
+        <div class="sys-step"><span class="sys-n">03</span><div><div class="sys-t">Claude populates the Notion DB from your list and sets cadence per category</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">04</span><div><div class="sys-t">n8n workflow: weekly check of overdue contacts → sends you a digest with context and suggested message</div></div><span class="sys-who sw-a">CLAUDE ASSISTS</span></div>
+        <div class="sys-step"><span class="sys-n">05</span><div><div class="sys-t">Connect to People calendar for birthdays — birthday trigger becomes a correspondence trigger too</div></div><span class="sys-who sw-a">CLAUDE ASSISTS</span></div>
+        <div class="workflow-box"><strong>Weekly cadence:</strong> Sunday TOC review includes "Engagement Report" — who you haven't talked to in too long, with a suggested note drafted by Clodius based on what you know about them. One tap to send or modify.</div>
+        <div class="tool-needed-row">
+          <span class="tn-tag tn-have">Notion (existing)</span>
+          <span class="tn-tag tn-have">Google Calendar (people)</span>
+          <span class="tn-tag tn-need">n8n configured</span>
+          <span class="tn-tag tn-need">Your contact brain-dump</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTO DB -->
+    <div id="tab-content-photos" class="tab-pane" style="display:none;padding:16px;">
+      <div class="sys-card">
+        <div class="sys-title">Photo Database</div>
+        <div class="sys-status-row"><span class="sys-badge sb-planned">PLANNED</span></div>
+        <div class="sys-desc">Connect Google Photos and iCloud to Claude. Tag photos with natural language descriptions so they can be pulled on request: "my Army photo," "DuPont exterior," "Jamie profile picture 2024." No complex database needed — Google Photos search + Claude access is enough for most pulls.</div>
+        <div class="sys-steps-label">SETUP STEPS</div>
+        <div class="sys-step"><span class="sys-n">01</span><div><div class="sys-t">Grant Claudio access to Google Photos via Google Workspace connector</div></div><span class="sys-who sw-a">CLAUDE ASSISTS</span></div>
+        <div class="sys-step"><span class="sys-n">02</span><div><div class="sys-t">Create a Google Photos Album called "TOC Reference" — add key photos: profile, Army photo, property photos, family photos, DuPont interior/exterior</div></div><span class="sys-who sw-y">YOU LEAD</span></div>
+        <div class="sys-step"><span class="sys-n">03</span><div><div class="sys-t">For each photo, add a description in Google Photos using natural language (it feeds Claude search)</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">04</span><div><div class="sys-t">iCloud: use iCloud Photos shared album as a bridge — Google Photos can import from shared albums</div></div><span class="sys-who sw-a">CLAUDE ASSISTS</span></div>
+        <div class="sys-step"><span class="sys-n">05</span><div><div class="sys-t">For physical photos: use mobile Claude to photograph and auto-tag via Google Photos upload</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="workflow-box"><strong>Standard photos to tag now:</strong> Profile picture (current), Army/uniform photo, Gods Valley property, DuPont exterior, each family member. These are the ones most likely to be requested for correspondence, Astrid project, or Overcast Studios use.</div>
+        <div class="tool-needed-row">
+          <span class="tn-tag tn-have">Google Photos (existing)</span>
+          <span class="tn-tag tn-have">Claude mobile (camera)</span>
+          <span class="tn-tag tn-need">Google Photos → Claudio connector setup</span>
+          <span class="tn-tag tn-need">iCloud → Google Photos bridge (optional)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SENESCHAL -->
+    <div id="tab-content-seneschal" class="tab-pane" style="display:none;padding:16px;">
+      <div class="sys-card">
+        <div class="sys-title">The Seneschal</div>
+        <div class="sys-status-row"><span class="sys-badge sb-setup">SETUP NEEDED</span></div>
+        <div class="sys-desc">The household manager of critical documents. Marriage license, passports, tax returns, ID cards, insurance policies, vehicle titles, property deeds — all indexed and accessible through a single dialogue. Ask "where is my passport" and get the answer in one step. Also handles personal task management for non-project life admin.</div>
+        <div class="sys-steps-label">SETUP STEPS</div>
+        <div class="sys-step"><span class="sys-n">01</span><div><div class="sys-t">Create "Critical Documents" folder in Google Drive with subfolders: Identity, Legal, Financial, Property, Military, Medical</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">02</span><div><div class="sys-t">Scan and upload all critical documents (phone camera → Google Drive scan is fine)</div></div><span class="sys-who sw-y">YOU LEAD</span></div>
+        <div class="sys-step"><span class="sys-n">03</span><div><div class="sys-t">Claude creates a Notion "Document Index" page: document name, type, location, expiration date, last updated</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">04</span><div><div class="sys-t">Set up expiration alerts in n8n: passport, licenses, registrations — alert 90 days before expiry</div></div><span class="sys-who sw-a">CLAUDE ASSISTS</span></div>
+        <div class="sys-step"><span class="sys-n">05</span><div><div class="sys-t">Create "Personal Tasks" Notion database separate from project tasks: life admin, appointments, errands</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="workflow-box"><strong>Usage:</strong> Tell any Claude instance "I need my [document]" → Claudio or Claudius pulls the Drive link directly. No searching. For expiring docs, Clodius sends a reminder 90 days out via n8n. Personal tasks surface in the Sunday TOC review alongside project tasks.</div>
+        <div class="tool-needed-row">
+          <span class="tn-tag tn-have">Google Drive (existing)</span>
+          <span class="tn-tag tn-have">Notion (existing)</span>
+          <span class="tn-tag tn-need">Document scanning session (~1hr)</span>
+          <span class="tn-tag tn-need">n8n for expiration alerts</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIBRARIAN -->
+    <div id="tab-content-librarian" class="tab-pane" style="display:none;padding:16px;">
+      <div class="sys-card">
+        <div class="sys-title">The Librarian</div>
+        <div class="sys-status-row"><span class="sys-badge sb-setup">SETUP NEEDED</span></div>
+        <div class="sys-desc">Master index of all resources: books (physical and digital), Google Drive files, research documents. Each entry has: title, author, category, assessment of utility, and which TOC projects it supports. Ask "what should I read for the CDCL article" and get a ranked reading list instantly.</div>
+        <div class="sys-steps-label">SETUP STEPS</div>
+        <div class="sys-step"><span class="sys-n">01</span><div><div class="sys-t">Create "Library" database in Notion: Title, Author, Type (physical/ebook/Drive doc), Category, Projects Related, Utility Rating, Notes</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">02</span><div><div class="sys-t">Physical books: photograph spines in batches → Claude mobile reads spines → auto-populates Notion DB</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">03</span><div><div class="sys-t">Digital books / Drive docs: Claudius indexes Google Drive → Claude categorizes and rates utility per entry</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">04</span><div><div class="sys-t">Claude maps each book to relevant TOC projects: military books → Essays + CDCL; game design books → Overcast Studios; world-building → Aedaeion + Atreal</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">05</span><div><div class="sys-t">Photograph physical library in batches — 10-20 spines per photo is readable</div></div><span class="sys-who sw-y">YOU LEAD</span></div>
+        <div class="workflow-box"><strong>Usage:</strong> Before starting any project session, ask "what should I reference for [project]?" → Claudius queries Notion Library DB → returns ranked list of books and Drive docs with notes on what each contributes. The physical book photos just need to be sent to Claude mobile — I'll extract all the titles and authors automatically.</div>
+        <div class="tool-needed-row">
+          <span class="tn-tag tn-have">Notion (existing)</span>
+          <span class="tn-tag tn-have">Google Drive (existing)</span>
+          <span class="tn-tag tn-have">Claude mobile (for spine photos)</span>
+          <span class="tn-tag tn-need">30 min to photograph spines</span>
+          <span class="tn-tag tn-need">1hr Claude session to index Drive</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTOBIOGRAPHY -->
+    <div id="tab-content-autobiography" class="tab-pane" style="display:none;padding:16px;">
+      <div class="sys-card">
+        <div class="sys-title">Autobiography Project</div>
+        <div class="sys-status-row"><span class="sys-badge sb-planned">PLANNED</span></div>
+        <div class="sys-desc">A structured memory capture system. Write down memories as they come — unstructured, raw, in any order. Claude tags each entry with: time period, people involved, location, theme, emotional tone, and potential chapter. Someday, filter and sort by tag to write sections of an autobiography.</div>
+        <div class="sys-steps-label">SETUP STEPS</div>
+        <div class="sys-step"><span class="sys-n">01</span><div><div class="sys-t">Create "Memories" database in Notion: Entry, Date Written, Time Period (decade/era), People, Location, Tags (multiple), Themes, Source (voice/typed/journal harvest)</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">02</span><div><div class="sys-t">Write or voice first 5 memories — anything that comes to mind, no structure required</div></div><span class="sys-who sw-y">YOU LEAD</span></div>
+        <div class="sys-step"><span class="sys-n">03</span><div><div class="sys-t">Claude reads entries → assigns tags, time period, themes, chapter suggestions → adds to Notion DB</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">04</span><div><div class="sys-t">Connect to Journal system — journal entries can be harvested for memory candidates during scheduled parse</div></div><span class="sys-who sw-a">CLAUDE ASSISTS</span></div>
+        <div class="sys-step"><span class="sys-n">05</span><div><div class="sys-t">When ready to write: filter Notion DB by time period or theme → Claude drafts narrative passages from tagged entries</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="workflow-box"><strong>Key insight:</strong> You don't write an autobiography in order — you accumulate raw material over years, then sort it. The tagging system lets you do that without discipline or a plan. Just capture when something surfaces. Claude handles the organization.</div>
+        <div class="tool-needed-row">
+          <span class="tn-tag tn-have">Notion (existing)</span>
+          <span class="tn-tag tn-have">Claude (all instances)</span>
+          <span class="tn-tag tn-need">Notion template setup (30 min)</span>
+          <span class="tn-tag tn-need">Journal system connected</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOURNAL -->
+    <div id="tab-content-journal" class="tab-pane" style="display:none;padding:16px;">
+      <div class="sys-card">
+        <div class="sys-title">Journal System</div>
+        <div class="sys-status-row"><span class="sys-badge sb-planned">PLANNED</span></div>
+        <div class="sys-desc">Voice-into-journal pipeline. You speak — it's transcribed — Claude parses, tags, stores, and harvests tasks and memories from the entry. No app to build. No habit to maintain beyond talking. A scheduled weekly Claude session processes the raw dump into structured data.</div>
+        <div class="sys-steps-label">CAPTURE METHOD</div>
+        <div class="sys-step"><span class="sys-n">01</span><div><div class="sys-t">Open Claude mobile → start conversation → speak freely. Claude transcribes in real time.</div></div><span class="sys-who sw-y">YOU LEAD</span></div>
+        <div class="sys-step"><span class="sys-n">02</span><div><div class="sys-t">End with "save this as a journal entry" → Claude saves to a Google Drive doc called "Journal Inbox [date]"</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">03</span><div><div class="sys-t">Alternative: call Otter.ai, speak, transcript auto-saves to Drive folder "Journal Inbox"</div><div class="sys-claude-note">Otter.ai has a free tier and automatic Drive sync</div></div><span class="sys-who sw-y">YOU LEAD</span></div>
+        <div class="sys-steps-label" style="margin-top:12px">WEEKLY PARSE (Scheduled — Sunday TOC Review)</div>
+        <div class="sys-step"><span class="sys-n">04</span><div><div class="sys-t">Claudius reads all new "Journal Inbox" entries from the week</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">05</span><div><div class="sys-t">For each entry: extract tasks → add to Notion personal tasks DB with source tag</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">06</span><div><div class="sys-t">Flag potential memory candidates → add to Autobiography DB with initial tags</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">07</span><div><div class="sys-t">Tag each entry: mood, topics, people mentioned, projects mentioned → store in Notion Journal DB</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="sys-step"><span class="sys-n">08</span><div><div class="sys-t">Generate weekly summary: main themes, emotional patterns, action items — surfaces in TOC review</div></div><span class="sys-who sw-c">CLAUDE LEADS</span></div>
+        <div class="workflow-box"><strong>Zero friction design:</strong> Your only job is to talk. Everything after that is Claude's job. The Sunday TOC review includes a 5-minute journal parse block — Claudius runs through the inbox and you see the results in Notion. No app to build, no habit to form beyond speaking freely when you feel like it.</div>
+        <div class="tool-needed-row">
+          <span class="tn-tag tn-have">Claude mobile (voice)</span>
+          <span class="tn-tag tn-have">Google Drive (inbox folder)</span>
+          <span class="tn-tag tn-have">Notion (journal DB)</span>
+          <span class="tn-tag tn-need">Otter.ai free account (optional)</span>
+          <span class="tn-tag tn-need">Claudius desktop (for weekly parse)</span>
+          <span class="tn-tag tn-need">Notion template setup (30 min)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="hub-footer">TOC HUB // LTC HOLM // TACTICAL OPERATIONS CENTER<br>Built for GitHub Pages — bookmark on phone home screen for app-like access</div>
+</div>
+
+<script>
+// THEME
+function toggleTheme(){
+  const d=document.documentElement;
+  const isDark=d.getAttribute('data-theme')==='dark';
+  d.setAttribute('data-theme',isDark?'light':'dark');
+  document.getElementById('ti').textContent=isDark?'🌙':'☀️';
+  document.getElementById('tl').textContent=isDark?'DARK':'LIGHT';
+  localStorage.setItem('hub-theme',isDark?'light':'dark');
+}
+const st=localStorage.getItem('hub-theme');
+if(st){document.documentElement.setAttribute('data-theme',st);document.getElementById('ti').textContent=st==='light'?'🌙':'☀️';document.getElementById('tl').textContent=st==='light'?'DARK':'LIGHT';}
+
+// CLOCK
+function tick(){
+  const n=new Date();
+  document.getElementById('datestr').textContent=n.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}).toUpperCase();
+  document.getElementById('timestr').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});
+}
+setInterval(tick,1000);tick();
+
+// TASKS
+const tasks=[
+  {t:'Create 6 Google Calendars (Projects, Business, Finance, Home, People, TOC Review)',cat:'CALENDAR',done:false},
+  {t:'Add all known birthdays to People calendar',cat:'CALENDAR',done:false},
+  {t:'Choose n8n hosting option (VPS vs local)',cat:'INFRA',done:false},
+  {t:'Set up Claude Ecosystem Map in Notion (closeout log template)',cat:'INFRA',done:false},
+  {t:'Research WA LLC vs sole prop for Overcast Studios',cat:'BUSINESS',done:false},
+  {t:'Photograph physical book spines (10-20 per session) → send to Claude mobile',cat:'LIBRARIAN',done:false},
+  {t:'Create Critical Documents folder in Google Drive with subfolders',cat:'SENESCHAL',done:false},
+  {t:'Brain-dump Engagements list: Vancouver friends, family, Army colleagues',cat:'ENGAGEMENTS',done:false},
+];
+function renderTasks(){
+  document.getElementById('task-list').innerHTML=tasks.map((t,i)=>`
+    <div class="task-item">
+      <div class="task-check${t.done?' done':''}" onclick="toggleTask(${i})" id="tc${i}">${t.done?'':''}</div>
+      <div style="flex:1">
+        <div class="task-text${t.done?' done-text':''}">${t.t}</div>
+        <div class="task-meta">${t.cat}</div>
+      </div>
+    </div>`).join('');
+}
+function toggleTask(i){tasks[i].done=!tasks[i].done;renderTasks();}
+renderTasks();
+
+// TONIGHT'S BRIEF
+const focusProjects=[
+  {rank:'1',cat:'INFRA',name:'n8n Foundation',step:'Choose VPS hosting option, install n8n, connect Notion API',who:'can'},
+  {rank:'2',cat:'CALENDAR',name:'Calendar Mission Setup',step:'Create 6 domain calendars, add birthdays and tax dates',who:'assist'},
+  {rank:'3',cat:'AI',name:'Project Astrid',step:'Draft personality schema fields in Notion',who:'can'},
+];
+function genBrief(){
+  document.getElementById('focus-content').innerHTML=focusProjects.map(p=>`
+    <div class="tonight-item">
+      <div class="ti-rank r${p.rank}">${p.rank}</div>
+      <div class="ti-info">
+        <div class="ti-cat">${p.cat}</div>
+        <div class="ti-name">${p.name}</div>
+        <div class="ti-step">${p.step}</div>
+      </div>
+      <span class="ti-who ${p.who==='can'?'tw-can':'tw-you'}">${p.who==='can'?'CLAUDE LEADS':'YOU LEAD'}</span>
+    </div>`).join('');
+}
+
+// TABS
+function sw(id){swTab(document.getElementById('tab-'+id),id);}
+function swTab(btn,id){
+  document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.tab-pane').forEach(p=>p.style.display='none');
+  document.getElementById('tab-content-'+id).style.display='block';
+  document.getElementById('tab-content-'+id).scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// DEPLOY ACCORDION
+function togDeploy(hdr){
+  const b=hdr.nextElementSibling;
+  const isOpen=b.classList.contains('open');
+  document.querySelectorAll('.deploy-body').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('.deploy-toggle').forEach(x=>x.textContent='▸ EXPAND');
+  if(!isOpen){b.classList.add('open');hdr.querySelector('.deploy-toggle').textContent='▾ COLLAPSE';}
+}
+</script>
+</body>
+</html>

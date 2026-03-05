@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Broadsheet // TOC</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;1,400&display=swap" rel="stylesheet">
+<style>
+[data-theme="dark"]{
+  --bg:#09080c;--surface:#100f16;--s2:#171523;--s3:#1e1c2e;
+  --border:#252338;--b2:#353255;
+  --text:#cac8dc;--dim:#525068;--bright:#f0eeff;--inv:#09080c;
+  --shadow:rgba(0,0,0,.7);
+  --gold:#d4a827;--blue:#4a8fd4;--green:#3a9e6a;--red:#c84848;
+  --orange:#c87830;--purple:#8060c8;--teal:#2898a8;--pink:#c85888;
+  --paper:#1a1820;
+}
+[data-theme="light"]{
+  --bg:#f0ece0;--surface:#faf8f2;--s2:#f5f0e4;--s3:#ece4d4;
+  --border:#d4c8b0;--b2:#b8a888;
+  --text:#2a2018;--dim:#907860;--bright:#100800;--inv:#faf8f2;
+  --shadow:rgba(0,0,0,.1);
+  --gold:#8a6800;--blue:#1848a0;--green:#106040;--red:#880000;
+  --orange:#804000;--purple:#401880;--teal:#006080;--pink:#880050;
+  --paper:#faf8f2;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:'Source Serif 4',Georgia,serif;display:flex;flex-direction:column;height:100vh;overflow:hidden;transition:background .2s,color .2s;}
+
+/* MASTHEAD */
+.masthead{flex-shrink:0;background:var(--surface);border-bottom:3px solid var(--bright);padding:10px 20px 8px;position:relative;z-index:20;}
+[data-theme="dark"] .masthead{border-bottom-color:var(--gold);}
+.masthead-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.mast-left{display:flex;align-items:baseline;gap:14px;}
+.mast-title{font-family:'Playfair Display',serif;font-size:28px;font-style:italic;color:var(--bright);letter-spacing:1px;}
+[data-theme="dark"] .mast-title{color:var(--gold);}
+.mast-edition{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:2px;}
+.mast-date{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:1px;}
+.mast-controls{display:flex;align-items:center;gap:7px;}
+.mbtn{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:5px 12px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;border-radius:2px;transition:all .15s;letter-spacing:1px;}
+.mbtn:hover{border-color:var(--gold);color:var(--gold);}
+.mbtn.primary{background:var(--gold);color:var(--inv);border-color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;}
+[data-theme="light"] .mbtn.primary{color:#fff;}
+.mbtn.primary:hover{opacity:.85;}
+.masthead-nav{display:flex;gap:2px;border-top:1px solid var(--border);padding-top:7px;}
+.mnav{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 12px;cursor:pointer;color:var(--dim);border-radius:2px;transition:all .12s;letter-spacing:1px;}
+.mnav:hover{background:var(--s2);color:var(--text);}
+.mnav.on{background:var(--s2);color:var(--bright);border:1px solid var(--border);}
+[data-theme="dark"] .mnav.on{color:var(--gold);}
+
+/* LAYOUT */
+.layout{flex:1;display:grid;grid-template-columns:260px 1fr;overflow:hidden;}
+@media(max-width:700px){.layout{grid-template-columns:1fr;}.source-panel{display:none;}}
+
+/* SOURCE PANEL */
+.source-panel{border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden;}
+.sp-header{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.sp-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--bright);}
+.sp-add{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:3px 8px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:pointer;border-radius:2px;transition:all .12s;}
+.sp-add:hover{border-color:var(--green);color:var(--green);}
+.source-list{flex:1;overflow-y:auto;padding:6px;}
+.source-group{margin-bottom:12px;}
+.sg-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;padding:4px 6px;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.sg-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.source-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:2px;cursor:pointer;transition:all .12s;border:1px solid transparent;margin-bottom:3px;}
+.source-item:hover{background:var(--s2);}
+.source-item.active{background:var(--s3);border-color:var(--border);}
+.source-item.selected{border-color:var(--blue);}
+.si-toggle{width:14px;height:14px;border:1px solid var(--border);border-radius:2px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.si-toggle.on{background:var(--green);border-color:var(--green);}
+.si-toggle.on::after{content:'✓';font-size:8px;color:var(--inv);}
+.si-icon{font-size:12px;flex-shrink:0;}
+.si-info{flex:1;min-width:0;}
+.si-name{font-size:11px;color:var(--bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.si-type{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);}
+.si-del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:11px;opacity:0;transition:opacity .12s;}
+.source-item:hover .si-del{opacity:1;}
+.si-del:hover{color:var(--red);}
+
+/* MAIN CONTENT */
+.main-content{display:flex;flex-direction:column;overflow:hidden;}
+.tab-content{flex:1;overflow-y:auto;}
+.tc{display:none;padding:16px;}
+.tc.on{display:block;}
+
+/* BRIEF TAB */
+.brief-status{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.bs-dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex-shrink:0;}
+.bs-dot.live{background:var(--green);animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.bs-text{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);flex:1;}
+.bs-text b{color:var(--text);}
+.bs-btn{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;padding:6px 16px;background:var(--blue);color:#fff;border:none;cursor:pointer;border-radius:2px;transition:all .15s;flex-shrink:0;}
+.bs-btn:hover{opacity:.85;}
+.bs-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* BRIEF ITEMS */
+.brief-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+@media(max-width:900px){.brief-grid{grid-template-columns:1fr;}}
+.brief-item{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:pointer;transition:all .18s;}
+.brief-item:hover{border-color:var(--b2);transform:translateY(-1px);box-shadow:0 4px 16px var(--shadow);}
+.bi-source-bar{padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;display:flex;align-items:center;justify-content:space-between;}
+.bi-source-bar.yt{background:rgba(200,72,72,.12);color:var(--red);}
+.bi-source-bar.reddit{background:rgba(200,120,48,.1);color:var(--orange);}
+.bi-source-bar.rss{background:rgba(74,143,212,.1);color:var(--blue);}
+.bi-source-bar.military{background:rgba(58,158,106,.1);color:var(--green);}
+.bi-source-bar.ue5{background:rgba(128,96,200,.1);color:var(--purple);}
+.bi-source-bar.custom{background:rgba(212,168,39,.1);color:var(--gold);}
+.bi-age{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);}
+.bi-body{padding:10px 12px;}
+.bi-title{font-family:'Playfair Display',serif;font-size:14px;color:var(--bright);line-height:1.4;margin-bottom:5px;}
+.bi-summary{font-size:11px;color:var(--dim);line-height:1.6;display:none;}
+.brief-item.expanded .bi-summary{display:block;}
+.bi-footer{padding:0 12px 10px;display:flex;align-items:center;justify-content:space-between;}
+.bi-tags{display:flex;gap:4px;}
+.bi-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 5px;border:1px solid var(--border);color:var(--dim);border-radius:1px;}
+.bi-summarize{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:3px 8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;border-radius:2px;transition:all .12s;letter-spacing:1px;}
+.bi-summarize:hover{border-color:var(--blue);color:var(--blue);}
+.bi-summarize.loading{color:var(--gold);border-color:var(--gold);animation:textpulse 1s infinite;}
+@keyframes textpulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* AI RESPONSE AREA */
+.ai-response{background:var(--s2);border:1px solid var(--b2);border-radius:3px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.8;color:var(--text);display:none;}
+.ai-response.show{display:block;}
+.air-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--gold);letter-spacing:3px;margin-bottom:8px;}
+.air-text{}
+.air-thinking{color:var(--dim);font-style:italic;font-family:'IBM Plex Mono',monospace;font-size:10px;}
+
+/* QUERY BOX */
+.query-row{display:flex;gap:8px;margin-bottom:14px;}
+.query-input{flex:1;background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:9px 12px;border-radius:2px;outline:none;transition:border-color .15s;letter-spacing:.5px;}
+.query-input:focus{border-color:var(--gold);}
+.query-input::placeholder{color:var(--dim);}
+.query-btn{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;padding:8px 18px;background:var(--gold);color:var(--inv);border:none;cursor:pointer;border-radius:2px;transition:all .15s;flex-shrink:0;}
+[data-theme="light"] .query-btn{color:#fff;}
+.query-btn:hover{opacity:.85;}
+.query-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* UE5 TRACKER */
+.tracker-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.tracker-filters{display:flex;gap:5px;flex-wrap:wrap;}
+.tf{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:3px 9px;border:1px solid var(--border);border-radius:12px;cursor:pointer;color:var(--dim);transition:all .12s;letter-spacing:1px;}
+.tf:hover,.tf.on{border-color:var(--purple);color:var(--purple);background:rgba(128,96,200,.08);}
+.tut-add-btn{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;padding:5px 14px;background:var(--purple);color:#fff;border:none;cursor:pointer;border-radius:2px;transition:all .15s;}
+.tut-add-btn:hover{opacity:.85;}
+
+.tut-grid{display:grid;grid-template-columns:1fr;gap:8px;}
+.tut-item{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;transition:all .15s;}
+.tut-item:hover{border-color:var(--b2);}
+.ti-header{display:flex;gap:12px;padding:10px 14px;cursor:pointer;align-items:flex-start;}
+.ti-thumb{width:60px;height:40px;background:var(--s3);border-radius:2px;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.ti-thumb img{width:100%;height:100%;object-fit:cover;}
+.ti-info{flex:1;}
+.ti-title{font-family:'Playfair Display',serif;font-size:13px;color:var(--bright);line-height:1.4;margin-bottom:4px;}
+.ti-meta{display:flex;gap:8px;flex-wrap:wrap;}
+.ti-channel{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);}
+.ti-dur{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);}
+.ti-tags{display:flex;gap:3px;flex-wrap:wrap;}
+.ti-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 5px;border:1px solid var(--border);color:var(--dim);border-radius:1px;}
+.ti-tag.cat-blueprint{color:var(--blue);border-color:rgba(74,143,212,.3);}
+.ti-tag.cat-material{color:var(--orange);border-color:rgba(200,120,48,.3);}
+.ti-tag.cat-metahuman{color:var(--pink);border-color:rgba(200,88,136,.3);}
+.ti-tag.cat-animation{color:var(--green);border-color:rgba(58,158,106,.3);}
+.ti-tag.cat-lighting{color:var(--gold);border-color:rgba(212,168,39,.3);}
+.ti-tag.cat-system{color:var(--purple);border-color:rgba(128,96,200,.3);}
+.ti-tag.cat-blender{color:var(--teal);border-color:rgba(40,152,168,.3);}
+.ti-status{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.ti-progress{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;border:1px solid;}
+.tp-queue{color:var(--dim);border-color:var(--border);}
+.tp-watch{color:var(--blue);border-color:rgba(74,143,212,.3);}
+.tp-done{color:var(--green);border-color:rgba(58,158,106,.3);}
+.tp-skip{color:var(--red);border-color:rgba(200,72,72,.3);}
+.tp-ref{color:var(--gold);border-color:rgba(212,168,39,.3);}
+.ti-pri{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;border:1px solid;}
+.tpr-hi{color:var(--red);border-color:rgba(200,72,72,.3);}
+.tpr-med{color:var(--orange);border-color:rgba(200,120,48,.3);}
+.tpr-lo{color:var(--dim);border-color:var(--border);}
+.ti-notes{padding:0 14px 12px 86px;font-size:11px;color:var(--dim);font-style:italic;display:none;line-height:1.6;}
+.tut-item.open .ti-notes{display:block;}
+.ti-actions{display:flex;gap:5px;padding:0 14px 10px 86px;display:none;}
+.tut-item.open .ti-actions{display:flex;}
+.ta-btn{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:3px 8px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:pointer;border-radius:2px;transition:all .12s;letter-spacing:1px;}
+.ta-btn:hover{border-color:var(--purple);color:var(--purple);}
+.ta-btn.set-done{border-color:var(--green);color:var(--green);}
+
+/* TRACKER STATS */
+.tracker-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.ts-chip{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 10px;border:1px solid var(--border);border-radius:2px;color:var(--dim);}
+.ts-chip b{color:var(--text);}
+
+/* ADD SOURCE MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:flex-start;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.overlay.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:20px;max-width:500px;width:100%;margin-top:30px;position:relative;}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--bright);margin-bottom:16px;}
+.form-group{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.form-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;}
+.form-input,.form-select{background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:7px 10px;border-radius:2px;outline:none;transition:border-color .15s;width:100%;letter-spacing:.5px;}
+.form-input:focus,.form-select:focus{border-color:var(--gold);}
+.save-btn{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;padding:9px;background:var(--gold);color:var(--inv);border:none;cursor:pointer;border-radius:2px;width:100%;margin-top:4px;}
+[data-theme="light"] .save-btn{color:#fff;}
+.save-btn:hover{opacity:.85;}
+.source-templates{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;}
+.st-btn{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:5px 8px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;border-radius:2px;transition:all .12s;text-align:left;letter-spacing:.5px;}
+.st-btn:hover{border-color:var(--blue);color:var(--blue);}
+
+hr.div{border:none;border-top:1px solid var(--border);margin:12px 0;}
+.slabel{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-top">
+    <div class="mast-left">
+      <div class="mast-title">The Broadsheet</div>
+      <div class="mast-edition">TOC INTELLIGENCE FEED</div>
+    </div>
+    <div class="mast-date" id="mast-date">Loading...</div>
+    <div class="mast-controls">
+      <button class="mbtn" onclick="toggleTheme()">☀/🌙</button>
+      <button class="mbtn" onclick="openModal('source')">+ SOURCE</button>
+      <button class="mbtn primary" onclick="runBrief()">⚡ BRIEF ME</button>
+    </div>
+  </div>
+  <div class="masthead-nav">
+    <div class="mnav on" onclick="swTab(this,'brief')">TODAY'S BRIEF</div>
+    <div class="mnav" onclick="swTab(this,'ue5')">UE5 TUTORIALS</div>
+    <div class="mnav" onclick="swTab(this,'query')">QUERY</div>
+    <div class="mnav" onclick="swTab(this,'setup')">SETUP / N8N</div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SOURCE PANEL -->
+  <div class="source-panel">
+    <div class="sp-header">
+      <div class="sp-title">Sources</div>
+      <button class="sp-add" onclick="openModal('source')">+ Add</button>
+    </div>
+    <div class="source-list" id="source-list"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="tab-content">
+
+      <!-- TODAY'S BRIEF -->
+      <div class="tc on" id="tc-brief">
+        <div class="brief-status">
+          <div class="bs-dot" id="bs-dot"></div>
+          <div class="bs-text" id="bs-text">Select sources and hit <b>Brief Me</b> to pull today's intelligence.</div>
+          <button class="bs-btn" id="bs-btn" onclick="runBrief()">PULL BRIEF</button>
+        </div>
+        <div class="ai-response" id="brief-response">
+          <div class="air-label">BRIEF // AI SUMMARY</div>
+          <div class="air-text" id="brief-response-text"></div>
+        </div>
+        <div class="brief-grid" id="brief-grid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- UE5 TUTORIAL TRACKER -->
+      <div class="tc" id="tc-ue5">
+        <div class="tracker-header">
+          <div class="tracker-filters">
+            <div class="tf on" onclick="filtTut(this,'all')">All</div>
+            <div class="tf" onclick="filtTut(this,'watch')">Watching</div>
+            <div class="tf" onclick="filtTut(this,'queue')">Queue</div>
+            <div class="tf" onclick="filtTut(this,'done')">Done</div>
+            <div class="tf" onclick="filtTut(this,'blueprint')">Blueprint</div>
+            <div class="tf" onclick="filtTut(this,'material')">Materials</div>
+            <div class="tf" onclick="filtTut(this,'metahuman')">MetaHuman</div>
+            <div class="tf" onclick="filtTut(this,'animation')">Animation</div>
+            <div class="tf" onclick="filtTut(this,'blender')">Blender</div>
+          </div>
+          <button class="tut-add-btn" onclick="openModal('tutorial')">+ ADD TUTORIAL</button>
+        </div>
+        <div class="tracker-stats" id="tracker-stats"></div>
+        <div class="tut-grid" id="tut-grid"></div>
+      </div>
+
+      <!-- QUERY -->
+      <div class="tc" id="tc-query">
+        <div style="margin-bottom:14px;">
+          <div class="slabel">Ask the Broadsheet</div>
+          <div style="font-size:13px;color:var(--dim);margin-bottom:10px;line-height:1.7;">Query across all your sources. Ask for a summary of today's UE5 news, a digest of military doctrine updates, what's new in AI music generation, or anything else. The Broadsheet searches and summarizes.</div>
+        </div>
+        <div class="query-row">
+          <input class="query-input" id="query-input" placeholder="What's new in Unreal Engine 5.5? / Latest multi-domain ops doctrine... / New AI music tools..." onkeydown="if(event.key==='Enter')runQuery()">
+          <button class="query-btn" onclick="runQuery()" id="query-btn">ASK</button>
+        </div>
+        <div class="ai-response" id="query-response">
+          <div class="air-label">BROADSHEET // INTELLIGENCE REPORT</div>
+          <div class="air-text" id="query-response-text"></div>
+        </div>
+        <div class="slabel" style="margin-top:16px;">Quick Queries</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${[
+            "What's new in Unreal Engine 5 this week?",
+            "Latest U.S. Army doctrine updates",
+            "New AI music generation tools",
+            "Star Wars news and releases",
+            "5 Parsecs From Home community updates",
+            "AI image generation advances",
+            "Military history articles this week",
+            "Blender 4.x new features",
+          ].map(q=>`<button class="mbtn" onclick="quickQuery('${q.replace(/'/g,"\\'")}') ">${q}</button>`).join('')}
+        </div>
+      </div>
+
+      <!-- SETUP -->
+      <div class="tc" id="tc-setup">
+        <div class="slabel">How the Broadsheet Works</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:16px;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px;">
+          <strong style="color:var(--bright);">Current mode (immediate):</strong> The Broadsheet uses the Claude API with web search enabled. When you hit "Brief Me," it searches all your active sources and summarizes the top items. Results are AI-generated summaries, not raw scraped content.<br><br>
+          <strong style="color:var(--bright);">n8n upgrade (when ready):</strong> Clodius runs scheduled scrapes via n8n, stores results in a Notion database, and the Broadsheet reads from there instead. Fully automated, richer content, works offline from Claude.
+        </div>
+
+        <div class="slabel">Source Types You Can Add</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+          ${[
+            {icon:'▶',type:'YouTube Channel',desc:'e.g. Unreal Sensei, William Faucher, Corridor Crew'},
+            {icon:'📰',type:'RSS Feed',desc:'Any blog, newsletter, or site with an RSS feed'},
+            {icon:'🔵',type:'Reddit',desc:'Subreddit — r/unrealengine, r/wargames, r/analog_horror'},
+            {icon:'🎖',type:'Military Periodicals',desc:'War on the Rocks, AUSA, Modern War Institute'},
+            {icon:'🎵',type:'AI Music / Tech',desc:'Suno blog, AI music news, Udio updates'},
+            {icon:'🌐',type:'News Site',desc:'Any news URL — Claude searches it by name'},
+          ].map(s=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:10px;"><div style="font-size:18px;margin-bottom:4px;">${s.icon}</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--bright);margin-bottom:3px;">${s.type}</div><div style="font-size:11px;color:var(--dim);line-height:1.5;">${s.desc}</div></div>`).join('')}
+        </div>
+
+        <div class="slabel">n8n Automation Roadmap</div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;">
+          ${[
+            {n:'01',t:'Set up n8n (VPS or local)',note:'Required for all automation'},
+            {n:'02',t:'YouTube RSS workflow: channel → parse latest 5 → store in Notion "Broadsheet Inbox"',note:'YouTube exposes RSS feeds — no API key needed'},
+            {n:'03',t:'Reddit RSS workflow: subreddit top posts → filter by keyword → Notion',note:'Reddit RSS is public and free'},
+            {n:'04',t:'Military periodicals: RSS feeds for War on the Rocks, MWI, AUSA',note:'All have RSS feeds'},
+            {n:'05',t:'Weekly digest: Clodius summarizes all Notion inbox items → emails digest',note:''},
+            {n:'06',t:'Broadsheet reads from Notion instead of Claude API',note:'Richer content, faster, works offline'},
+          ].map(s=>`<div style="display:flex;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--gold);min-width:22px;">${s.n}</span><div><div style="color:var(--text)">${s.t}</div>${s.note?`<div style="font-size:10px;color:var(--dim);margin-top:2px;font-style:italic">${s.note}</div>`:''}</div></div>`).join('')}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ADD SOURCE MODAL -->
+<div class="overlay" id="modal-source" onclick="closeModal(event,'source')">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modal-source').classList.remove('show')">✕</button>
+    <div class="modal-title">Add Source</div>
+    <div class="slabel">Quick Add</div>
+    <div class="source-templates">
+      ${[
+        {l:'Unreal Sensei',t:'youtube',u:'https://youtube.com/@UnrealSensei',g:'UE5'},
+        {l:'William Faucher',t:'youtube',u:'https://youtube.com/@WilliamFaucher',g:'UE5'},
+        {l:'War on the Rocks',t:'military',u:'https://warontherocks.com/feed/',g:'Military'},
+        {l:'r/unrealengine',t:'reddit',u:'https://reddit.com/r/unrealengine',g:'UE5'},
+        {l:'Modern War Institute',t:'military',u:'https://mwi.westpoint.edu/feed/',g:'Military'},
+        {l:'r/wargames',t:'reddit',u:'https://reddit.com/r/wargames',g:'Wargames'},
+        {l:'Suno AI Blog',t:'rss',u:'https://suno.ai/blog',g:'AI Music'},
+        {l:'r/StableDiffusion',t:'reddit',u:'https://reddit.com/r/StableDiffusion',g:'AI Art'},
+        {l:'AUSA News',t:'military',u:'https://www.ausa.org/news',g:'Military'},
+        {l:'80 Level (UE5)',t:'rss',u:'https://80.lv/feed/',g:'UE5'},
+      ].map(s=>`<button class="st-btn" onclick="prefillSource('${s.l}','${s.t}','${s.u}','${s.g}')">${s.l}</button>`).join('')}
+    </div>
+    <hr class="div">
+    <div class="form-group"><div class="form-label">Name</div><input class="form-input" id="ns-name" placeholder="Unreal Sensei"></div>
+    <div class="form-group"><div class="form-label">Type</div>
+      <select class="form-select" id="ns-type">
+        <option value="youtube">YouTube Channel</option>
+        <option value="reddit">Reddit</option>
+        <option value="rss">RSS Feed</option>
+        <option value="military">Military Periodical</option>
+        <option value="ue5">UE5 / Game Dev</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
+    <div class="form-group"><div class="form-label">URL</div><input class="form-input" id="ns-url" placeholder="https://..."></div>
+    <div class="form-group"><div class="form-label">Group</div>
+      <select class="form-select" id="ns-group">
+        <option>UE5</option><option>Military</option><option>Wargames</option><option>AI Music</option><option>AI Art</option><option>Star Wars</option><option>General</option>
+      </select>
+    </div>
+    <button class="save-btn" onclick="addSource()">ADD SOURCE</button>
+  </div>
+</div>
+
+<!-- ADD TUTORIAL MODAL -->
+<div class="overlay" id="modal-tutorial" onclick="closeModal(event,'tutorial')">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modal-tutorial').classList.remove('show')">✕</button>
+    <div class="modal-title">Add Tutorial</div>
+    <div class="form-group"><div class="form-label">Title</div><input class="form-input" id="nt-title" placeholder="UE5 MetaHuman Hair System Complete Guide"></div>
+    <div class="form-group"><div class="form-label">URL / Link</div><input class="form-input" id="nt-url" placeholder="https://youtube.com/watch?v=..."></div>
+    <div class="form-group"><div class="form-label">Channel / Author</div><input class="form-input" id="nt-channel" placeholder="Unreal Sensei"></div>
+    <div class="form-group"><div class="form-label">Duration</div><input class="form-input" id="nt-dur" placeholder="1:24:00"></div>
+    <div class="form-group"><div class="form-label">Category</div>
+      <select class="form-select" id="nt-cat">
+        <option value="blueprint">Blueprint / Scripting</option>
+        <option value="material">Materials / Shaders</option>
+        <option value="metahuman">MetaHuman</option>
+        <option value="animation">Animation</option>
+        <option value="lighting">Lighting / VFX</option>
+        <option value="system">Game Systems / GAS</option>
+        <option value="blender">Blender Pipeline</option>
+        <option value="general">General UE5</option>
+      </select>
+    </div>
+    <div class="form-group"><div class="form-label">Priority</div>
+      <select class="form-select" id="nt-pri">
+        <option value="hi">High — Need this for active project</option>
+        <option value="med">Medium — Useful soon</option>
+        <option value="lo">Low — Nice to know</option>
+      </select>
+    </div>
+    <div class="form-group"><div class="form-label">Notes</div><input class="form-input" id="nt-notes" placeholder="Relevant to TIE Academy cockpit material..."></div>
+    <button class="save-btn" onclick="addTutorial()">ADD TO TRACKER</button>
+  </div>
+</div>
+
+<script>
+// ══════ DATA ══════
+let sources = [
+  {id:'s1',name:'Unreal Sensei',type:'youtube',url:'https://youtube.com/@UnrealSensei',group:'UE5',active:true},
+  {id:'s2',name:'William Faucher',type:'youtube',url:'https://youtube.com/@WilliamFaucher',group:'UE5',active:true},
+  {id:'s3',name:'War on the Rocks',type:'military',url:'https://warontherocks.com/feed/',group:'Military',active:true},
+  {id:'s4',name:'Modern War Institute',type:'military',url:'https://mwi.westpoint.edu',group:'Military',active:true},
+  {id:'s5',name:'r/unrealengine',type:'reddit',url:'https://reddit.com/r/unrealengine',group:'UE5',active:true},
+  {id:'s6',name:'AUSA News',type:'military',url:'https://www.ausa.org/news',group:'Military',active:false},
+  {id:'s7',name:'r/wargames',type:'reddit',url:'https://reddit.com/r/wargames',group:'Wargames',active:true},
+  {id:'s8',name:'80 Level',type:'rss',url:'https://80.lv',group:'UE5',active:false},
+  {id:'s9',name:'Suno AI Blog',type:'rss',url:'https://suno.ai/blog',group:'AI Music',active:false},
+];
+
+let tutorials = [
+  {id:'t1',title:'Gameplay Ability System (GAS) Full Crash Course',url:'https://www.youtube.com/watch?v=YvXvWa6vbAA',channel:'Voort',dur:'2:15:00',cat:'system',pri:'hi',status:'queue',notes:'Essential for TIE Academy ship system nodes and damage states. Start here before building the 67-node system.',thumb:''},
+  {id:'t2',title:'UE5 MetaHuman Complete Customization Guide',url:'',channel:'Unreal Sensei',dur:'45:00',cat:'metahuman',pri:'hi',status:'queue',notes:'Character pipeline for TIE Academy pilots. Covers clothing attachment and LOD settings.',thumb:''},
+  {id:'t3',title:'Transparent Materials and Glass in UE5',url:'',channel:'William Faucher',dur:'32:00',cat:'material',pri:'hi',status:'watch',notes:'DIRECTLY relevant — cockpit window transparency issue. Covers blend modes, refraction, and depth fade.',thumb:''},
+  {id:'t4',title:'Blender to UE5 Complete Workflow 2024',url:'',channel:'CGDive',dur:'1:10:00',cat:'blender',pri:'med',status:'queue',notes:'Full pipeline. Relevant to clothing and prop import workflow.',thumb:''},
+  {id:'t5',title:'Python Scripting in Blender for Automation',url:'',channel:'Blender Guru',dur:'55:00',cat:'blender',pri:'med',status:'queue',notes:'For the automated clothing import script.',thumb:''},
+  {id:'t6',title:'UE5 Cloth Simulation Deep Dive',url:'',channel:'Reallusion',dur:'40:00',cat:'animation',pri:'med',status:'queue',notes:'MetaHuman clothing simulation for character movement.',thumb:''},
+  {id:'t7',title:'Dynamic Material Instances — Full Guide',url:'',channel:'Unreal Sensei',dur:'28:00',cat:'material',pri:'lo',status:'done',notes:'Completed. Reference for parameter-driven materials.',thumb:''},
+  {id:'t8',title:'UE5 Blueprint Communication Patterns',url:'',channel:'Matt Aspland',dur:'35:00',cat:'blueprint',pri:'med',status:'queue',notes:'Ship system node communication patterns.',thumb:''},
+];
+
+let tutFilter = 'all';
+
+// ══════ SOURCE PANEL ══════
+function renderSources(){
+  const groups = [...new Set(sources.map(s=>s.group))];
+  document.getElementById('source-list').innerHTML = groups.map(g=>`
+    <div class="source-group">
+      <div class="sg-label">${g}</div>
+      ${sources.filter(s=>s.group===g).map(s=>`
+        <div class="source-item${s.active?' active':''}">
+          <div class="si-toggle${s.active?' on':''}" onclick="toggleSource('${s.id}')"></div>
+          <div class="si-icon">${{youtube:'▶',reddit:'🔵',rss:'📰',military:'🎖',ue5:'🎮',custom:'🌐'}[s.type]||'🌐'}</div>
+          <div class="si-info">
+            <div class="si-name">${s.name}</div>
+            <div class="si-type">${s.type}</div>
+          </div>
+          <button class="si-del" onclick="delSource('${s.id}')">✕</button>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function toggleSource(id){
+  const s=sources.find(x=>x.id===id);if(s)s.active=!s.active;renderSources();
+}
+function delSource(id){sources=sources.filter(s=>s.id!==id);renderSources();}
+function addSource(){
+  sources.push({id:'s'+Date.now(),name:document.getElementById('ns-name').value,type:document.getElementById('ns-type').value,url:document.getElementById('ns-url').value,group:document.getElementById('ns-group').value,active:true});
+  document.getElementById('modal-source').classList.remove('show');renderSources();
+}
+function prefillSource(n,t,u,g){
+  document.getElementById('ns-name').value=n;document.getElementById('ns-type').value=t;
+  document.getElementById('ns-url').value=u;document.getElementById('ns-group').value=g;
+}
+
+// ══════ BRIEF ══════
+async function runBrief(){
+  const active=sources.filter(s=>s.active);
+  if(!active.length){alert('Enable at least one source.');return;}
+  document.getElementById('bs-dot').classList.add('live');
+  document.getElementById('bs-text').innerHTML='Pulling intelligence from <b>'+active.length+' sources</b>...';
+  document.getElementById('bs-btn').disabled=true;
+  const briefResp=document.getElementById('brief-response');
+  briefResp.classList.add('show');
+  document.getElementById('brief-response-text').innerHTML='<span class="air-thinking">Querying sources and building brief...</span>';
+
+  const sourceList=active.map(s=>`- ${s.name} (${s.type}): ${s.url}`).join('\n');
+  const prompt=`You are the Broadsheet intelligence briefing system for LTC Jamie Holm. Search for the latest content from these sources and produce a structured intelligence brief with up to 10 items. Format as a clean list with: source name, headline, 1-sentence summary, and estimated date. Sources:\n${sourceList}\n\nProduce the brief now. Focus on items from the last 7 days where possible.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:2000,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await resp.json();
+    const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
+    document.getElementById('brief-response-text').innerHTML=text.replace(/\n/g,'<br>');
+    populateBriefGrid(text,active);
+  }catch(e){
+    document.getElementById('brief-response-text').innerHTML='<span class="air-thinking">Brief unavailable. Check API connection.</span>';
+  }
+  document.getElementById('bs-dot').classList.remove('live');
+  document.getElementById('bs-text').innerHTML='Brief complete — <b>'+active.length+' sources</b> queried.';
+  document.getElementById('bs-btn').disabled=false;
+}
+
+function populateBriefGrid(text,active){
+  // Build placeholder cards from active sources while API response loads
+  const grid=document.getElementById('brief-grid');
+  const typeClass={youtube:'yt',reddit:'reddit',rss:'rss',military:'military',ue5:'ue5',custom:'custom'};
+  grid.innerHTML=active.slice(0,10).map((s,i)=>`
+    <div class="brief-item" id="bi-${i}" onclick="toggleItem(${i})">
+      <div class="bi-source-bar ${typeClass[s.type]||'custom'}">
+        <span>${s.name.toUpperCase()}</span>
+        <span class="bi-age">Live</span>
+      </div>
+      <div class="bi-body">
+        <div class="bi-title">Latest from ${s.name} — see brief above for headlines</div>
+        <div class="bi-summary">Full summary available in the AI brief above.</div>
+      </div>
+      <div class="bi-footer">
+        <div class="bi-tags"><span class="bi-tag">${s.group}</span></div>
+        <button class="bi-summarize" onclick="event.stopPropagation();summarizeItem(${i},'${s.name}')">SUMMARIZE</button>
+      </div>
+    </div>`).join('');
+}
+
+function toggleItem(i){document.getElementById('bi-'+i)?.classList.toggle('expanded');}
+
+async function summarizeItem(i,sourceName){
+  const btn=document.querySelector(`#bi-${i} .bi-summarize`);
+  if(btn){btn.classList.add('loading');btn.textContent='PULLING...';}
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:600,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        messages:[{role:'user',content:`Search "${sourceName}" and give me a 3-5 sentence summary of their most recent content. What are the top 2-3 pieces from the last week? Be specific about titles and dates.`}]
+      })
+    });
+    const data=await resp.json();
+    const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
+    const card=document.getElementById('bi-'+i);
+    if(card){
+      card.querySelector('.bi-summary').innerHTML=text.replace(/\n/g,'<br>');
+      card.classList.add('expanded');
+    }
+  }catch(e){}
+  if(btn){btn.classList.remove('loading');btn.textContent='DONE';}
+}
+
+// ══════ QUERY ══════
+async function runQuery(){
+  const q=document.getElementById('query-input').value.trim();
+  if(!q)return;
+  const btn=document.getElementById('query-btn');
+  btn.disabled=true;btn.textContent='...';
+  const resp=document.getElementById('query-response');
+  resp.classList.add('show');
+  document.getElementById('query-response-text').innerHTML='<span class="air-thinking">Searching...</span>';
+
+  const activeSrc=sources.filter(s=>s.active).map(s=>s.name).join(', ');
+  const prompt=`You are the Broadsheet intelligence system for LTC Jamie Holm (military officer, game developer, writer). His active sources include: ${activeSrc||'general web'}. Answer this query with current, specific information:\n\n${q}\n\nBe specific, cite sources, and organize the response clearly. Focus on actionable intelligence.`;
+
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
+    });
+    const data=await r.json();
+    const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
+    document.getElementById('query-response-text').innerHTML=text.replace(/\n/g,'<br>');
+  }catch(e){
+    document.getElementById('query-response-text').innerHTML='<span class="air-thinking">Query failed. Check connection.</span>';
+  }
+  btn.disabled=false;btn.textContent='ASK';
+}
+
+function quickQuery(q){
+  document.getElementById('query-input').value=q;
+  swTab(document.querySelectorAll('.mnav')[2],'query');
+  runQuery();
+}
+
+// ══════ TUTORIAL TRACKER ══════
+function renderTutorials(){
+  let list=tutorials;
+  if(tutFilter!=='all'){
+    if(['watch','queue','done','skip','ref'].includes(tutFilter))list=list.filter(t=>t.status===tutFilter);
+    else list=list.filter(t=>t.cat===tutFilter);
+  }
+  const stats={total:tutorials.length,done:tutorials.filter(t=>t.status==='done').length,watch:tutorials.filter(t=>t.status==='watch').length,queue:tutorials.filter(t=>t.status==='queue').length,hi:tutorials.filter(t=>t.pri==='hi').length};
+  document.getElementById('tracker-stats').innerHTML=`
+    <div class="ts-chip">Total: <b>${stats.total}</b></div>
+    <div class="ts-chip">Done: <b>${stats.done}</b></div>
+    <div class="ts-chip">Watching: <b>${stats.watch}</b></div>
+    <div class="ts-chip">Queued: <b>${stats.queue}</b></div>
+    <div class="ts-chip">High Priority: <b>${stats.hi}</b></div>`;
+
+  const priLabel={hi:'HIGH',med:'MED',lo:'LOW'};
+  const statusLabel={queue:'QUEUE',watch:'WATCHING',done:'DONE',skip:'SKIP',ref:'REF'};
+  document.getElementById('tut-grid').innerHTML=list.map(t=>`
+    <div class="tut-item${t.status==='watch'?' open':''}" id="tut-${t.id}">
+      <div class="ti-header" onclick="document.getElementById('tut-${t.id}').classList.toggle('open')">
+        <div class="ti-thumb">${t.thumb?`<img src="${t.thumb}">`:'▶'}</div>
+        <div class="ti-info">
+          <div class="ti-title">${t.title}</div>
+          <div class="ti-meta">
+            <span class="ti-channel">${t.channel}</span>
+            ${t.dur?`<span class="ti-dur">${t.dur}</span>`:''}
+          </div>
+          <div class="ti-tags">
+            <span class="ti-tag cat-${t.cat}">${t.cat}</span>
+          </div>
+        </div>
+        <div class="ti-status">
+          <span class="ti-progress tp-${t.status}">${statusLabel[t.status]||t.status}</span>
+          <span class="ti-pri tpr-${t.pri}">${priLabel[t.pri]}</span>
+        </div>
+      </div>
+      <div class="ti-notes">${t.notes||'No notes.'}</div>
+      <div class="ti-actions">
+        <button class="ta-btn set-done" onclick="setTutStatus('${t.id}','done')">✓ DONE</button>
+        <button class="ta-btn" onclick="setTutStatus('${t.id}','watch')">▶ WATCHING</button>
+        <button class="ta-btn" onclick="setTutStatus('${t.id}','ref')">★ REF</button>
+        <button class="ta-btn" onclick="setTutStatus('${t.id}','skip')">✕ SKIP</button>
+        ${t.url?`<a href="${t.url}" target="_blank"><button class="ta-btn">OPEN ↗</button></a>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function filtTut(el,f){
+  document.querySelectorAll('.tf').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');tutFilter=f;renderTutorials();
+}
+function setTutStatus(id,s){
+  const t=tutorials.find(x=>x.id===id);if(t)t.status=s;renderTutorials();
+}
+function addTutorial(){
+  tutorials.unshift({
+    id:'t'+Date.now(),
+    title:document.getElementById('nt-title').value,
+    url:document.getElementById('nt-url').value,
+    channel:document.getElementById('nt-channel').value,
+    dur:document.getElementById('nt-dur').value,
+    cat:document.getElementById('nt-cat').value,
+    pri:document.getElementById('nt-pri').value,
+    status:'queue',
+    notes:document.getElementById('nt-notes').value,
+    thumb:''
+  });
+  document.getElementById('modal-tutorial').classList.remove('show');
+  renderTutorials();
+}
+
+// ══════ NAV ══════
+function swTab(el,id){
+  document.querySelectorAll('.mnav').forEach(n=>n.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tc-'+id).classList.add('on');
+}
+
+// ══════ MODALS ══════
+function openModal(id){document.getElementById('modal-'+id).classList.add('show');}
+function closeModal(e,id){if(e.target===document.getElementById('modal-'+id))document.getElementById('modal-'+id).classList.remove('show');}
+
+// ══════ UTILS ══════
+function toggleTheme(){
+  const d=document.documentElement;const dark=d.getAttribute('data-theme')==='dark';
+  d.setAttribute('data-theme',dark?'light':'dark');
+  localStorage.setItem('bs-theme',dark?'light':'dark');
+}
+const st=localStorage.getItem('bs-theme');if(st)document.documentElement.setAttribute('data-theme',st);
+document.getElementById('mast-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).toUpperCase();
+
+// INIT
+renderSources();
+renderTutorials();
+</script>
+</body>
+</html>

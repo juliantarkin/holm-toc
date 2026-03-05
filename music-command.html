@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music Command // TOC</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+[data-theme="dark"]{--bg:#060a0f;--surface:#0d1218;--s2:#121820;--s3:#1a2230;--border:#1e2d3d;--b2:#2a3f55;--text:#c8d8e8;--dim:#486070;--bright:#e8f4ff;--inv:#060a0f;--shadow:rgba(0,0,0,.7);}
+[data-theme="light"]{--bg:#f0f4f8;--surface:#fff;--s2:#f4f8fc;--s3:#e8f0f8;--border:#ccd8e8;--b2:#99b0c8;--text:#1a2a3a;--dim:#6088a8;--bright:#0a1a2a;--inv:#fff;--shadow:rgba(0,0,0,.08);}
+[data-theme="dark"]{--gold:#e8c547;--blue:#4fc3f7;--green:#4dd9ac;--orange:#f08040;--purple:#8fa4ff;--pink:#ff6890;--red:#ff5252;--teal:#40d0c0;}
+[data-theme="light"]{--gold:#8a6800;--blue:#0070b8;--green:#007850;--orange:#984800;--purple:#2840a8;--pink:#a81840;--red:#b81818;--teal:#007880;}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;height:100vh;overflow:hidden;transition:background .2s,color .2s;}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(79,195,247,.04),transparent 60%);pointer-events:none;z-index:0;}
+
+header{flex-shrink:0;border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--surface);z-index:10;position:relative;}
+[data-theme="dark"] header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--blue),var(--green),transparent 70%);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:5px;color:var(--blue);}
+[data-theme="dark"] .logo{text-shadow:0 0 20px rgba(79,195,247,.5);}
+.logo-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:2px;}
+.hdr-r{display:flex;align-items:center;gap:8px;}
+.hbtn{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 10px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;border-radius:2px;transition:all .15s;letter-spacing:1px;}
+.hbtn:hover{border-color:var(--blue);color:var(--blue);}
+
+/* LAYOUT */
+.layout{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:1;}
+
+/* MAIN TABS */
+.main-tabs{flex-shrink:0;display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 18px;overflow-x:auto;scrollbar-width:none;}
+.main-tabs::-webkit-scrollbar{display:none;}
+.tab{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;padding:10px 14px;cursor:pointer;color:var(--dim);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;margin-bottom:-1px;}
+.tab:hover{color:var(--text);}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue);}
+
+.tc{display:none;flex:1;overflow-y:auto;padding:18px;}
+.tc.on{display:block;}
+
+/* NOW PLAYING BAR */
+.np-bar{flex-shrink:0;border-top:1px solid var(--border);background:var(--surface);padding:10px 20px;display:flex;align-items:center;gap:16px;}
+.np-art{width:38px;height:38px;border-radius:2px;background:var(--s3);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;overflow:hidden;}
+.np-art img{width:100%;height:100%;object-fit:cover;}
+.np-info{flex:1;}
+.np-title{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--bright);font-weight:600;}
+.np-artist{font-size:10px;color:var(--dim);}
+.np-controls{display:flex;align-items:center;gap:10px;}
+.nc-btn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:16px;transition:color .15s;padding:4px;}
+.nc-btn:hover{color:var(--blue);}
+.nc-btn.play{color:var(--blue);font-size:20px;}
+.np-progress{flex:1;max-width:200px;}
+.prog-bar{height:3px;background:var(--s3);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--blue);width:35%;border-radius:2px;}
+.np-time{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);}
+.source-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;border:1px solid;letter-spacing:1px;}
+.sb-apple{color:var(--pink);border-color:rgba(255,104,144,.3);}
+.sb-spotify{color:var(--green);border-color:rgba(77,217,172,.3);}
+.sb-vinyl{color:var(--gold);border-color:rgba(232,197,71,.3);}
+.sb-ai{color:var(--purple);border-color:rgba(143,164,255,.3);}
+
+/* SECTION */
+.sec-h{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--blue);margin-bottom:10px;}
+.slabel{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:10px;}
+.sec-sub{font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.7;}
+
+/* CATALOGUE OVERVIEW CARDS */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:18px;}
+.cat-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px;position:relative;overflow:hidden;}
+.cat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.cc-apple::before{background:linear-gradient(90deg,#fc3c44,#ff85a0);}
+.cc-spotify::before{background:linear-gradient(90deg,#1db954,#4dd9ac);}
+.cc-vinyl::before{background:linear-gradient(90deg,#e8c547,#f08040);}
+.cc-ai::before{background:linear-gradient(90deg,#8fa4ff,#ff6890);}
+.cat-icon{font-size:26px;margin-bottom:8px;}
+.cat-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--bright);margin-bottom:3px;}
+.cat-count{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;margin-bottom:4px;}
+.cc-apple .cat-count{color:var(--pink);}
+.cc-spotify .cat-count{color:var(--green);}
+.cc-vinyl .cat-count{color:var(--gold);}
+.cc-ai .cat-count{color:var(--purple);}
+.cat-desc{font-size:10px;color:var(--dim);line-height:1.5;}
+.cat-status{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;display:inline-block;margin-top:7px;border:1px solid;}
+.cs-synced{color:var(--green);border-color:rgba(77,217,172,.3);}
+.cs-manual{color:var(--orange);border-color:rgba(240,128,64,.3);}
+.cs-partial{color:var(--gold);border-color:rgba(232,197,71,.3);}
+
+/* VINYL RECORD GRID */
+.vinyl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.vinyl-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:pointer;transition:all .18s;}
+.vinyl-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 20px var(--shadow);}
+.vinyl-art{width:100%;aspect-ratio:1;background:var(--s3);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.vinyl-art img{width:100%;height:100%;object-fit:cover;}
+.vinyl-record{width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at center,#333 20%,#111 20%,#222 30%,#111 30%,#222 50%,#111 50%,#333 80%);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.vinyl-record-inner{width:28%;aspect-ratio:1;border-radius:50%;background:var(--s2);border:1px solid var(--border);}
+.vinyl-info{padding:10px;}
+.vinyl-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:var(--bright);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vinyl-artist{font-size:11px;color:var(--dim);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vinyl-meta{display:flex;justify-content:space-between;align-items:center;}
+.vinyl-year{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);}
+.vinyl-genre{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 5px;border-radius:2px;border:1px solid var(--border);color:var(--dim);}
+
+/* TRACK LIST */
+.track-list{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:14px;}
+.track-item{display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;}
+.track-item:last-child{border-bottom:none;}
+.track-item:hover{background:var(--s2);}
+.track-item.playing{background:var(--s3);}
+.track-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);min-width:24px;}
+.track-info{flex:1;}
+.track-title{font-size:13px;color:var(--bright);margin-bottom:1px;}
+.track-artist{font-size:11px;color:var(--dim);}
+.track-dur{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);}
+.track-source{flex-shrink:0;}
+.heart{background:none;border:none;cursor:pointer;color:var(--dim);font-size:14px;transition:color .15s;}
+.heart:hover,.heart.liked{color:var(--pink);}
+
+/* AI MUSIC SECTION */
+.ai-project-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all .18s;}
+.ai-project-card:hover{border-color:var(--purple);}
+.apc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.apc-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--bright);}
+.apc-status{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border-radius:2px;border:1px solid;letter-spacing:1px;}
+.aps-concept{color:var(--purple);border-color:rgba(143,164,255,.3);}
+.aps-progress{color:var(--blue);border-color:rgba(79,195,247,.3);}
+.aps-done{color:var(--green);border-color:rgba(77,217,172,.3);}
+.apc-desc{font-size:12px;color:var(--dim);line-height:1.7;margin-bottom:10px;}
+.apc-tracks{display:flex;flex-direction:column;gap:4px;}
+.apc-track{display:flex;gap:8px;padding:5px 8px;background:var(--s2);border-radius:2px;font-size:11px;}
+.apc-tnum{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);min-width:20px;}
+.apc-tname{color:var(--text);}
+.apc-tconcept{color:var(--dim);font-style:italic;margin-left:auto;font-size:10px;}
+.tools-used{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+.tool-chip{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border:1px solid var(--border);color:var(--dim);border-radius:2px;}
+
+/* VINYL CONCEPT ALBUM BUILDER */
+.album-builder{background:var(--surface);border:1px solid var(--b2);border-radius:4px;padding:16px;margin-bottom:14px;}
+.ab-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gold);margin-bottom:12px;}
+.ab-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+@media(max-width:600px){.ab-form{grid-template-columns:1fr;}}
+.ab-field{display:flex;flex-direction:column;gap:4px;}
+.ab-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;}
+.ab-input,.ab-select,.ab-textarea{background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 9px;border-radius:2px;outline:none;transition:border-color .15s;width:100%;}
+.ab-input:focus,.ab-textarea:focus,.ab-select:focus{border-color:var(--gold);}
+.ab-textarea{resize:vertical;min-height:70px;line-height:1.6;}
+.gen-prompt-btn{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;padding:10px;width:100%;background:var(--gold);color:var(--inv);border:none;cursor:pointer;border-radius:2px;transition:all .15s;}
+[data-theme="light"] .gen-prompt-btn{color:#fff;}
+.gen-prompt-btn:hover{opacity:.85;}
+.prompt-output{background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text);line-height:1.8;margin-top:10px;min-height:60px;display:none;word-break:break-word;}
+
+/* PLAYLIST */
+.playlist-builder{display:grid;grid-template-columns:1fr 320px;gap:14px;}
+@media(max-width:700px){.playlist-builder{grid-template-columns:1fr;}}
+.pl-pool{}
+.pl-list{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
+.pl-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border);transition:background .12s;cursor:grab;}
+.pl-item:last-child{border-bottom:none;}
+.pl-item:hover{background:var(--s2);}
+.pl-drag{color:var(--dim);font-size:12px;cursor:grab;}
+.pl-name{flex:1;font-size:12px;color:var(--text);}
+.pl-dur{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);}
+.pl-remove{background:none;border:none;color:var(--dim);cursor:pointer;font-size:12px;transition:color .15s;}
+.pl-remove:hover{color:var(--red);}
+.pl-panel{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px;}
+.pl-panel-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:var(--blue);margin-bottom:10px;}
+.add-to-pl-btn{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;padding:7px;width:100%;background:var(--blue);color:var(--inv);border:none;cursor:pointer;border-radius:2px;margin-top:10px;transition:all .15s;}
+[data-theme="light"] .add-to-pl-btn{color:#fff;}
+.add-to-pl-btn:hover{opacity:.85;}
+
+/* SETUP GUIDE */
+.setup-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:10px;}
+.sc-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--blue);margin-bottom:8px;}
+.sc-step{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.sc-step:last-child{border-bottom:none;}
+.sc-n{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--gold);min-width:22px;}
+.sc-t{color:var(--text);line-height:1.5;flex:1;}
+.sc-note{font-size:10px;color:var(--dim);margin-top:3px;font-style:italic;}
+.who{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 5px;border-radius:2px;border:1px solid;margin-left:auto;flex-shrink:0;height:fit-content;}
+.wc{color:var(--green);border-color:rgba(77,217,172,.3);}
+.wy{color:var(--orange);border-color:rgba(240,128,64,.3);}
+
+hr.div{border:none;border-top:1px solid var(--border);margin:14px 0;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">Music Command</div>
+    <div class="logo-sub">TOC // CATALOGUE · VINYL · AI MUSIC</div>
+  </div>
+  <div class="hdr-r">
+    <button class="hbtn" onclick="toggleTheme()">☀/🌙</button>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="main-tabs">
+    <div class="tab on" onclick="sw(this,'catalogue')">CATALOGUE</div>
+    <div class="tab" onclick="sw(this,'vinyl')">VINYL COLLECTION</div>
+    <div class="tab" onclick="sw(this,'ai')">AI MUSIC</div>
+    <div class="tab" onclick="sw(this,'playlist')">PLAYLISTS</div>
+    <div class="tab" onclick="sw(this,'setup')">SETUP</div>
+  </div>
+
+  <!-- CATALOGUE -->
+  <div class="tc on" id="tc-catalogue">
+    <div class="sec-h">Music Library Overview</div>
+    <div class="sec-sub">Your music across all sources — Apple Music, Spotify, vinyl collection, and AI-generated works. This tab is your master catalogue view once sources are connected.</div>
+    <div class="cat-grid">
+      <div class="cat-card cc-apple">
+        <div class="cat-icon">🍎</div>
+        <div class="cat-name">Apple Music</div>
+        <div class="cat-count">Library syncing</div>
+        <div class="cat-desc">Your Apple Music library, playlists, purchased tracks, and listening history.</div>
+        <span class="cat-status cs-manual">SETUP NEEDED</span>
+      </div>
+      <div class="cat-card cc-spotify">
+        <div class="cat-icon">🎵</div>
+        <div class="cat-name">Spotify</div>
+        <div class="cat-count">Library syncing</div>
+        <div class="cat-desc">Saved albums, playlists, podcasts, and listening data via Spotify API.</div>
+        <span class="cat-status cs-manual">SETUP NEEDED</span>
+      </div>
+      <div class="cat-card cc-vinyl">
+        <div class="cat-icon">🎵</div>
+        <div class="cat-name">Vinyl Collection</div>
+        <div class="cat-count" id="vinyl-count">0 records</div>
+        <div class="cat-desc">Physical record collection catalogued here. Add manually or photo-scan covers.</div>
+        <span class="cat-status cs-partial">MANUAL ENTRY</span>
+      </div>
+      <div class="cat-card cc-ai">
+        <div class="cat-icon">🤖</div>
+        <div class="cat-name">AI Created</div>
+        <div class="cat-count" id="ai-count">3 projects</div>
+        <div class="cat-desc">AI-generated tracks, concept albums, and Suno/Udio/Udio works.</div>
+        <span class="cat-status cs-partial">ACTIVE</span>
+      </div>
+    </div>
+
+    <div class="slabel">Recent / Highlighted Tracks</div>
+    <div class="track-list">
+      <div class="track-item">
+        <div class="track-num">▶</div>
+        <div class="track-info"><div class="track-title">Hyperspace Blues</div><div class="track-artist">AI Generated — Concept Album Draft</div></div>
+        <div class="track-dur">3:42</div>
+        <span class="source-badge sb-ai">AI</span>
+        <button class="heart liked">♥</button>
+      </div>
+      <div class="track-item">
+        <div class="track-num">2</div>
+        <div class="track-info"><div class="track-title">Dark Side of the Moon</div><div class="track-artist">Pink Floyd</div></div>
+        <div class="track-dur">42:59</div>
+        <span class="source-badge sb-vinyl">VINYL</span>
+        <button class="heart liked">♥</button>
+      </div>
+      <div class="track-item">
+        <div class="track-num">3</div>
+        <div class="track-info"><div class="track-title">[Connect Apple Music to see library]</div><div class="track-artist">Your library will appear here</div></div>
+        <div class="track-dur">—</div>
+        <span class="source-badge sb-apple">APPLE</span>
+        <button class="heart">♡</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VINYL COLLECTION -->
+  <div class="tc" id="tc-vinyl">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="sec-h" style="margin:0">Vinyl Collection</div>
+      <button class="hbtn" onclick="addVinyl()" style="border-color:var(--gold);color:var(--gold)">+ ADD RECORD</button>
+    </div>
+    <div class="sec-sub">Your physical record collection. Add manually below or photograph the album cover with Claude mobile — Claude will extract artist, title, and year automatically.</div>
+    <div class="vinyl-grid" id="vinyl-grid"></div>
+  </div>
+
+  <!-- AI MUSIC -->
+  <div class="tc" id="tc-ai">
+    <div class="sec-h">AI Music Projects</div>
+    <div class="sec-sub">Concept albums, generated tracks, and AI music experiments. Designed for Suno AI, Udio, or similar tools. The Vinyl Concept Album builder below generates production prompts for a complete AI-made album ready to press to vinyl.</div>
+
+    <div class="ai-project-card">
+      <div class="apc-header">
+        <div class="apc-title">Operation Ghost Frequency</div>
+        <span class="apc-status aps-concept">CONCEPT</span>
+      </div>
+      <div class="apc-desc">A concept album set in the Aedaeion universe. Ambient/electronic with military undertones. 8 tracks telling the story of a long-range reconnaissance patrol behind enemy lines — no contact, diminishing supplies, strange signals.</div>
+      <div class="apc-tracks">
+        <div class="apc-track"><span class="apc-tnum">01</span><span class="apc-tname">Insertion</span><span class="apc-tconcept">Dark ambient, helicopter blade rhythm</span></div>
+        <div class="apc-track"><span class="apc-tnum">02</span><span class="apc-tname">First Light, No Contact</span><span class="apc-tconcept">Sparse, tension builds</span></div>
+        <div class="apc-track"><span class="apc-tnum">03</span><span class="apc-tname">The Signal</span><span class="apc-tconcept">Glitchy, corrupted radio static</span></div>
+        <div class="apc-track"><span class="apc-tnum">04</span><span class="apc-tnum">04</span><span class="apc-tname">72 Hours</span><span class="apc-tconcept">Fatigue, hallucination, dissonance</span></div>
+        <div class="apc-track"><span class="apc-tnum">05</span><span class="apc-tname">Extract</span><span class="apc-tconcept">Relief, movement, urgency</span></div>
+      </div>
+      <div class="tools-used">
+        <span class="tool-chip">Suno AI</span><span class="tool-chip">ElevenLabs (narration)</span><span class="tool-chip">Higgsfield (visual)</span><span class="tool-chip">ComfyUI (album art)</span>
+      </div>
+    </div>
+
+    <div class="ai-project-card">
+      <div class="apc-header">
+        <div class="apc-title">Outer Rim Jazz</div>
+        <span class="apc-status aps-concept">CONCEPT</span>
+      </div>
+      <div class="apc-desc">Star Wars inspired jazz concept album. Cantina-adjacent but sophisticated — the kind of music that would play in a nicer establishment on Coruscant. 6 tracks, each named for a location or character type in the SW universe.</div>
+      <div class="apc-tracks">
+        <div class="apc-track"><span class="apc-tnum">01</span><span class="apc-tname">Coruscant After Hours</span><span class="apc-tconcept">Late night jazz, city lights</span></div>
+        <div class="apc-track"><span class="apc-tnum">02</span><span class="apc-tname">The Mandalorian's Waltz</span><span class="apc-tconcept">Lonely, defiant, beautiful</span></div>
+        <div class="apc-track"><span class="apc-tnum">03</span><span class="apc-tname">Smuggler's Moon</span><span class="apc-tconcept">Upbeat, danger underneath</span></div>
+        <div class="apc-track"><span class="apc-tnum">04</span><span class="apc-tname">Force Meditation (Solo Piano)</span><span class="apc-tconcept">Impressionist, floating</span></div>
+      </div>
+      <div class="tools-used">
+        <span class="tool-chip">Suno AI</span><span class="tool-chip">Udio</span><span class="tool-chip">ComfyUI (art)</span>
+      </div>
+    </div>
+
+    <div class="ai-project-card">
+      <div class="apc-header">
+        <div class="apc-title">Maneuver Warfare (Score)</div>
+        <span class="apc-status aps-concept">CONCEPT</span>
+      </div>
+      <div class="apc-desc">Orchestral/electronic hybrid score for an imagined documentary on maneuver warfare theory. Inspired by Hans Zimmer's Dunkirk and Interstellar. Tracks named for concepts from Boyd's OODA Loop and Lind's doctrine.</div>
+      <div class="apc-tracks">
+        <div class="apc-track"><span class="apc-tnum">01</span><span class="apc-tname">OODA</span><span class="apc-tconcept">Short loop, builds in complexity</span></div>
+        <div class="apc-track"><span class="apc-tnum">02</span><span class="apc-tname">Surface Gap</span><span class="apc-tconcept">Tension, orchestral swell</span></div>
+        <div class="apc-track"><span class="apc-tnum">03</span><span class="apc-tname">Schwerpunkt</span><span class="apc-tconcept">Focus, momentum, decisive</span></div>
+        <div class="apc-track"><span class="apc-tnum">04</span><span class="apc-tname">Mission Command</span><span class="apc-tconcept">Trust, distributed, forward</span></div>
+      </div>
+      <div class="tools-used">
+        <span class="tool-chip">Suno AI</span><span class="tool-chip">ElevenLabs</span>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- VINYL CONCEPT ALBUM BUILDER -->
+    <div class="album-builder">
+      <div class="ab-title">🎵 Vinyl Concept Album Builder</div>
+      <div class="sec-sub" style="margin-bottom:12px">Design a concept album for AI generation and vinyl pressing. Fill in the concept, mood, and tracks — the builder generates Suno AI prompts for each track and a packaging brief for the physical release.</div>
+      <div class="ab-form">
+        <div class="ab-field"><div class="ab-label">Album Title</div><input class="ab-input" id="ab-title" placeholder="Operation Ghost Frequency"></div>
+        <div class="ab-field"><div class="ab-label">Genre / Style</div><input class="ab-input" id="ab-genre" placeholder="Dark ambient, electronic, orchestral..."></div>
+        <div class="ab-field"><div class="ab-label">Concept / Story</div><textarea class="ab-textarea" id="ab-concept" placeholder="What is this album about? A mission, a character arc, a world..."></textarea></div>
+        <div class="ab-field"><div class="ab-label">Mood Arc</div><textarea class="ab-textarea" id="ab-mood" placeholder="Starts tense, builds to a climax at track 6, resolves quietly..."></textarea></div>
+      </div>
+      <div class="ab-field" style="margin-bottom:10px"><div class="ab-label">Track List (one per line: Track Name — brief concept)</div><textarea class="ab-textarea" style="min-height:120px" id="ab-tracks" placeholder="01. Insertion — Dark ambient, helicopter blades&#10;02. First Contact — Sparse, tension&#10;03. The Signal — Glitchy radio static"></textarea></div>
+      <div class="ab-form">
+        <div class="ab-field"><div class="ab-label">Album Art Style</div><input class="ab-input" id="ab-art" placeholder="Minimalist, painterly, photographic..."></div>
+        <div class="ab-field"><div class="ab-label">AI Tool Target</div><select class="ab-select" id="ab-tool"><option>Suno AI</option><option>Udio</option><option>Both</option></select></div>
+      </div>
+      <button class="gen-prompt-btn" onclick="genAlbumPrompt()">⚡ GENERATE SUNO PROMPTS + VINYL BRIEF</button>
+      <div class="prompt-output" id="ab-output"></div>
+    </div>
+  </div>
+
+  <!-- PLAYLISTS -->
+  <div class="tc" id="tc-playlist">
+    <div class="sec-h">Playlist Builder</div>
+    <div class="sec-sub">Build and manage playlists across all your sources. Describe what you want in natural language and Claude assembles it from your catalogue.</div>
+
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <input style="flex:1;min-width:200px;background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:8px 12px;border-radius:2px;outline:none;" placeholder="Describe the playlist you want... 'Late night focus, no lyrics'" id="pl-prompt">
+      <button class="hbtn" style="border-color:var(--blue);color:var(--blue);padding:8px 16px;" onclick="genPlaylist()">ASK CLAUDE</button>
+    </div>
+
+    <div class="playlist-builder">
+      <div class="pl-pool">
+        <div class="slabel">Current Playlist</div>
+        <div class="pl-list" id="current-playlist">
+          <div style="padding:20px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);">Describe a playlist above or drag tracks here</div>
+        </div>
+      </div>
+      <div class="pl-panel">
+        <div class="pl-panel-title">Playlist Info</div>
+        <div class="ab-field" style="margin-bottom:8px"><div class="ab-label">Name</div><input class="ab-input" placeholder="Playlist name" id="pl-name"></div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);margin-bottom:8px;line-height:1.6;">
+          Duration: <span id="pl-dur">0 min</span><br>
+          Tracks: <span id="pl-tracks">0</span><br>
+          Sources: <span id="pl-sources">—</span>
+        </div>
+        <div class="slabel">Saved Playlists</div>
+        <div style="font-size:11px;color:var(--dim);font-style:italic;margin-bottom:10px;">Connect Apple Music or Spotify to see your existing playlists here</div>
+        <button class="add-to-pl-btn">SAVE PLAYLIST</button>
+        <button class="add-to-pl-btn" style="background:var(--green);margin-top:6px;">EXPORT TO APPLE MUSIC</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETUP -->
+  <div class="tc" id="tc-setup">
+    <div class="sec-h">Setup Guide</div>
+    <div class="sec-sub">Connect your music sources so Claude can catalogue and manage your full library. Each connection unlocks more of the Music Command system.</div>
+
+    <div class="setup-card">
+      <div class="sc-title">Apple Music Catalogue</div>
+      <div class="sc-step"><span class="sc-n">01</span><div class="sc-t">Export Apple Music library: iTunes/Music app → File → Library → Export Library (XML)<div class="sc-note">This gives you a complete list of everything in your library including purchase dates and play counts</div></div><span class="who wy">YOU</span></div>
+      <div class="sc-step"><span class="sc-n">02</span><div class="sc-t">Upload the XML to Google Drive in /Music/Library/apple-library.xml</div><span class="who wy">YOU</span></div>
+      <div class="sc-step"><span class="sc-n">03</span><div class="sc-t">Claudius reads the XML and imports all tracks into a Notion Music Database with title, artist, album, genre, play count<div class="sc-note">Claude handles the XML parsing — it's just a file read</div></div><span class="who wc">CLAUDE</span></div>
+      <div class="sc-step"><span class="sc-n">04</span><div class="sc-t">For real-time access: Apple Music API (developer.apple.com) — requires MusicKit API key<div class="sc-note">Optional. The export covers the catalogue; the API adds live playback integration</div></div><span class="who wy">YOU</span></div>
+    </div>
+
+    <div class="setup-card">
+      <div class="sc-title">Spotify Catalogue</div>
+      <div class="sc-step"><span class="sc-n">01</span><div class="sc-t">Request your Spotify data: Spotify account → Privacy Settings → Download your data<div class="sc-note">Arrives in ~5 days. Contains every stream, playlist, and saved track</div></div><span class="who wy">YOU</span></div>
+      <div class="sc-step"><span class="sc-n">02</span><div class="sc-t">Alternatively: Spotify API (faster). Create app at developer.spotify.com → get client ID + secret<div class="sc-note">Free, takes 10 minutes to set up</div></div><span class="who wy">YOU</span></div>
+      <div class="sc-step"><span class="sc-n">03</span><div class="sc-t">Clodius pulls your saved albums, playlists, and top tracks via Spotify API → stores in Notion<div class="sc-note">Claude writes the API integration code</div></div><span class="who wc">CLAUDE</span></div>
+    </div>
+
+    <div class="setup-card">
+      <div class="sc-title">Vinyl Collection</div>
+      <div class="sc-step"><span class="sc-n">01</span><div class="sc-t">Photograph your record collection — album cover facing camera, 5-10 per photo is fine</div><span class="who wy">YOU</span></div>
+      <div class="sc-step"><span class="sc-n">02</span><div class="sc-t">Send photos to Claude mobile — Claude extracts artist, title, year, genre from each cover<div class="sc-note">Works for 90%+ of albums. For obscure pressings, Claude will flag for manual entry</div></div><span class="who wc">CLAUDE</span></div>
+      <div class="sc-step"><span class="sc-n">03</span><div class="sc-t">Claude populates the Vinyl Collection DB in Notion and this dashboard simultaneously</div><span class="who wc">CLAUDE</span></div>
+      <div class="sc-step"><span class="sc-n">04</span><div class="sc-t">Optional: Connect Discogs account (discogs.com) for automatic valuations and edition tracking</div><span class="who wy">YOU</span></div>
+    </div>
+
+    <div class="setup-card">
+      <div class="sc-title">AI Music Tools</div>
+      <div class="sc-step"><span class="sc-n">01</span><div class="sc-t">Suno AI (suno.ai) — best for full song generation with lyrics. Free tier available, Pro for commercial use<div class="sc-note">Best starting point for concept albums</div></div><span class="who wy">YOU</span></div>
+      <div class="sc-step"><span class="sc-n">02</span><div class="sc-t">Udio (udio.com) — alternative, different voice/style model. Good for instrumental and orchestral<div class="sc-note">Try the same prompt on both — they sound very different</div></div><span class="who wy">YOU</span></div>
+      <div class="sc-step"><span class="sc-n">03</span><div class="sc-t">For vinyl pressing: DiscMakers or United Record Pressing — minimum runs of ~100 copies. Claude generates the full submission brief<div class="sc-note">~$800-1400 for 100 copies of a standard 12" LP</div></div><span class="who wc">CLAUDE</span></div>
+      <div class="sc-step"><span class="sc-n">04</span><div class="sc-t">Album art: ComfyUI on RunPod for consistent style, or Midjourney for quick concept exploration</div><span class="who wc">CLAUDE</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- NOW PLAYING -->
+<div class="np-bar">
+  <div class="np-art">🎵</div>
+  <div class="np-info">
+    <div class="np-title">No track selected</div>
+    <div class="np-artist">Select a track to play</div>
+  </div>
+  <div class="np-controls">
+    <button class="nc-btn">⏮</button>
+    <button class="nc-btn play">▶</button>
+    <button class="nc-btn">⏭</button>
+  </div>
+  <div class="np-progress">
+    <div class="prog-bar"><div class="prog-fill"></div></div>
+    <div class="np-time" style="margin-top:3px">0:00 / 0:00</div>
+  </div>
+</div>
+
+<script>
+// VINYL DATA
+let vinylCollection=[
+  {id:'v1',title:'Dark Side of the Moon',artist:'Pink Floyd',year:1973,genre:'Prog Rock',cover:'',notes:'Original pressing'},
+  {id:'v2',title:'Kind of Blue',artist:'Miles Davis',year:1959,genre:'Jazz',cover:'',notes:''},
+  {id:'v3',title:'Rumours',artist:'Fleetwood Mac',year:1977,genre:'Rock',cover:'',notes:'Reissue'},
+  {id:'v4',title:'Blade Runner OST',artist:'Vangelis',year:1982,genre:'Soundtrack',cover:'',notes:'Import edition'},
+  {id:'v5',title:'The Wall',artist:'Pink Floyd',year:1979,genre:'Prog Rock',cover:'',notes:''},
+];
+
+function renderVinyl(){
+  document.getElementById('vinyl-count').textContent=vinylCollection.length+' records';
+  document.getElementById('vinyl-grid').innerHTML=vinylCollection.map(v=>`
+    <div class="vinyl-card">
+      <div class="vinyl-art">
+        ${v.cover?`<img src="${v.cover}">`:`<div class="vinyl-record"><div class="vinyl-record-inner"></div></div>`}
+      </div>
+      <div class="vinyl-info">
+        <div class="vinyl-title">${v.title}</div>
+        <div class="vinyl-artist">${v.artist}</div>
+        <div class="vinyl-meta">
+          <span class="vinyl-year">${v.year}</span>
+          <span class="vinyl-genre">${v.genre}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addVinyl(){
+  const title=prompt('Album title:');if(!title)return;
+  const artist=prompt('Artist:');if(!artist)return;
+  const year=prompt('Year:')||'';
+  const genre=prompt('Genre:')||'';
+  vinylCollection.push({id:'v'+Date.now(),title,artist,year,genre,cover:'',notes:''});
+  renderVinyl();
+}
+
+function genAlbumPrompt(){
+  const title=document.getElementById('ab-title').value||'Untitled Album';
+  const genre=document.getElementById('ab-genre').value||'ambient';
+  const concept=document.getElementById('ab-concept').value||'';
+  const mood=document.getElementById('ab-mood').value||'';
+  const tracks=document.getElementById('ab-tracks').value.split('\n').filter(t=>t.trim());
+  const art=document.getElementById('ab-art').value||'minimal';
+  const tool=document.getElementById('ab-tool').value;
+
+  const out=document.getElementById('ab-output');
+  out.style.display='block';
+
+  let result=`═══ VINYL CONCEPT ALBUM: ${title.toUpperCase()} ═══\n\n`;
+  result+=`CONCEPT: ${concept}\nMOOD ARC: ${mood}\nGENRE: ${genre}\n\n`;
+  result+=`─── ${tool.toUpperCase()} TRACK PROMPTS ───\n\n`;
+
+  tracks.forEach((t,i)=>{
+    const parts=t.split('—').map(s=>s.trim());
+    const tname=parts[0]||`Track ${i+1}`;
+    const tconcept=parts[1]||'';
+    result+=`${tname}:\n"${genre} music. ${tconcept}. Part of a concept album called "${title}". ${concept}. Mood: ${i===0?'opening, establishing':`building on track ${i}`}. High production quality, no lyrics unless specified."\n\n`;
+  });
+
+  result+=`─── VINYL PRESSING BRIEF ───\n\n`;
+  result+=`Album: ${title}\nFormat: 12" LP, 33 1/3 RPM\nArt Direction: ${art}\nAlbum Art Prompt (ComfyUI): "${art} album cover art for "${title}". ${concept}. Color palette aligned with ${genre} aesthetic. No text on image — text to be added in layout."\nPackaging: Gatefold recommended. Include lyric/concept insert.\nRecommended Press: DiscMakers or United Record Pressing\nMinimum Run: 100 copies (~$900-1400)`;
+
+  out.textContent=result;
+}
+
+function genPlaylist(){
+  const prompt=document.getElementById('pl-prompt').value;
+  if(!prompt)return;
+  document.getElementById('current-playlist').innerHTML=`
+    <div style="padding:12px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim)">
+      Playlist concept: "${prompt}"<br><br>
+      Once your Apple Music and Spotify libraries are connected, Claude will pull matching tracks from your actual collection. Currently showing example structure:
+    </div>
+    ${['Dark Side of the Moon — Pink Floyd (Vinyl)','Kind of Blue — Miles Davis (Vinyl)','Blade Runner OST — Vangelis (Vinyl)'].map((t,i)=>`
+    <div class="pl-item">
+      <span class="pl-drag">⠿</span>
+      <div class="pl-name">${t}</div>
+      <button class="pl-remove">✕</button>
+    </div>`).join('')}`;
+  document.getElementById('pl-tracks').textContent='3';
+  document.getElementById('pl-dur').textContent='~2 hr';
+  document.getElementById('pl-sources').textContent='Vinyl';
+}
+
+function sw(el,id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.tc').forEach(t=>t.style.display='none');
+  document.getElementById('tc-'+id).style.display='block';
+}
+
+function toggleTheme(){
+  const d=document.documentElement;const dark=d.getAttribute('data-theme')==='dark';
+  d.setAttribute('data-theme',dark?'light':'dark');
+  localStorage.setItem('music-theme',dark?'light':'dark');
+}
+const st=localStorage.getItem('music-theme');if(st)document.documentElement.setAttribute('data-theme',st);
+
+renderVinyl();
+</script>
+</body>
+</html>

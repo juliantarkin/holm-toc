@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery // Jamie Holm</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+[data-theme="dark"]{--bg:#0a090c;--surface:#13111a;--s2:#1a1825;--s3:#222030;--border:#2d2a3e;--b2:#3d3a55;--text:#ccc8e0;--dim:#5a5870;--bright:#f0eeff;--inv:#0a090c;--shadow:rgba(0,0,0,.7);}
+[data-theme="light"]{--bg:#f5f4f0;--surface:#fff;--s2:#f8f7f4;--s3:#eeecf0;--border:#d8d4e0;--b2:#b8b0c8;--text:#201c30;--dim:#8078a0;--bright:#100820;--inv:#fff;--shadow:rgba(0,0,0,.08);}
+[data-theme="dark"]{--gold:#e8d080;--accent:#b07cff;--pink:#ff7cab;--green:#60d890;--blue:#60b8ff;--red:#ff6060;--orange:#ff9040;}
+[data-theme="light"]{--gold:#6a5000;--accent:#5020b0;--pink:#880040;--green:#007040;--blue:#003880;--red:#880000;--orange:#804000;}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',Georgia,serif;display:flex;flex-direction:column;height:100vh;overflow:hidden;transition:background .2s,color .2s;}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 60% at 75% 30%,rgba(176,124,255,.04),transparent 55%);pointer-events:none;}
+
+header{flex-shrink:0;border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;background:var(--surface);z-index:20;position:relative;}
+[data-theme="dark"] header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--accent),var(--gold),transparent 60%);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:6px;color:var(--gold);}
+[data-theme="dark"] .logo{text-shadow:0 0 20px rgba(232,208,128,.35);}
+.logo-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:2px;}
+.hdr-r{display:flex;align-items:center;gap:8px;}
+.hbtn{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 10px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;border-radius:1px;transition:all .15s;letter-spacing:1px;}
+.hbtn:hover{border-color:var(--gold);color:var(--gold);}
+.add-btn{background:var(--accent);color:var(--inv);border-color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;padding:5px 14px;}
+[data-theme="light"] .add-btn{color:#fff;}
+.add-btn:hover{opacity:.85;}
+
+/* LAYOUT */
+.layout{flex:1;display:grid;grid-template-columns:220px 1fr;overflow:hidden;}
+@media(max-width:700px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}}
+
+/* SIDEBAR */
+.sidebar{border-right:1px solid var(--border);background:var(--surface);overflow-y:auto;padding:14px;}
+.filter-group{margin-bottom:18px;}
+.fg-title{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.fitem{display:flex;align-items:center;justify-content:space-between;padding:5px 6px;cursor:pointer;border-radius:2px;transition:all .12s;font-size:13px;}
+.fitem:hover{background:var(--s2);}
+.fitem.on{background:var(--s3);}
+.fitem-label{color:var(--text);}
+.fitem.on .fitem-label{color:var(--gold);}
+.fitem-count{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);}
+.fitem.on .fitem-count{color:var(--gold);}
+.color-dot{width:8px;height:8px;border-radius:50%;margin-right:6px;flex-shrink:0;}
+
+/* STATS ROW */
+.stats-row{display:flex;gap:12px;padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.stat{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:1px;}
+.stat b{color:var(--gold);}
+
+/* MAIN */
+.gallery-main{display:flex;flex-direction:column;overflow:hidden;}
+
+/* VIEW CONTROLS */
+.view-bar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);background:var(--surface);gap:10px;flex-wrap:wrap;}
+.view-tabs{display:flex;gap:1px;}
+.vtab{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:5px 10px;border:1px solid var(--border);cursor:pointer;color:var(--dim);transition:all .15s;letter-spacing:1px;}
+.vtab:first-child{border-radius:2px 0 0 2px;}
+.vtab:last-child{border-radius:0 2px 2px 0;}
+.vtab.on{background:var(--accent);border-color:var(--accent);color:var(--inv);}
+[data-theme="light"] .vtab.on{color:#fff;}
+.sort-select{font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:2px;outline:none;cursor:pointer;}
+.search-in{font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:2px;outline:none;transition:border-color .15s;letter-spacing:1px;width:180px;}
+.search-in:focus{border-color:var(--accent);}
+.search-in::placeholder{color:var(--dim);}
+
+/* GALLERY GRID */
+.gallery-scroll{flex:1;overflow-y:auto;padding:16px;}
+.gallery-grid{display:grid;gap:12px;}
+.gallery-grid.grid-lg{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}
+.gallery-grid.grid-md{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
+.gallery-grid.grid-list{grid-template-columns:1fr;}
+
+/* ART CARD */
+.art-card{background:var(--surface);border:1px solid var(--border);border-radius:2px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative;}
+.art-card:hover{border-color:var(--b2);transform:translateY(-2px);box-shadow:0 8px 24px var(--shadow);}
+.art-card.todo-card{border-style:dashed;opacity:.7;}
+.art-card.todo-card:hover{opacity:1;border-color:var(--accent);}
+.ac-image{width:100%;aspect-ratio:4/3;background:var(--s2);overflow:hidden;position:relative;}
+.ac-image img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.art-card:hover .ac-image img{transform:scale(1.03);}
+.ac-placeholder{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:6px;font-size:28px;}
+.ac-placeholder-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:1px;}
+.ac-type-badge{position:absolute;top:8px;left:8px;font-family:'IBM Plex Mono',monospace;font-size:7px;padding:2px 6px;border-radius:1px;letter-spacing:1px;border:1px solid;}
+.tb-physical{color:var(--gold);background:rgba(232,208,128,.1);border-color:rgba(232,208,128,.3);}
+.tb-digital{color:var(--blue);background:rgba(96,184,255,.1);border-color:rgba(96,184,255,.3);}
+.tb-ai{color:var(--accent);background:rgba(176,124,255,.1);border-color:rgba(176,124,255,.3);}
+.tb-todo{color:var(--orange);background:rgba(255,144,64,.1);border-color:rgba(255,144,64,.3);}
+.ac-status{position:absolute;top:8px;right:8px;font-family:'IBM Plex Mono',monospace;font-size:7px;padding:2px 6px;border-radius:1px;letter-spacing:1px;border:1px solid;}
+.as-done{color:var(--green);background:rgba(96,216,144,.1);border-color:rgba(96,216,144,.3);}
+.as-wip{color:var(--blue);background:rgba(96,184,255,.1);border-color:rgba(96,184,255,.3);}
+.as-planned{color:var(--dim);background:var(--s3);border-color:var(--border);}
+.ac-info{padding:10px 12px;}
+.ac-title{font-size:15px;color:var(--bright);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ac-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);margin-bottom:5px;}
+.ac-tags{display:flex;flex-wrap:wrap;gap:3px;}
+.ac-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 5px;border:1px solid var(--border);border-radius:1px;color:var(--dim);}
+
+/* LIST VIEW */
+.gallery-grid.grid-list .art-card{display:grid;grid-template-columns:80px 1fr;height:60px;}
+.gallery-grid.grid-list .ac-image{height:60px;aspect-ratio:unset;width:80px;}
+.gallery-grid.grid-list .ac-info{padding:8px 12px;display:flex;align-items:center;gap:16px;}
+.gallery-grid.grid-list .ac-title{font-size:13px;margin:0;flex:1;}
+.gallery-grid.grid-list .ac-meta{margin:0;}
+.gallery-grid.grid-list .ac-tags{display:none;}
+.gallery-grid.grid-list .ac-type-badge{top:4px;left:4px;}
+.gallery-grid.grid-list .ac-status{top:4px;right:4px;}
+
+/* LIGHTBOX */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:200;align-items:flex-start;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+.lightbox.show{display:flex;}
+.lb-inner{display:grid;grid-template-columns:auto 320px;gap:0;max-height:90vh;border:1px solid var(--border);border-radius:3px;overflow:hidden;background:var(--surface);}
+@media(max-width:700px){.lb-inner{grid-template-columns:1fr;}.lb-image-panel{max-height:40vh;}}
+.lb-image-panel{background:var(--s2);display:flex;align-items:center;justify-content:center;min-width:300px;max-width:60vw;overflow:hidden;position:relative;}
+.lb-image-panel img{max-width:100%;max-height:80vh;object-fit:contain;}
+.lb-placeholder{font-size:60px;opacity:.3;}
+.lb-close{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.5);border:none;color:#fff;font-size:18px;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1;}
+.lb-info{padding:20px;overflow-y:auto;}
+.lb-type{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:2px;margin-bottom:4px;}
+.lb-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--bright);margin-bottom:6px;line-height:1.1;}
+.lb-desc{font-size:14px;color:var(--text);line-height:1.8;margin-bottom:14px;}
+.lb-field{margin-bottom:10px;}
+.lb-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:3px;}
+.lb-val{font-size:13px;color:var(--text);line-height:1.5;}
+.lb-prompt{font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--s2);border:1px solid var(--border);padding:8px;border-radius:2px;line-height:1.7;color:var(--text);word-break:break-word;}
+.lb-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.lb-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border:1px solid var(--border);border-radius:1px;color:var(--dim);}
+.lb-actions{display:flex;gap:6px;margin-top:14px;}
+.lb-btn{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;padding:7px 14px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;border-radius:1px;transition:all .15s;flex:1;text-align:center;}
+.lb-btn:hover{border-color:var(--accent);color:var(--accent);}
+.lb-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--inv);}
+[data-theme="light"] .lb-btn.primary{color:#fff;}
+
+/* NEW WORK MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;align-items:flex-start;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.overlay.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:20px;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;position:relative;margin-top:20px;}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--bright);margin-bottom:16px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;}
+.fi,.fta,.fse{background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:'Cormorant Garamond',serif;font-size:13px;padding:7px 9px;border-radius:1px;outline:none;transition:border-color .15s;width:100%;}
+.fi:focus,.fta:focus,.fse:focus{border-color:var(--accent);}
+.fta{resize:vertical;min-height:70px;line-height:1.6;}
+.fse{cursor:pointer;}
+.save-btn{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;padding:10px;background:var(--accent);color:var(--inv);border:none;cursor:pointer;border-radius:1px;transition:all .15s;width:100%;margin-top:4px;}
+[data-theme="light"] .save-btn{color:#fff;}
+.save-btn:hover{opacity:.85;}
+
+/* TODO SECTION */
+.todo-panel{background:var(--surface);border:1px solid var(--b2);border-radius:3px;padding:14px;margin-bottom:12px;}
+.tp-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--orange);margin-bottom:10px;}
+.todo-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.todo-item:last-child{border-bottom:none;}
+.todo-check{width:16px;height:16px;border:1px solid var(--border);border-radius:1px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all .15s;}
+.todo-check:hover{border-color:var(--accent);}
+.todo-check.done{background:var(--green);border-color:var(--green);}
+[data-theme="light"] .todo-check.done{background:var(--green);}
+.todo-check.done::after{content:'✓';font-size:10px;color:#fff;font-weight:bold;}
+.todo-info{flex:1;}
+.todo-title{font-size:14px;color:var(--bright);margin-bottom:2px;}
+.todo-title.done-text{text-decoration:line-through;color:var(--dim);}
+.todo-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);display:flex;gap:8px;flex-wrap:wrap;}
+.todo-type{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 5px;border:1px solid;border-radius:1px;}
+.slabel{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;padding-bottom:5px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+
+hr.div{border:none;border-top:1px solid var(--border);margin:14px 0;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">Art Gallery</div>
+    <div class="logo-sub">JAMIE HOLM // PHYSICAL · DIGITAL · GENERATED</div>
+  </div>
+  <div class="hdr-r">
+    <button class="hbtn" onclick="toggleTheme()">☀/🌙</button>
+    <button class="hbtn add-btn" onclick="openAdd()">+ ADD WORK</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="filter-group">
+      <div class="fg-title">Medium</div>
+      <div class="fitem on" onclick="filt(this,'all')"><div style="display:flex;align-items:center"><div class="color-dot" style="background:var(--gold)"></div><span class="fitem-label">All Works</span></div><span class="fitem-count" id="fc-all">0</span></div>
+      <div class="fitem" onclick="filt(this,'physical')"><div style="display:flex;align-items:center"><div class="color-dot" style="background:var(--gold)"></div><span class="fitem-label">Physical</span></div><span class="fitem-count" id="fc-physical">0</span></div>
+      <div class="fitem" onclick="filt(this,'digital')"><div style="display:flex;align-items:center"><div class="color-dot" style="background:var(--blue)"></div><span class="fitem-label">Digital</span></div><span class="fitem-count" id="fc-digital">0</span></div>
+      <div class="fitem" onclick="filt(this,'ai')"><div style="display:flex;align-items:center"><div class="color-dot" style="background:var(--accent)"></div><span class="fitem-label">AI Generated</span></div><span class="fitem-count" id="fc-ai">0</span></div>
+      <div class="fitem" onclick="filt(this,'todo')"><div style="display:flex;align-items:center"><div class="color-dot" style="background:var(--orange)"></div><span class="fitem-label">To Do / Planned</span></div><span class="fitem-count" id="fc-todo">0</span></div>
+    </div>
+    <div class="filter-group">
+      <div class="fg-title">Status</div>
+      <div class="fitem" onclick="filtStatus(this,'done')"><span class="fitem-label">Completed</span></div>
+      <div class="fitem" onclick="filtStatus(this,'wip')"><span class="fitem-label">In Progress</span></div>
+      <div class="fitem" onclick="filtStatus(this,'planned')"><span class="fitem-label">Planned</span></div>
+    </div>
+    <div class="filter-group">
+      <div class="fg-title">Subject</div>
+      <div class="fitem" onclick="filtTag(this,'star-wars')"><span class="fitem-label">Star Wars</span></div>
+      <div class="fitem" onclick="filtTag(this,'aedaeion')"><span class="fitem-label">Aedaeion</span></div>
+      <div class="fitem" onclick="filtTag(this,'portrait')"><span class="fitem-label">Portrait</span></div>
+      <div class="fitem" onclick="filtTag(this,'landscape')"><span class="fitem-label">Landscape</span></div>
+      <div class="fitem" onclick="filtTag(this,'character')"><span class="fitem-label">Character</span></div>
+      <div class="fitem" onclick="filtTag(this,'concept')"><span class="fitem-label">Concept Art</span></div>
+    </div>
+  </div>
+
+  <!-- MAIN GALLERY -->
+  <div class="gallery-main">
+    <div class="stats-row">
+      <span class="stat">Total: <b id="stat-total">0</b></span>
+      <span class="stat">Physical: <b id="stat-physical">0</b></span>
+      <span class="stat">Digital: <b id="stat-digital">0</b></span>
+      <span class="stat">AI Generated: <b id="stat-ai">0</b></span>
+      <span class="stat">To Do: <b id="stat-todo">0</b></span>
+    </div>
+    <div class="view-bar">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div class="view-tabs">
+          <button class="vtab on" onclick="setView(this,'lg')">▦</button>
+          <button class="vtab" onclick="setView(this,'md')">▤</button>
+          <button class="vtab" onclick="setView(this,'list')">☰</button>
+        </div>
+        <select class="sort-select" onchange="sortWorks(this.value)">
+          <option value="date-desc">Newest First</option>
+          <option value="date-asc">Oldest First</option>
+          <option value="title">Title A–Z</option>
+          <option value="type">By Medium</option>
+        </select>
+      </div>
+      <input class="search-in" placeholder="SEARCH WORKS..." oninput="searchWorks(this.value)">
+    </div>
+    <div class="gallery-scroll">
+      <div class="gallery-grid grid-lg" id="gallery-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLB(event)">
+  <div class="lb-inner">
+    <div class="lb-image-panel" id="lb-img">
+      <button class="lb-close" onclick="document.getElementById('lightbox').classList.remove('show')">✕</button>
+    </div>
+    <div class="lb-info" id="lb-info"></div>
+  </div>
+</div>
+
+<!-- ADD WORK MODAL -->
+<div class="overlay" id="modal-add" onclick="closeAdd(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modal-add').classList.remove('show')">✕</button>
+    <div class="modal-title">Add Work</div>
+    <div class="form-grid">
+      <div class="fg"><div class="fl">Title</div><input class="fi" id="nw-title" placeholder="Untitled"></div>
+      <div class="fg"><div class="fl">Medium</div>
+        <select class="fse" id="nw-type">
+          <option value="physical">Physical</option>
+          <option value="digital">Digital</option>
+          <option value="ai">AI Generated</option>
+          <option value="todo">To Do / Planned</option>
+        </select>
+      </div>
+      <div class="fg"><div class="fl">Status</div>
+        <select class="fse" id="nw-status">
+          <option value="done">Completed</option>
+          <option value="wip">In Progress</option>
+          <option value="planned">Planned</option>
+        </select>
+      </div>
+      <div class="fg"><div class="fl">Year / Date</div><input class="fi" id="nw-year" placeholder="2024"></div>
+    </div>
+    <div class="fg" style="margin-bottom:10px"><div class="fl">Description</div><textarea class="fta" id="nw-desc" placeholder="About this work..."></textarea></div>
+    <div class="fg" style="margin-bottom:10px"><div class="fl">Medium / Materials (physical) or Tools (digital)</div><input class="fi" id="nw-materials" placeholder="Oil on canvas, Midjourney, Procreate..."></div>
+    <div class="fg" style="margin-bottom:10px"><div class="fl">AI Prompt (if applicable)</div><textarea class="fta" id="nw-prompt" placeholder="The prompt used to generate this work..."></textarea></div>
+    <div class="fg" style="margin-bottom:10px"><div class="fl">Tags (comma separated)</div><input class="fi" id="nw-tags" placeholder="star-wars, character, concept-art"></div>
+    <div class="fg" style="margin-bottom:10px"><div class="fl">Image URL (or leave blank)</div><input class="fi" id="nw-img" placeholder="https://..."></div>
+    <button class="save-btn" onclick="saveWork()">ADD TO GALLERY</button>
+  </div>
+</div>
+
+<script>
+let works=[
+  {id:'w1',title:'TIE Fighter Cockpit Study',type:'ai',status:'done',year:2024,desc:'AI-generated concept study for the TIE Academy UE5 project. Weathered cockpit interior, warm amber glow from instruments.',materials:'Midjourney v6',prompt:'TIE fighter cockpit interior, weathered, battle damage, amber instrument glow, dramatic lighting, photorealistic, sci-fi',tags:['star-wars','concept','interior'],img:''},
+  {id:'w2',title:'Kael Morrow — Portrait',type:'ai',status:'done',year:2024,desc:'Character portrait for the 5 Parsecs campaign. Disgraced Union officer, post-discharge. Weathered, grey at temples, ship in background.',materials:'ComfyUI / Stable Diffusion XL',prompt:'Character portrait, middle-aged military man, grey temples, weathered face, jaw scar, space-faring outfit, moody lighting, realistic style, science fiction',tags:['portrait','character','5parsecs'],img:''},
+  {id:'w3',title:'Aedaeion — The Shattered Plain',type:'ai',status:'done',year:2024,desc:'World-building concept for the Aedaeion universe. Vast ancient battlefield, impossible scale, two moons.',materials:'Midjourney v6',prompt:'Epic fantasy landscape, shattered ancient battlefield, scale suggests thousands of years of conflict, twin moons, dust and silence, painterly style',tags:['aedaeion','landscape','worldbuilding'],img:''},
+  {id:'w4',title:'Gods Valley Watercolor',type:'physical',status:'planned',year:2025,desc:'Planned watercolor piece of the Nehalem property. Morning light through the trees, camper in distance.',materials:'Watercolor on cold press, 9x12',prompt:'',tags:['landscape','personal','property'],img:''},
+  {id:'w5',title:'Void Magister — Full Render',type:'todo',status:'planned',year:2025,desc:'Full character render of the Aedaeion villain. Phase-weave shroud, indigo and cold silver palette. Needs reference images first.',materials:'ComfyUI / IP-Adapter + reference',prompt:'Tall mysterious figure, phase-shifting shroud that never resolves, deep indigo and cold silver, face obscured, impossibly tall, ancient power, epic scale lighting',tags:['aedaeion','character','villain'],img:''},
+  {id:'w6',title:'Operation Ghost Frequency — Album Art',type:'todo',status:'planned',year:2025,desc:'Album cover for the AI concept album. Minimal, military, atmospheric. Soldier silhouette in fog with strange signal tower.',materials:'ComfyUI / SDXL',prompt:'Minimalist album cover art, single soldier silhouette in fog, distant signal tower with unusual geometry, low-key military color palette, cinematic, no text',tags:['music','concept','atmospheric'],img:''},
+  {id:'w7',title:'DuPont Backyard at Dusk',type:'physical',status:'wip',year:2024,desc:'Oil painting in progress. Backyard light study, catching the Pacific Northwest evening quality.',materials:'Oil on linen, 12x16',prompt:'',tags:['landscape','personal','pleinair'],img:''},
+  {id:'w8',title:'Star Wars Fleet Engagement',type:'digital',status:'done',year:2023,desc:'Digital painting, Capital ship engagement above an ocean planet. Personal project, not game-related.',materials:'Procreate',prompt:'',tags:['star-wars','space','digital-painting'],img:''},
+];
+
+let currentFilter='all';
+let currentStatus='';
+let currentTag='';
+let currentView='lg';
+let currentSort='date-desc';
+let currentSearch='';
+let selectedWork=null;
+
+function getFiltered(){
+  let list=[...works];
+  if(currentFilter!=='all')list=list.filter(w=>w.type===currentFilter);
+  if(currentStatus)list=list.filter(w=>w.status===currentStatus);
+  if(currentTag)list=list.filter(w=>w.tags.includes(currentTag));
+  if(currentSearch)list=list.filter(w=>w.title.toLowerCase().includes(currentSearch)||w.desc.toLowerCase().includes(currentSearch)||w.tags.some(t=>t.includes(currentSearch)));
+  if(currentSort==='date-asc')list.sort((a,b)=>a.year-b.year);
+  else if(currentSort==='date-desc')list.sort((a,b)=>b.year-a.year);
+  else if(currentSort==='title')list.sort((a,b)=>a.title.localeCompare(b.title));
+  else if(currentSort==='type')list.sort((a,b)=>a.type.localeCompare(b.type));
+  return list;
+}
+
+const TB={physical:'tb-physical',digital:'tb-digital',ai:'tb-ai',todo:'tb-todo'};
+const TBL={physical:'PHYSICAL',digital:'DIGITAL',ai:'AI GEN',todo:'TO DO'};
+const SB={done:'as-done',wip:'as-wip',planned:'as-planned'};
+const SBL={done:'DONE',wip:'WIP',planned:'PLANNED'};
+
+function renderGallery(){
+  const list=getFiltered();
+  const g=document.getElementById('gallery-grid');
+  const isList=currentView==='list';
+  g.innerHTML=list.map(w=>`
+    <div class="art-card${w.type==='todo'?' todo-card':''}" onclick="openLB('${w.id}')">
+      <div class="ac-image">
+        ${w.img?`<img src="${w.img}">`:`<div class="ac-placeholder">${{physical:'🖼',digital:'🎨',ai:'🤖',todo:'📋'}[w.type]||'🖼'}<span class="ac-placeholder-label">${w.type==='todo'?'PLANNED':w.type.toUpperCase()}</span></div>`}
+        <span class="ac-type-badge ${TB[w.type]||''}">${TBL[w.type]||w.type}</span>
+        <span class="ac-status ${SB[w.status]||''}">${SBL[w.status]||w.status}</span>
+      </div>
+      <div class="ac-info">
+        <div class="ac-title">${w.title}</div>
+        <div class="ac-meta">${w.materials||''}${w.year?' · '+w.year:''}</div>
+        <div class="ac-tags">${w.tags.slice(0,4).map(t=>`<span class="ac-tag">${t}</span>`).join('')}</div>
+      </div>
+    </div>`).join('')||'<div style="padding:30px;text-align:center;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--dim);grid-column:1/-1">No works match filter</div>';
+  updateStats();
+}
+
+function updateStats(){
+  const types=['physical','digital','ai','todo'];
+  const tot=works.length;
+  document.getElementById('stat-total').textContent=tot;
+  types.forEach(t=>{
+    const c=works.filter(w=>w.type===t).length;
+    document.getElementById('stat-'+t).textContent=c;
+    const fc=document.getElementById('fc-'+t);if(fc)fc.textContent=c;
+  });
+  document.getElementById('fc-all').textContent=tot;
+}
+
+function filt(el,f){
+  document.querySelectorAll('.fitem').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');currentFilter=f;currentStatus='';currentTag='';renderGallery();
+}
+function filtStatus(el,s){
+  document.querySelectorAll('.fitem').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');currentStatus=s===currentStatus?'':s;currentFilter='all';renderGallery();
+}
+function filtTag(el,t){
+  document.querySelectorAll('.fitem').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');currentTag=t===currentTag?'':t;renderGallery();
+}
+function setView(el,v){
+  document.querySelectorAll('.vtab').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');currentView=v;
+  const g=document.getElementById('gallery-grid');
+  g.className='gallery-grid grid-'+v;
+}
+function sortWorks(v){currentSort=v;renderGallery();}
+function searchWorks(v){currentSearch=v.toLowerCase();renderGallery();}
+
+function openLB(id){
+  const w=works.find(x=>x.id===id);if(!w)return;selectedWork=w;
+  document.getElementById('lb-img').innerHTML=`
+    <button class="lb-close" onclick="document.getElementById('lightbox').classList.remove('show')">✕</button>
+    ${w.img?`<img src="${w.img}">`:`<div class="lb-placeholder">${{physical:'🖼',digital:'🎨',ai:'🤖',todo:'📋'}[w.type]||'🖼'}</div>`}`;
+  document.getElementById('lb-info').innerHTML=`
+    <div class="lb-type">${TBL[w.type]||w.type} // ${SBL[w.status]||w.status}</div>
+    <div class="lb-title">${w.title}</div>
+    <div class="lb-desc">${w.desc}</div>
+    ${w.materials?`<div class="lb-field"><div class="lb-label">Materials / Tools</div><div class="lb-val">${w.materials}</div></div>`:''}
+    ${w.prompt?`<div class="lb-field"><div class="lb-label">AI Prompt</div><div class="lb-prompt">${w.prompt}</div></div>`:''}
+    ${w.year?`<div class="lb-field"><div class="lb-label">Year</div><div class="lb-val">${w.year}</div></div>`:''}
+    <div class="lb-tags">${w.tags.map(t=>`<span class="lb-tag">${t}</span>`).join('')}</div>
+    <div class="lb-actions">
+      ${w.prompt?`<button class="lb-btn" onclick="navigator.clipboard.writeText('${w.prompt.replace(/'/g,"\\'")}')">COPY PROMPT</button>`:''}
+      <button class="lb-btn primary" onclick="editWork('${w.id}')">EDIT</button>
+    </div>`;
+  document.getElementById('lightbox').classList.add('show');
+}
+
+function closeLB(e){if(e.target===document.getElementById('lightbox'))document.getElementById('lightbox').classList.remove('show');}
+
+function openAdd(){document.getElementById('modal-add').classList.add('show');}
+function closeAdd(e){if(e.target===document.getElementById('modal-add'))document.getElementById('modal-add').classList.remove('show');}
+
+function saveWork(){
+  const w={
+    id:'w'+Date.now(),
+    title:document.getElementById('nw-title').value||'Untitled',
+    type:document.getElementById('nw-type').value,
+    status:document.getElementById('nw-status').value,
+    year:document.getElementById('nw-year').value||new Date().getFullYear(),
+    desc:document.getElementById('nw-desc').value||'',
+    materials:document.getElementById('nw-materials').value||'',
+    prompt:document.getElementById('nw-prompt').value||'',
+    tags:document.getElementById('nw-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    img:document.getElementById('nw-img').value||''
+  };
+  works.unshift(w);
+  document.getElementById('modal-add').classList.remove('show');
+  renderGallery();
+}
+
+function editWork(id){
+  document.getElementById('lightbox').classList.remove('show');
+  // Populate add modal with existing data for editing
+  const w=works.find(x=>x.id===id);if(!w)return;
+  document.getElementById('nw-title').value=w.title;
+  document.getElementById('nw-type').value=w.type;
+  document.getElementById('nw-status').value=w.status;
+  document.getElementById('nw-year').value=w.year;
+  document.getElementById('nw-desc').value=w.desc;
+  document.getElementById('nw-materials').value=w.materials;
+  document.getElementById('nw-prompt').value=w.prompt;
+  document.getElementById('nw-tags').value=w.tags.join(', ');
+  document.getElementById('nw-img').value=w.img||'';
+  openAdd();
+}
+
+function toggleTheme(){
+  const d=document.documentElement;const dark=d.getAttribute('data-theme')==='dark';
+  d.setAttribute('data-theme',dark?'light':'dark');
+  localStorage.setItem('gallery-theme',dark?'light':'dark');
+}
+const st=localStorage.getItem('gallery-theme');if(st)document.documentElement.setAttribute('data-theme',st);
+
+renderGallery();
+</script>
+</body>
+</html>

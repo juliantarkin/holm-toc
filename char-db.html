@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Character Database // TOC</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+[data-theme="dark"]{--bg:#09080f;--surface:#12101c;--s2:#1a1826;--s3:#221f30;--border:#2e2b42;--b2:#3d3960;--text:#d0cce8;--dim:#5c587a;--bright:#f0eeff;--inv:#09080f;--shadow:rgba(0,0,0,.6);}
+[data-theme="light"]{--bg:#f2f0f8;--surface:#fff;--s2:#f7f5ff;--s3:#ede9ff;--border:#d4cff0;--b2:#b8b0e8;--text:#1e1a3a;--dim:#7870a8;--bright:#0a0618;--inv:#fff;--shadow:rgba(0,0,0,.08);}
+[data-theme="dark"]{--gold:#d4a827;--blue:#7c9eff;--pink:#d46baa;--green:#5dbf8a;--orange:#d48040;--purple:#a07eff;--red:#d45858;--teal:#3fbfb0;}
+[data-theme="light"]{--gold:#8a6800;--blue:#2456c8;--pink:#8a2468;--green:#1a7048;--orange:#8a4400;--purple:#5020b0;--red:#8a1818;--teal:#0a8078;}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:'Crimson Pro',Georgia,serif;display:flex;flex-direction:column;height:100vh;overflow:hidden;transition:background .2s,color .2s;}
+
+/* ATMOSPHERIC BG */
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 80%,rgba(124,158,255,.04) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 80% 20%,rgba(160,126,255,.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+header{flex-shrink:0;border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--surface);position:relative;z-index:10;}
+[data-theme="dark"] header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--purple),var(--blue),transparent 60%);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:5px;color:var(--purple);}
+[data-theme="dark"] .logo{text-shadow:0 0 20px rgba(160,126,255,.5);}
+.logo-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:2px;}
+.hdr-r{display:flex;align-items:center;gap:10px;}
+.tbtn{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 10px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;border-radius:2px;transition:all .15s;letter-spacing:1px;}
+.tbtn:hover{border-color:var(--purple);color:var(--purple);}
+.new-btn{background:var(--purple);color:var(--inv);border-color:var(--purple);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;padding:5px 14px;}
+[data-theme="light"] .new-btn{color:#fff;}
+.new-btn:hover{opacity:.85;}
+
+/* LAYOUT */
+.layout{flex:1;display:grid;grid-template-columns:280px 1fr;overflow:hidden;position:relative;z-index:1;}
+@media(max-width:700px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}}
+
+/* SIDEBAR */
+.sidebar{border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden;}
+.search-box{padding:12px;border-bottom:1px solid var(--border);}
+.search-input{width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:7px 10px;border-radius:2px;outline:none;letter-spacing:1px;transition:border-color .15s;}
+.search-input:focus{border-color:var(--purple);}
+.search-input::placeholder{color:var(--dim);}
+.filter-row{padding:8px 12px;display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--border);}
+.ftag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border:1px solid var(--border);border-radius:12px;cursor:pointer;color:var(--dim);transition:all .15s;letter-spacing:1px;}
+.ftag:hover,.ftag.on{border-color:var(--purple);color:var(--purple);background:rgba(160,126,255,.08);}
+.char-list{flex:1;overflow-y:auto;padding:6px;}
+.char-item{padding:10px 12px;border-radius:3px;cursor:pointer;transition:all .15s;border:1px solid transparent;margin-bottom:4px;display:flex;gap:10px;align-items:flex-start;}
+.char-item:hover{background:var(--s2);border-color:var(--border);}
+.char-item.active{background:var(--s3);border-color:var(--purple);}
+.ci-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid var(--border);background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:16px;overflow:hidden;}
+.ci-avatar img{width:100%;height:100%;object-fit:cover;}
+.ci-info{flex:1;min-width:0;}
+.ci-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ci-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px;}
+.ci-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 4px;border-radius:2px;border:1px solid;}
+.tag-pc{color:var(--blue);border-color:rgba(124,158,255,.3);}
+.tag-npc{color:var(--green);border-color:rgba(93,191,138,.3);}
+.tag-villain{color:var(--red);border-color:rgba(212,88,88,.3);}
+.tag-ally{color:var(--teal);border-color:rgba(63,191,176,.3);}
+.tag-5p{color:var(--orange);border-color:rgba(212,128,64,.3);}
+.tag-sw{color:var(--gold);border-color:rgba(212,168,39,.3);}
+.tag-aed{color:var(--purple);border-color:rgba(160,126,255,.3);}
+.ci-world{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);margin-top:2px;}
+
+/* MAIN PANEL */
+.main{display:flex;flex-direction:column;overflow:hidden;}
+.main-tabs{flex-shrink:0;display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 18px;overflow-x:auto;scrollbar-width:none;}
+.main-tabs::-webkit-scrollbar{display:none;}
+.mt{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;padding:10px 12px;cursor:pointer;color:var(--dim);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;margin-bottom:-1px;}
+.mt:hover{color:var(--text);}
+.mt.on{color:var(--purple);border-bottom-color:var(--purple);}
+.main-content{flex:1;overflow-y:auto;padding:20px;}
+.mc{display:none;}
+.mc.on{display:block;}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;opacity:.4;}
+.es-icon{font-size:48px;}
+.es-text{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);text-align:center;line-height:1.8;}
+
+/* CHARACTER SHEET */
+.cs-hero{display:flex;gap:20px;margin-bottom:20px;}
+.cs-portrait{width:140px;height:180px;flex-shrink:0;border:1px solid var(--border);border-radius:3px;background:var(--s2);overflow:hidden;position:relative;cursor:pointer;}
+.cs-portrait img{width:100%;height:100%;object-fit:cover;}
+.cs-portrait-placeholder{display:flex;align-items:center;justify-content:center;height:100%;font-size:40px;flex-direction:column;gap:6px;}
+.cs-portrait-placeholder span{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:1px;}
+.cs-portrait:hover .portrait-overlay{opacity:1;}
+.portrait-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#fff;letter-spacing:1px;}
+.cs-header{flex:1;}
+.cs-world{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);letter-spacing:3px;margin-bottom:4px;}
+.cs-name{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:4px;color:var(--bright);line-height:1;margin-bottom:6px;}
+.cs-tagline{font-size:15px;color:var(--dim);font-style:italic;margin-bottom:12px;}
+.cs-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+.cchip{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:3px 8px;border-radius:12px;border:1px solid;letter-spacing:1px;}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.stat-box{background:var(--s2);border:1px solid var(--border);border-radius:3px;padding:8px;text-align:center;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--purple);}
+.stat-lbl{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--dim);letter-spacing:1px;margin-top:1px;}
+
+/* SECTION BLOCKS */
+.cs-section{margin-bottom:18px;}
+.cs-sec-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.cs-text{font-size:14px;line-height:1.8;color:var(--text);}
+.trait-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.trait-box{background:var(--s2);border:1px solid var(--border);border-radius:3px;padding:10px;}
+.trait-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:1px;margin-bottom:4px;}
+.trait-val{font-size:13px;color:var(--text);line-height:1.5;}
+.rel-item{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.rel-item:last-child{border-bottom:none;}
+.rel-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--bright);min-width:100px;}
+.rel-type{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 5px;border-radius:2px;border:1px solid;height:fit-content;margin-top:2px;flex-shrink:0;}
+.rel-desc{color:var(--dim);flex:1;}
+
+/* IMAGE API PANEL */
+.api-panel{background:var(--s2);border:1px solid var(--b2);border-radius:3px;padding:14px;margin-bottom:14px;}
+.api-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--blue);margin-bottom:10px;}
+.api-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:12px;}
+.img-slot{border:1px solid var(--border);border-radius:3px;aspect-ratio:3/4;background:var(--s3);cursor:pointer;position:relative;overflow:hidden;transition:all .15s;}
+.img-slot:hover{border-color:var(--blue);}
+.img-slot img{width:100%;height:100%;object-fit:cover;}
+.img-slot-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.75);padding:4px;font-family:'IBM Plex Mono',monospace;font-size:7px;color:#fff;letter-spacing:1px;text-align:center;}
+.img-slot-empty{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:3px;opacity:.4;}
+.img-slot-empty span{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--dim);letter-spacing:1px;}
+.api-url-box{background:var(--s3);border:1px solid var(--border);border-radius:2px;padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--blue);word-break:break-all;cursor:pointer;margin-bottom:8px;transition:background .15s;}
+.api-url-box:hover{background:var(--border);}
+.api-note{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);line-height:1.6;}
+.prompt-assembler{background:var(--s3);border:1px solid var(--b2);border-radius:3px;padding:12px;margin-top:10px;}
+.pa-title{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);letter-spacing:2px;margin-bottom:8px;}
+.pa-row{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;}
+.pa-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);min-width:70px;flex-shrink:0;padding-top:2px;}
+.pa-val{font-size:12px;color:var(--text);flex:1;line-height:1.5;}
+.pa-output{background:var(--bg);border:1px solid var(--border);border-radius:2px;padding:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text);line-height:1.8;word-break:break-word;max-height:120px;overflow-y:auto;}
+.copy-btn{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;padding:6px 14px;background:var(--purple);color:var(--inv);border:none;cursor:pointer;border-radius:2px;transition:all .15s;margin-top:8px;}
+[data-theme="light"] .copy-btn{color:#fff;}
+.copy-btn:hover{opacity:.85;}
+
+/* EDIT FORM */
+.edit-form{display:flex;flex-direction:column;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;}
+.form-input,.form-textarea,.form-select{background:var(--s2);border:1px solid var(--border);color:var(--text);font-family:'Crimson Pro',serif;font-size:13px;padding:7px 10px;border-radius:2px;outline:none;transition:border-color .15s;width:100%;}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.6;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--purple);}
+.form-select{cursor:pointer;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.save-btn{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;padding:10px;background:var(--purple);color:var(--inv);border:none;cursor:pointer;border-radius:2px;transition:all .15s;}
+[data-theme="light"] .save-btn{color:#fff;}
+.save-btn:hover{opacity:.85;}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.overlay.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;max-width:480px;width:90%;position:relative;}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer;line-height:1;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--bright);margin-bottom:14px;}
+
+hr.div{border:none;border-top:1px solid var(--border);margin:16px 0;}
+.slabel{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">Character Database</div>
+    <div class="logo-sub">TOC // RPG & STORY WORLDS</div>
+  </div>
+  <div class="hdr-r">
+    <button class="tbtn" onclick="toggleTheme()">☀/🌙</button>
+    <button class="tbtn" onclick="showModal('new-char')">＋ NEW CHARACTER</button>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="search-box">
+      <input class="search-input" placeholder="SEARCH CHARACTERS..." oninput="filterChars(this.value)" id="search">
+    </div>
+    <div class="filter-row">
+      <span class="ftag on" onclick="setFilter(this,'all')">All</span>
+      <span class="ftag" onclick="setFilter(this,'pc')">PC</span>
+      <span class="ftag" onclick="setFilter(this,'npc')">NPC</span>
+      <span class="ftag" onclick="setFilter(this,'villain')">Villain</span>
+      <span class="ftag tag-5p" onclick="setFilter(this,'5parsecs')">5 Parsecs</span>
+      <span class="ftag tag-sw" onclick="setFilter(this,'starwars')">Star Wars</span>
+      <span class="ftag tag-aed" onclick="setFilter(this,'aedaeion')">Aedaeion</span>
+    </div>
+    <div class="char-list" id="char-list"></div>
+  </div>
+
+  <div class="main">
+    <div class="main-tabs" id="main-tabs" style="display:none;">
+      <div class="mt on" onclick="swTab(this,'sheet')">CHARACTER SHEET</div>
+      <div class="mt" onclick="swTab(this,'personality')">PERSONALITY</div>
+      <div class="mt" onclick="swTab(this,'background')">BACKGROUND</div>
+      <div class="mt" onclick="swTab(this,'relationships')">RELATIONSHIPS</div>
+      <div class="mt" onclick="swTab(this,'images')">IMAGES & API</div>
+      <div class="mt" onclick="swTab(this,'edit')">EDIT</div>
+    </div>
+    <div class="main-content">
+      <div class="empty-state" id="empty-state">
+        <div class="es-icon">⚔</div>
+        <div class="es-text">Select a character from the roster<br>or create a new one</div>
+      </div>
+      <div class="mc on" id="mc-sheet" style="display:none;"></div>
+      <div class="mc" id="mc-personality" style="display:none;"></div>
+      <div class="mc" id="mc-background" style="display:none;"></div>
+      <div class="mc" id="mc-relationships" style="display:none;"></div>
+      <div class="mc" id="mc-images" style="display:none;"></div>
+      <div class="mc" id="mc-edit" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW CHARACTER MODAL -->
+<div class="overlay" id="modal-new-char">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('new-char')">✕</button>
+    <div class="modal-title">New Character</div>
+    <div class="edit-form">
+      <div class="form-row">
+        <div class="form-group"><div class="form-label">Name</div><input class="form-input" id="nc-name" placeholder="Character name"></div>
+        <div class="form-group"><div class="form-label">World / Campaign</div>
+          <select class="form-select" id="nc-world">
+            <option>5 Parsecs Campaign</option><option>Star Wars (TIE Academy)</option><option>Aedaeion</option><option>Atreal</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><div class="form-label">Role</div>
+          <select class="form-select" id="nc-role">
+            <option>PC</option><option>NPC</option><option>Villain</option><option>Ally</option><option>Faction Leader</option><option>Background</option>
+          </select>
+        </div>
+        <div class="form-group"><div class="form-label">Species / Race</div><input class="form-input" id="nc-species" placeholder="Human, Twi'lek, etc."></div>
+      </div>
+      <div class="form-group"><div class="form-label">Tagline / One-line description</div><input class="form-input" id="nc-tagline" placeholder="Former soldier turned mercenary..."></div>
+      <button class="save-btn" onclick="createChar()">CREATE CHARACTER</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════ DATA ══════════════════
+let chars = [
+  {
+    id:'kael',name:'Kael Morrow',world:'5 Parsecs Campaign',role:'PC',species:'Human',tagline:'Disgraced Union officer, now running a crew on the fringe.',
+    stats:{agility:7,combat:6,toughness:5,savvy:4,spirit:3,luck:8},
+    appearance:'Weathered face, close-cropped grey at the temples. Carries himself like someone who used to give orders. Scar along the jaw from a boarding action. Prefers practical clothes with hidden pockets.',
+    personality:{alignment:'Chaotic Good',mbti:'INTJ',motivations:'Prove he was right to refuse the order. Keep his crew alive. Find who sold him out.',flaws:'Holds grudges indefinitely. Micromanages under stress. Drinks too much when planetside.',strengths:'Reads people well. Never panics. Loyal to a fault once trust is earned.',voice:'Terse. Uses silence as punctuation. Dark humor in tense situations.',fears:'Losing another crew. Being proven wrong.'},
+    background:'Command officer in the Unified Trade Union Fleet. Refused to fire on civilian transports during the Korath Station suppression. Court-martialed, dishonorably discharged. Three of his crew followed him out. Now runs independent contracts — salvage, escort, occasionally the kind of work he used to prosecute others for.',
+    campaign_notes:'Currently: tracking who leaked the Korath orders. Has a contact on Verithos Station. Owes a debt to the Corsair Syndicate.',
+    relationships:[{name:'Lyra Voss',type:'Crew',role:'Pilot',desc:'Trusts her more than anyone. Doesn\'t say it.'},{name:'The Admiral',type:'Enemy',role:'Former CO',desc:'The one who gave the Korath order.'},{name:'Dax',type:'Crew',role:'Tech',desc:'Picked him up on Mirehn. Youngest on crew.'}],
+    images:{portrait:'',full_body:'',ref_face:'',ref_outfit:'',concept:''},
+    art_notes:'5\'11", lean. Military bearing even in civilian clothes. Often caught mid-thought expression. Lighting: moody, low key. Style: realistic, gritty sci-fi.',
+    tags:['pc','5parsecs']
+  },
+  {
+    id:'lyra',name:'Lyra Voss',world:'5 Parsecs Campaign',role:'PC',species:'Human',tagline:'Born in a cockpit. Has never not been running from something.',
+    stats:{agility:9,combat:5,toughness:4,savvy:6,spirit:5,luck:7},
+    appearance:'Small and quick. Dark hair, usually braided back for zero-g. Pilot\'s calluses on her hands. Always has an exit plan.',
+    personality:{alignment:'True Neutral',mbti:'ESTP',motivations:'Stay fast. Stay free. Earn enough to never be landlocked.',flaws:'Commitment-averse. Deflects with humor. Takes risks that aren\'t hers to take.',strengths:'Best pilot in three sectors. Reads a room instantly. Never gets rattled.',voice:'Fast, warm, sarcastic. Talks too much when nervous.',fears:'Being grounded. Being owned by anyone — employer, debt, person.'},
+    background:'Grew up on transport freighters. Learned to fly before she could read. Ran courier work, then racing circuits, then "consulting" for people who didn\'t ask her to file flight plans.',
+    campaign_notes:'Has a stolen ship registry that could surface as a problem. Racing contact named Prism owes her a favor.',
+    relationships:[{name:'Kael Morrow',type:'Crew',role:'Captain',desc:'Respects him. Finds his guilt exhausting.'},{name:'Prism',type:'Contact',role:'Racer',desc:'Old circuit rival. Now operates on Helix Station.'}],
+    images:{portrait:'',full_body:'',ref_face:'',ref_outfit:'',concept:''},
+    art_notes:'5\'4", athletic, pilot gear. Quick eyes, usually smiling. Style: action-adjacent, real lighting, not overly stylized.',
+    tags:['pc','5parsecs']
+  },
+  {
+    id:'void-magister',name:'The Void Magister',world:'Aedaeion',role:'villain',species:'Unknown',tagline:'Something that was human once. No longer.',
+    stats:{agility:4,combat:8,toughness:9,savvy:10,spirit:2,luck:1},
+    appearance:'Tall. Features obscured by a phase-weave shroud that never fully resolves into detail. The impression of a face rather than a face. Speaks in a voice that arrives slightly before his mouth moves.',
+    personality:{alignment:'Lawful Evil',mbti:'INTJ',motivations:'Restore a world-state that preceded the current age. Believes the present is a corruption.',flaws:'Utterly unable to value individual lives. Plans in centuries. Cannot adapt quickly.',strengths:'Patience beyond mortal comprehension. Vast resources. Always ten steps ahead.',voice:'Formal, archaic word choices. Never raises his voice. Makes offers instead of threats.',fears:'The thing he cannot name that ended the previous age.'},
+    background:'Pre-dates the current age of Aedaeion. Was human, perhaps, in a prior era. Made a bargain that preserved his consciousness at the cost of everything recognizably human. Now works toward conditions he believes will unmake the corruption.',
+    campaign_notes:'Has not directly opposed the party yet. Agents have crossed paths twice.',
+    relationships:[{name:'The Artificer',type:'Agent',role:'Field Commander',desc:'Does the Magister\'s hands-on work.'}],
+    images:{portrait:'',full_body:'',ref_face:'',ref_outfit:'',concept:''},
+    art_notes:'Dramatic, high contrast. Phase effects around edges. Color palette: deep indigo and cold silver. Epic scale.',
+    tags:['villain','npc','aedaeion']
+  }
+];
+
+let currentChar = null;
+let filterCat = 'all';
+
+// ══════════════════ RENDER LIST ══════════════════
+function renderList(list){
+  const el=document.getElementById('char-list');
+  if(!list.length){el.innerHTML='<div style="padding:20px;text-align:center;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--dim);">No characters found</div>';return;}
+  el.innerHTML=list.map(c=>`
+    <div class="char-item${currentChar&&currentChar.id===c.id?' active':''}" onclick="selectChar('${c.id}')">
+      <div class="ci-avatar">${c.images.portrait?`<img src="${c.images.portrait}">`:'⚔'}</div>
+      <div class="ci-info">
+        <div class="ci-name">${c.name}</div>
+        <div class="ci-tags">${c.tags.map(t=>`<span class="ci-tag tag-${t}">${t}</span>`).join('')}</div>
+        <div class="ci-world">${c.world}</div>
+      </div>
+    </div>`).join('');
+}
+
+function filterChars(q){
+  let list=chars;
+  if(filterCat!=='all')list=list.filter(c=>c.tags.includes(filterCat));
+  if(q)list=list.filter(c=>c.name.toLowerCase().includes(q.toLowerCase())||c.world.toLowerCase().includes(q.toLowerCase()));
+  renderList(list);
+}
+
+function setFilter(el,cat){
+  document.querySelectorAll('.ftag').forEach(f=>f.classList.remove('on'));
+  el.classList.add('on');filterCat=cat;
+  filterChars(document.getElementById('search').value);
+}
+
+// ══════════════════ SELECT ══════════════════
+function selectChar(id){
+  currentChar=chars.find(c=>c.id===id);
+  document.getElementById('empty-state').style.display='none';
+  document.getElementById('main-tabs').style.display='flex';
+  document.querySelectorAll('.mc').forEach(m=>{m.style.display='none';m.classList.remove('on');});
+  document.querySelectorAll('.mt').forEach(m=>m.classList.remove('on'));
+  document.querySelector('.mt').classList.add('on');
+  document.getElementById('mc-sheet').style.display='block';
+  renderSheet();renderPersonality();renderBackground();renderRelationships();renderImages();renderEdit();
+  filterChars(document.getElementById('search').value);
+}
+
+// ══════════════════ TAB SWITCH ══════════════════
+function swTab(el,tab){
+  document.querySelectorAll('.mt').forEach(m=>m.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.mc').forEach(m=>{m.style.display='none';m.classList.remove('on');});
+  const t=document.getElementById('mc-'+tab);t.style.display='block';t.classList.add('on');
+}
+
+// ══════════════════ SHEET ══════════════════
+function renderSheet(){
+  const c=currentChar;
+  const stats=Object.entries(c.stats).map(([k,v])=>`<div class="stat-box"><div class="stat-val">${v}</div><div class="stat-lbl">${k.toUpperCase()}</div></div>`).join('');
+  const chipMap={pc:'tag-pc',npc:'tag-npc',villain:'tag-villain',ally:'tag-ally','5parsecs':'tag-5p',starwars:'tag-sw',aedaeion:'tag-aed'};
+  const chips=c.tags.map(t=>`<span class="cchip ${chipMap[t]||''}">${t}</span>`).join('');
+  document.getElementById('mc-sheet').innerHTML=`
+    <div class="cs-hero">
+      <div class="cs-portrait" onclick="openPortrait()">
+        ${c.images.portrait?`<img src="${c.images.portrait}">`:`<div class="cs-portrait-placeholder"><span style="font-size:40px">⚔</span><span>ADD PORTRAIT</span></div>`}
+        <div class="portrait-overlay">CHANGE IMAGE</div>
+      </div>
+      <div class="cs-header">
+        <div class="cs-world">${c.world.toUpperCase()}</div>
+        <div class="cs-name">${c.name}</div>
+        <div class="cs-tagline">${c.tagline}</div>
+        <div class="cs-chips">${chips}</div>
+        <div class="stat-grid">${stats}</div>
+      </div>
+    </div>
+    <div class="cs-section">
+      <div class="cs-sec-label">Appearance</div>
+      <div class="cs-text">${c.appearance}</div>
+    </div>
+    <div class="cs-section">
+      <div class="cs-sec-label">Campaign Notes</div>
+      <div class="cs-text">${c.campaign_notes||'<span style="color:var(--dim);font-style:italic">No campaign notes yet</span>'}</div>
+    </div>`;
+}
+
+// ══════════════════ PERSONALITY ══════════════════
+function renderPersonality(){
+  const p=currentChar.personality;
+  document.getElementById('mc-personality').innerHTML=`
+    <div class="trait-grid" style="margin-bottom:16px">
+      <div class="trait-box"><div class="trait-label">Alignment</div><div class="trait-val">${p.alignment}</div></div>
+      <div class="trait-box"><div class="trait-label">MBTI</div><div class="trait-val">${p.mbti}</div></div>
+    </div>
+    <div class="cs-section">
+      <div class="cs-sec-label">Motivations</div>
+      <div class="cs-text">${p.motivations}</div>
+    </div>
+    <div class="trait-grid" style="margin-bottom:16px">
+      <div class="trait-box"><div class="trait-label">Strengths</div><div class="trait-val">${p.strengths}</div></div>
+      <div class="trait-box"><div class="trait-label">Flaws</div><div class="trait-val">${p.flaws}</div></div>
+    </div>
+    <div class="cs-section">
+      <div class="cs-sec-label">Voice & Speech Patterns</div>
+      <div class="cs-text">${p.voice}</div>
+    </div>
+    <div class="cs-section">
+      <div class="cs-sec-label">Fears</div>
+      <div class="cs-text">${p.fears}</div>
+    </div>`;
+}
+
+// ══════════════════ BACKGROUND ══════════════════
+function renderBackground(){
+  document.getElementById('mc-background').innerHTML=`
+    <div class="cs-section">
+      <div class="cs-sec-label">Background</div>
+      <div class="cs-text" style="font-size:15px;line-height:1.9">${currentChar.background}</div>
+    </div>`;
+}
+
+// ══════════════════ RELATIONSHIPS ══════════════════
+function renderRelationships(){
+  const typeColors={Crew:'tag-5p',Enemy:'tag-villain',Contact:'tag-sw',Agent:'tag-aed',Ally:'tag-ally'};
+  document.getElementById('mc-relationships').innerHTML=`
+    <div class="cs-section">
+      <div class="cs-sec-label">Relationships</div>
+      ${currentChar.relationships.map(r=>`
+        <div class="rel-item">
+          <div class="rel-name">${r.name}</div>
+          <span class="rel-type ${typeColors[r.type]||''}">${r.type}</span>
+          <div class="rel-desc">${r.role} — ${r.desc}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+// ══════════════════ IMAGES & API ══════════════════
+function renderImages(){
+  const c=currentChar;
+  const slots=['portrait','full_body','ref_face','ref_outfit','concept'];
+  const labels={portrait:'Portrait',full_body:'Full Body',ref_face:'Face Ref',ref_outfit:'Outfit Ref',concept:'Concept Art'};
+  const apiBase=`https://yourusername.github.io/toc/chars/${c.id}/`;
+  const prompt=buildPrompt(c);
+  document.getElementById('mc-images').innerHTML=`
+    <div class="api-panel">
+      <div class="api-title">Reference Images</div>
+      <div class="api-grid">
+        ${slots.map(s=>`
+          <div class="img-slot" onclick="setImage('${s}')">
+            ${c.images[s]?`<img src="${c.images[s]}"><div class="img-slot-label">${labels[s]}</div>`:`<div class="img-slot-empty"><span style="font-size:18px">+</span><span>${labels[s]}</span></div>`}
+          </div>`).join('')}
+      </div>
+      <div class="slabel">Structured API Access</div>
+      <div class="api-url-box" onclick="copyText('${apiBase}portrait.jpg')" title="Click to copy">${apiBase}portrait.jpg</div>
+      <div class="api-note">These URLs are the structured paths an n8n agent uses to pull images when assembling art prompts. Host images at these paths after deploying to GitHub Pages. Agent calls: <code style="font-family:IBM Plex Mono,monospace;font-size:9px;background:var(--s3);padding:1px 4px">GET /chars/{id}/{slot}.jpg</code> to fetch any reference.</div>
+    </div>
+    <div class="api-panel">
+      <div class="api-title">Art Prompt Assembler</div>
+      <div class="prompt-assembler">
+        <div class="pa-title">AUTO-GENERATED PROMPT</div>
+        <div class="pa-row"><div class="pa-label">CHARACTER</div><div class="pa-val">${c.name}</div></div>
+        <div class="pa-row"><div class="pa-label">REF IMAGES</div><div class="pa-val">${slots.filter(s=>c.images[s]).map(s=>`[${s}]`).join(', ')||'None uploaded yet'}</div></div>
+        <div class="pa-row"><div class="pa-label">STYLE</div><div class="pa-val">${c.art_notes}</div></div>
+        <div class="pa-row"><div class="pa-label">PROMPT</div></div>
+        <div class="pa-output">${prompt}</div>
+        <button class="copy-btn" onclick="copyText(\`${prompt}\`)">COPY PROMPT</button>
+      </div>
+      <hr class="div">
+      <div class="slabel">Agent API Spec</div>
+      <div class="api-note" style="line-height:1.9;font-size:10px">
+        An n8n agent can call this endpoint pattern to build a ComfyUI or Midjourney prompt:<br><br>
+        1. <code style="font-family:IBM Plex Mono,monospace;font-size:9px;background:var(--s3);padding:1px 4px">GET /chars/{id}/meta.json</code> → returns character data + art_notes<br>
+        2. <code style="font-family:IBM Plex Mono,monospace;font-size:9px;background:var(--s3);padding:1px 4px">GET /chars/{id}/ref_face.jpg</code> → face reference image<br>
+        3. <code style="font-family:IBM Plex Mono,monospace;font-size:9px;background:var(--s3);padding:1px 4px">GET /chars/{id}/ref_outfit.jpg</code> → outfit/costume reference<br>
+        4. Pass images + prompt to ComfyUI IP-Adapter or Midjourney --cref flag<br>
+        5. Store output back to <code style="font-family:IBM Plex Mono,monospace;font-size:9px;background:var(--s3);padding:1px 4px">/chars/{id}/generated/[timestamp].jpg</code>
+      </div>
+    </div>`;
+}
+
+function buildPrompt(c){
+  const refs=Object.entries(c.images).filter(([k,v])=>v).map(([k])=>k).join(', ');
+  return `Character portrait of ${c.name}, ${c.species}, ${c.tagline} ${c.appearance} ${c.art_notes} ${refs?`Reference images provided for: ${refs}.`:''} High quality, detailed illustration. World: ${c.world}.`.replace(/\s+/g,' ').trim();
+}
+
+// ══════════════════ EDIT ══════════════════
+function renderEdit(){
+  const c=currentChar;
+  document.getElementById('mc-edit').innerHTML=`
+    <div class="edit-form">
+      <div class="form-row">
+        <div class="form-group"><div class="form-label">Name</div><input class="form-input" id="e-name" value="${c.name}"></div>
+        <div class="form-group"><div class="form-label">Species</div><input class="form-input" id="e-species" value="${c.species}"></div>
+      </div>
+      <div class="form-group"><div class="form-label">Tagline</div><input class="form-input" id="e-tagline" value="${c.tagline}"></div>
+      <div class="form-group"><div class="form-label">Appearance</div><textarea class="form-textarea" id="e-appearance">${c.appearance}</textarea></div>
+      <div class="form-group"><div class="form-label">Background</div><textarea class="form-textarea" style="min-height:120px" id="e-background">${c.background}</textarea></div>
+      <div class="form-group"><div class="form-label">Campaign Notes</div><textarea class="form-textarea" id="e-campaign">${c.campaign_notes||''}</textarea></div>
+      <div class="form-group"><div class="form-label">Art Notes (for prompt assembly)</div><textarea class="form-textarea" id="e-artnotes">${c.art_notes}</textarea></div>
+      <div class="form-group"><div class="form-label">Personality — Motivations</div><textarea class="form-textarea" id="e-motivations">${c.personality.motivations}</textarea></div>
+      <div class="form-group"><div class="form-label">Personality — Strengths</div><textarea class="form-textarea" id="e-strengths">${c.personality.strengths}</textarea></div>
+      <div class="form-group"><div class="form-label">Personality — Flaws</div><textarea class="form-textarea" id="e-flaws">${c.personality.flaws}</textarea></div>
+      <div class="form-group"><div class="form-label">Voice / Speech</div><textarea class="form-textarea" id="e-voice">${c.personality.voice}</textarea></div>
+      <button class="save-btn" onclick="saveChar()">SAVE CHANGES</button>
+    </div>`;
+}
+
+function saveChar(){
+  currentChar.name=document.getElementById('e-name').value;
+  currentChar.species=document.getElementById('e-species').value;
+  currentChar.tagline=document.getElementById('e-tagline').value;
+  currentChar.appearance=document.getElementById('e-appearance').value;
+  currentChar.background=document.getElementById('e-background').value;
+  currentChar.campaign_notes=document.getElementById('e-campaign').value;
+  currentChar.art_notes=document.getElementById('e-artnotes').value;
+  currentChar.personality.motivations=document.getElementById('e-motivations').value;
+  currentChar.personality.strengths=document.getElementById('e-strengths').value;
+  currentChar.personality.flaws=document.getElementById('e-flaws').value;
+  currentChar.personality.voice=document.getElementById('e-voice').value;
+  renderSheet();renderPersonality();renderImages();filterChars('');
+  swTab(document.querySelector('.mt'),'sheet');
+}
+
+function createChar(){
+  const id='char_'+Date.now();
+  const c={
+    id,name:document.getElementById('nc-name').value||'Unnamed',
+    world:document.getElementById('nc-world').value,role:document.getElementById('nc-role').value,
+    species:document.getElementById('nc-species').value||'Unknown',
+    tagline:document.getElementById('nc-tagline').value||'',
+    stats:{agility:5,combat:5,toughness:5,savvy:5,spirit:5,luck:5},
+    appearance:'',personality:{alignment:'True Neutral',mbti:'XXXX',motivations:'',flaws:'',strengths:'',voice:'',fears:''},
+    background:'',campaign_notes:'',relationships:[],
+    images:{portrait:'',full_body:'',ref_face:'',ref_outfit:'',concept:''},
+    art_notes:'',
+    tags:[document.getElementById('nc-role').value.toLowerCase().replace(' ','_'),document.getElementById('nc-world').value.toLowerCase().replace(/[^a-z]/g,'')]
+  };
+  chars.push(c);closeModal('new-char');selectChar(id);
+}
+
+function setImage(slot){
+  const url=prompt(`Enter image URL for ${slot}:`);
+  if(url){currentChar.images[slot]=url;renderImages();}
+}
+function openPortrait(){setImage('portrait');renderSheet();}
+function copyText(t){navigator.clipboard.writeText(t).then(()=>{}).catch(()=>{});}
+
+function showModal(id){document.getElementById('modal-'+id).classList.add('show');}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('show');}
+
+function toggleTheme(){
+  const d=document.documentElement;const dark=d.getAttribute('data-theme')==='dark';
+  d.setAttribute('data-theme',dark?'light':'dark');
+  localStorage.setItem('char-theme',dark?'light':'dark');
+}
+const st=localStorage.getItem('char-theme');
+if(st)document.documentElement.setAttribute('data-theme',st);
+
+// INIT
+filterChars('');
+</script>
+</body>
+</html>

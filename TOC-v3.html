@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOC — Tactical Operations Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════ THEME VARIABLES ═══════════════════ */
+[data-theme="dark"]{
+  --bg:#080810;--surface:#0f0f1a;--s2:#15151f;--s3:#1c1c28;
+  --border:#252535;--border2:#303045;
+  --text:#cccce0;--dim:#5a5a72;--bright:#f0f0ff;--text-inv:#080810;
+  --card-bg:#0f0f1a;--input-bg:#15151f;
+  --shadow:rgba(0,0,0,.5);
+  --scan:rgba(0,0,0,.018);
+}
+[data-theme="light"]{
+  --bg:#f0f0f5;--surface:#ffffff;--s2:#f5f5fa;--s3:#eaeaf2;
+  --border:#d0d0e0;--border2:#b8b8d0;
+  --text:#2a2a40;--dim:#7070a0;--bright:#0a0a20;--text-inv:#f0f0f5;
+  --card-bg:#ffffff;--input-bg:#f5f5fa;
+  --shadow:rgba(0,0,0,.08);
+  --scan:transparent;
+}
+/* accent colors stay same both modes */
+:root{
+  --gold:#c8a820;--gold-glow:rgba(200,168,32,.3);
+  --blue:#2196f3;--pink:#e91e8c;--green:#2e9e6a;
+  --orange:#e07020;--purple:#7e57c2;--teal:#00897b;--red:#d32f2f;
+  --gold-light:#e8c547;--blue-light:#4fc3f7;--pink-light:#f06292;
+  --green-light:#69f0ae;--orange-light:#ffab40;
+}
+[data-theme="dark"]{
+  --gold:#e8c547;--gold-glow:rgba(232,197,71,.3);
+  --blue:#4fc3f7;--pink:#f06292;--green:#69f0ae;
+  --orange:#ffab40;--purple:#b39ddb;--red:#ff5252;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;display:flex;flex-direction:column;height:100vh;overflow:hidden;transition:background .2s,color .2s;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,var(--scan) 3px,var(--scan) 4px);pointer-events:none;z-index:9999;}
+
+/* ═══════════════════ HEADER ═══════════════════ */
+header{flex-shrink:0;border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--surface);position:relative;z-index:50;gap:12px;}
+[data-theme="dark"] header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--gold),transparent 50%);}
+.logo{display:flex;align-items:baseline;gap:8px;flex-shrink:0;}
+.logo-toc{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:5px;color:var(--gold);}
+[data-theme="dark"] .logo-toc{text-shadow:0 0 20px var(--gold-glow);}
+.logo-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:2px;}
+.hdr-right{display:flex;align-items:center;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:10px;flex-wrap:wrap;}
+.hdr-stat{color:var(--dim);}
+.hdr-stat b{color:var(--gold);}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite;display:inline-block;margin-right:5px;}
+[data-theme="dark"] .pulse{box-shadow:0 0 8px var(--green);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#clock{color:var(--blue);font-size:11px;letter-spacing:2px;}
+
+/* THEME TOGGLE */
+.theme-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;padding:5px 10px;border:1px solid var(--border);border-radius:20px;background:var(--s2);transition:all .15s;flex-shrink:0;}
+.theme-toggle:hover{border-color:var(--gold);}
+.theme-toggle span{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1px;}
+.toggle-icon{font-size:14px;}
+
+/* ═══════════════════ LAYOUT ═══════════════════ */
+.layout{flex:1;display:grid;grid-template-columns:1fr 370px;overflow:hidden;}
+@media(max-width:768px){.layout{grid-template-columns:1fr;}.g3-panel{display:none;}.g3-panel.mobile-show{display:flex;position:fixed;inset:0;z-index:100;}}
+
+/* ═══════════════════ LEFT: TABS ═══════════════════ */
+.main{display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border);}
+.tabs{flex-shrink:0;display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 16px;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:10px 12px;cursor:pointer;color:var(--dim);border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;margin-bottom:-1px;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-content{flex:1;overflow-y:auto;padding:18px;}
+.tc{display:none;}
+.tc.active{display:block;}
+
+/* ═══════════════════ G3 PANEL ═══════════════════ */
+.g3-panel{background:var(--surface);display:flex;flex-direction:column;overflow:hidden;border-left:1px solid var(--border);}
+.g3-header{flex-shrink:0;padding:14px 16px 10px;border-bottom:1px solid var(--border);background:var(--s2);}
+[data-theme="dark"] .g3-header{background:linear-gradient(135deg,rgba(232,197,71,.06),rgba(79,195,247,.03));}
+.g3-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:4px;color:var(--gold);display:flex;align-items:center;gap:8px;}
+.g3-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;background:rgba(232,197,71,.1);border:1px solid rgba(232,197,71,.25);color:var(--gold);border-radius:2px;letter-spacing:2px;}
+.g3-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);margin-top:2px;}
+.g3-controls{flex-shrink:0;padding:12px 16px;border-bottom:1px solid var(--border);}
+.ctrl-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+.btn-row{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;}
+.bsm{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:3px 8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;border-radius:2px;transition:all .15s;letter-spacing:1px;text-transform:uppercase;}
+.bsm:hover,.bsm.on{border-color:var(--gold);color:var(--gold);background:rgba(232,197,71,.06);}
+.btime{flex:1;text-align:center;}
+.btime.on{border-color:var(--blue);color:var(--blue);background:rgba(79,195,247,.06);}
+.btn-brief{width:100%;padding:12px;background:var(--gold);color:var(--text-inv);border:none;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:4px;cursor:pointer;transition:all .2s;border-radius:2px;}
+.btn-brief:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 4px 16px var(--gold-glow);}
+
+/* ═══════════════════ G3 OUTPUT ═══════════════════ */
+.g3-output{flex:1;overflow-y:auto;padding:0;}
+.brief-empty{padding:28px 16px;text-align:center;}
+.be-icon{font-size:28px;margin-bottom:8px;opacity:.35;}
+.be-text{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);line-height:1.8;}
+.brief-sec{border-bottom:1px solid var(--border);}
+.bsec-hdr{padding:9px 16px;background:var(--s2);font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;cursor:pointer;display:flex;justify-content:space-between;transition:background .12s;}
+.bsec-hdr:hover{background:var(--s3);}
+.bsec-body{padding:12px 16px;}
+.sit-box{background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:10px;margin-bottom:8px;}
+.sit-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:5px;}
+.sit-txt{font-size:11px;color:var(--text);line-height:1.7;}
+.wl-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.wl-b{background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:8px;}
+.wl-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:1px;margin-bottom:2px;}
+.wl-v{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;}
+.wl-s{font-size:9px;color:var(--dim);}
+.pick-card{border:1px solid var(--border);border-radius:2px;margin-bottom:10px;overflow:hidden;cursor:pointer;transition:all .18s;}
+.pick-card:hover{border-color:var(--border2);box-shadow:0 2px 12px var(--shadow);}
+.pick-hdr{padding:10px 12px;display:flex;gap:10px;align-items:flex-start;background:var(--s2);}
+.pick-rank{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;flex-shrink:0;}
+.r1{color:var(--gold);} .r2{color:var(--blue);} .r3{color:var(--pink);}
+.pick-inf{flex:1;}
+.pick-cat{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;margin-bottom:2px;}
+.pick-name{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:var(--bright);}
+.pick-why{font-size:10px;color:var(--dim);margin-top:2px;font-style:italic;line-height:1.4;}
+.pick-body{padding:0 12px 12px;}
+.pick-sl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;margin:10px 0 6px;}
+.step-row{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);}
+.step-row:last-child{border-bottom:none;}
+.step-n{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);min-width:20px;flex-shrink:0;padding-top:1px;}
+.step-c{flex:1;}
+.step-t{font-size:11px;color:var(--text);line-height:1.4;}
+.step-cl{display:flex;align-items:center;gap:4px;margin-top:3px;flex-wrap:wrap;}
+.cbadge{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 6px;border-radius:2px;letter-spacing:1px;border:1px solid;}
+.cb-can{color:var(--green);border-color:rgba(105,240,174,.3);background:rgba(105,240,174,.06);}
+.cb-ass{color:var(--blue);border-color:rgba(79,195,247,.3);background:rgba(79,195,247,.06);}
+.cb-you{color:var(--orange);border-color:rgba(255,171,64,.3);background:rgba(255,171,64,.06);}
+[data-theme="light"] .cb-can{color:#1a7a4a;border-color:rgba(26,122,74,.3);background:rgba(26,122,74,.06);}
+[data-theme="light"] .cb-ass{color:#1565c0;border-color:rgba(21,101,192,.3);background:rgba(21,101,192,.06);}
+[data-theme="light"] .cb-you{color:#c05000;border-color:rgba(192,80,0,.3);background:rgba(192,80,0,.06);}
+.cnote{font-size:9px;color:var(--dim);font-style:italic;}
+
+/* ═══════════════════ PROJECT CARDS ═══════════════════ */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+.pcard{background:var(--card-bg);border:1px solid var(--border);border-radius:3px;padding:14px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;}
+.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.pcard:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 6px 20px var(--shadow);}
+.cat-ai::before{background:linear-gradient(90deg,#f06292,#ff5252);}
+.cat-unreal::before{background:linear-gradient(90deg,#4fc3f7,#6c63ff);}
+.cat-rpg::before{background:linear-gradient(90deg,#69f0ae,#4fc3f7);}
+.cat-writing::before{background:linear-gradient(90deg,#e8c547,#ffab40);}
+.cat-business::before{background:linear-gradient(90deg,#ffab40,#f06292);}
+.cat-infra::before{background:linear-gradient(90deg,#6c63ff,#f06292);}
+.cat-home::before{background:linear-gradient(90deg,#80cbc4,#26a69a);}
+.cat-property::before{background:linear-gradient(90deg,#a5d6a7,#66bb6a);}
+.cat-tv::before{background:linear-gradient(90deg,#ffcc80,#ff8a65);}
+.cat-ecosystem::before{background:linear-gradient(90deg,#e8c547,#4fc3f7);}
+.pc-cat{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+.cat-ai .pc-cat{color:#f06292;}[data-theme="light"] .cat-ai .pc-cat{color:#c2185b;}
+.cat-unreal .pc-cat{color:#4fc3f7;}[data-theme="light"] .cat-unreal .pc-cat{color:#0277bd;}
+.cat-rpg .pc-cat{color:#69f0ae;}[data-theme="light"] .cat-rpg .pc-cat{color:#1b5e20;}
+.cat-writing .pc-cat{color:#e8c547;}[data-theme="light"] .cat-writing .pc-cat{color:#8c6d00;}
+.cat-business .pc-cat{color:#ffab40;}[data-theme="light"] .cat-business .pc-cat{color:#bf5000;}
+.cat-infra .pc-cat{color:#9575cd;}[data-theme="light"] .cat-infra .pc-cat{color:#4527a0;}
+.cat-home .pc-cat{color:#80cbc4;}[data-theme="light"] .cat-home .pc-cat{color:#00695c;}
+.cat-property .pc-cat{color:#a5d6a7;}[data-theme="light"] .cat-property .pc-cat{color:#2e7d32;}
+.cat-tv .pc-cat{color:#ffcc80;}[data-theme="light"] .cat-tv .pc-cat{color:#e65100;}
+.cat-ecosystem .pc-cat{color:var(--gold);}
+.pc-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:var(--bright);margin-bottom:5px;}
+.pc-scope{font-size:11px;color:var(--dim);line-height:1.5;margin-bottom:8px;}
+.pc-step{display:flex;gap:6px;padding:2px 0;font-size:10px;color:var(--text);}
+.pc-bul{width:3px;height:3px;border-radius:50%;background:var(--dim);flex-shrink:0;margin-top:5px;}
+.pc-foot{margin-top:9px;padding-top:7px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:6px;}
+.eff{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;border:1px solid;}
+.el{color:var(--green);border-color:rgba(105,240,174,.3);background:rgba(105,240,174,.06);}
+.em{color:var(--orange);border-color:rgba(255,171,64,.3);background:rgba(255,171,64,.06);}
+.eh{color:var(--red);border-color:rgba(255,82,82,.3);background:rgba(255,82,82,.06);}
+[data-theme="light"] .el{color:#1a7a4a;border-color:rgba(26,122,74,.3);}
+[data-theme="light"] .em{color:#c05000;border-color:rgba(192,80,0,.3);}
+[data-theme="light"] .eh{color:#b71c1c;border-color:rgba(183,28,28,.3);}
+.etime{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);}
+
+/* SITREP BUTTON on card */
+.btn-sitrep{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;border-radius:2px;transition:all .15s;letter-spacing:1px;}
+.btn-sitrep:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ═══════════════════ SITREP MODAL ═══════════════════ */
+.sitrep-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:flex-start;justify-content:center;padding:40px 20px;backdrop-filter:blur(4px);}
+[data-theme="light"] .sitrep-overlay{background:rgba(0,0,0,.35);}
+.sitrep-overlay.show{display:flex;}
+.sitrep-modal{background:var(--surface);border:1px solid var(--border);border-radius:4px;width:100%;max-width:600px;max-height:80vh;overflow-y:auto;position:relative;}
+.sr-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);background:var(--s2);}
+.sr-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--dim);font-size:16px;cursor:pointer;font-family:'IBM Plex Mono',monospace;line-height:1;}
+.sr-close:hover{color:var(--text);}
+.sr-cat{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;}
+.sr-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--bright);}
+.sr-body{padding:18px 20px;}
+.sr-section{margin-bottom:16px;}
+.sr-sec-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;padding-bottom:5px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.sr-text{font-size:12px;color:var(--text);line-height:1.7;}
+.sr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sr-box{background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:10px;}
+.sr-box-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:1px;margin-bottom:4px;}
+.sr-box-val{font-size:11px;color:var(--text);line-height:1.6;}
+.sr-item{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.sr-item:last-child{border-bottom:none;}
+.sr-bullet{color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:9px;flex-shrink:0;padding-top:1px;}
+.sr-done{color:var(--green);text-decoration:line-through;opacity:.7;}
+.tool-list{display:flex;flex-wrap:wrap;gap:5px;}
+.tool-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid var(--border);color:var(--dim);border-radius:2px;}
+.tool-tag.have{border-color:rgba(105,240,174,.3);color:var(--green);background:rgba(105,240,174,.05);}
+[data-theme="light"] .tool-tag.have{border-color:rgba(26,122,74,.3);color:#1a7a4a;}
+.tool-tag.need{border-color:rgba(255,171,64,.3);color:var(--orange);background:rgba(255,171,64,.05);}
+[data-theme="light"] .tool-tag.need{border-color:rgba(192,80,0,.3);color:#c05000;}
+
+/* ═══════════════════ MODAL (project detail) ═══════════════════ */
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.moverlay.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:20px;max-width:540px;width:100%;max-height:80vh;overflow-y:auto;position:relative;}
+.mclose{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--dim);font-size:16px;cursor:pointer;}
+.mclose:hover{color:var(--text);}
+.mcat{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;}
+.mtitle{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--bright);margin-bottom:12px;}
+.msec{margin-bottom:12px;}
+.mseclbl{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:5px;border-bottom:1px solid var(--border);padding-bottom:3px;}
+.mtext{font-size:12px;color:var(--text);line-height:1.7;}
+.mstep{font-size:11px;padding:4px 0;display:flex;gap:8px;border-bottom:1px solid var(--border);}
+.mstep:last-child{border-bottom:none;}
+.msn{font-family:'IBM Plex Mono',monospace;color:var(--gold);font-size:9px;min-width:18px;}
+.mtags{display:flex;flex-wrap:wrap;gap:4px;}
+.mtag{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 6px;border:1px solid var(--border);color:var(--dim);border-radius:2px;}
+
+/* ═══════════════════ SECTION STYLES ═══════════════════ */
+.sec-h{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:3px;color:var(--blue);margin-bottom:10px;}
+.sec-sub{font-size:12px;color:var(--dim);line-height:1.7;margin-bottom:14px;}
+.slabel{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:10px;}
+.igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px;}
+.inode{background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:11px;}
+.iname{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--bright);margin-bottom:4px;}
+.idesc{font-size:10px;color:var(--dim);line-height:1.5;}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:9px;}
+.ttool{background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:10px;}
+.tname{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--bright);margin-bottom:2px;}
+.tcat-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:1px;margin-bottom:4px;}
+.tdesc{font-size:10px;color:var(--dim);line-height:1.5;}
+.t-ai .tcat-label{color:var(--pink);} .t-3d .tcat-label{color:var(--blue);}
+.t-voice .tcat-label{color:var(--orange);} .t-video .tcat-label{color:var(--purple);}
+.t-infra .tcat-label{color:var(--green);} .t-gen .tcat-label{color:var(--gold);}
+.t-tv .tcat-label{color:#ffcc80;}
+[data-theme="light"] .t-ai .tcat-label{color:#c2185b;} [data-theme="light"] .t-3d .tcat-label{color:#0277bd;}
+[data-theme="light"] .t-voice .tcat-label{color:#c05000;} [data-theme="light"] .t-video .tcat-label{color:#4527a0;}
+[data-theme="light"] .t-infra .tcat-label{color:#1a7a4a;} [data-theme="light"] .t-gen .tcat-label{color:#8c6d00;}
+[data-theme="light"] .t-tv .tcat-label{color:#e65100;}
+hr.div{border:none;border-top:1px solid var(--border);margin:16px 0;}
+.info-card{background:var(--s2);border:1px solid var(--border2);border-radius:2px;padding:12px;margin-bottom:10px;}
+.info-card p{font-size:12px;color:var(--text);line-height:1.8;}
+.info-card strong{color:var(--gold);}
+
+/* CLAUDE ECOSYSTEM */
+.eco-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:16px;}
+.eco-card{background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:12px;}
+.eco-name{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;}
+.eco-desc{font-size:11px;color:var(--dim);line-height:1.6;}
+.eco-tip{font-size:10px;color:var(--text);margin-top:5px;padding-top:5px;border-top:1px solid var(--border);}
+
+/* CLAUDE INSTANCE CARDS */
+.claude-instance{background:var(--s2);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:12px;}
+.ci-header{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
+.ci-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--gold);}
+.ci-platform{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:1px;}
+.ci-desc{font-size:11px;color:var(--text);line-height:1.6;margin-bottom:10px;}
+.ci-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ci-col-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--dim);margin-bottom:5px;}
+.ctag-row{display:flex;flex-wrap:wrap;gap:4px;}
+.ctag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;border:1px solid;}
+.ctag.has{color:var(--green);border-color:rgba(105,240,174,.3);background:rgba(105,240,174,.05);}
+.ctag.no{border-color:var(--border);color:var(--dim);opacity:.45;}
+[data-theme="light"] .ctag.has{color:#1a7a4a;border-color:rgba(26,122,74,.3);}
+.ci-usefor{font-size:10px;color:var(--dim);line-height:1.5;}
+
+/* DB MATRIX */
+.db-matrix{border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:14px;}
+.db-row{display:grid;grid-template-columns:140px 1fr 1fr 1fr 1fr;border-bottom:1px solid var(--border);}
+.db-row:last-child{border-bottom:none;}
+.db-row.header{background:var(--s3);font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;}
+.db-cell{padding:8px 10px;font-size:10px;color:var(--text);border-right:1px solid var(--border);}
+.db-cell:last-child{border-right:none;}
+.db-cell.header-cell{color:var(--dim);font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:1px;}
+.db-yes{color:var(--green);font-family:'IBM Plex Mono',monospace;font-size:9px;} 
+.db-partial{color:var(--orange);font-family:'IBM Plex Mono',monospace;font-size:9px;}
+.db-no{color:var(--dim);font-family:'IBM Plex Mono',monospace;font-size:9px;opacity:.5;}
+[data-theme="light"] .db-yes{color:#1a7a4a;} [data-theme="light"] .db-partial{color:#c05000;}
+
+/* PROJECT FILE FLOW */
+.flow-card{background:var(--s2);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:10px;}
+.flow-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:8px;}
+.flow-row{display:flex;gap:10px;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.flow-row:last-child{border-bottom:none;}
+.flow-proj{min-width:130px;color:var(--text);}
+.flow-locs{flex:1;display:flex;flex-wrap:wrap;gap:4px;}
+.flow-loc{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;}
+.fl-notion{color:var(--blue);background:rgba(79,195,247,.06);border:1px solid rgba(79,195,247,.25);}
+.fl-drive{color:var(--orange);background:rgba(255,171,64,.06);border:1px solid rgba(255,171,64,.25);}
+.fl-obsidian{color:var(--purple);background:rgba(179,157,219,.06);border:1px solid rgba(179,157,219,.25);}
+.fl-local{color:var(--dim);background:var(--s3);border:1px solid var(--border);}
+[data-theme="light"] .fl-notion{color:#0277bd;} [data-theme="light"] .fl-drive{color:#c05000;} [data-theme="light"] .fl-obsidian{color:#4527a0;}
+
+/* FINANCES */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:9px;margin-bottom:16px;}
+.fcard{background:var(--card-bg);border:1px solid var(--border);border-radius:2px;padding:12px;}
+.fname{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:2px;}
+.famt{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;margin-bottom:3px;}
+.famt.mo{color:var(--orange);} .famt.unk{color:var(--dim);} .famt.free{color:var(--green);}
+.fdesc{font-size:10px;color:var(--dim);line-height:1.5;}
+.ftag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 5px;border-radius:2px;display:inline-block;margin-top:5px;border:1px solid;}
+.ft-e{color:var(--green);border-color:rgba(105,240,174,.3);background:rgba(105,240,174,.05);}
+.ft-a{color:var(--blue);border-color:rgba(79,195,247,.3);background:rgba(79,195,247,.05);}
+.ft-r{color:var(--orange);border-color:rgba(255,171,64,.3);background:rgba(255,171,64,.05);}
+.ft-f{color:var(--purple);border-color:rgba(179,157,219,.3);background:rgba(179,157,219,.05);}
+[data-theme="light"] .ft-e{color:#1a7a4a;} [data-theme="light"] .ft-a{color:#0277bd;} [data-theme="light"] .ft-r{color:#c05000;} [data-theme="light"] .ft-f{color:#4527a0;}
+.hygcard{background:var(--s2);border:1px solid rgba(232,197,71,.15);border-radius:3px;padding:13px;margin-bottom:12px;}
+.hygcard h4{font-family:'Bebas Neue',sans-serif;letter-spacing:2px;font-size:15px;color:var(--gold);margin-bottom:9px;}
+.hrow{display:flex;gap:9px;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.hrow:last-child{border-bottom:none;}
+.hnum{font-family:'IBM Plex Mono',monospace;color:var(--blue);font-size:9px;min-width:20px;}
+.htxt{color:var(--text);}
+
+/* CAL */
+.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:9px;margin-bottom:14px;}
+.cal-node{background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:11px;}
+.cal-name{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--bright);margin-bottom:3px;}
+.cal-desc{font-size:10px;color:var(--dim);line-height:1.5;}
+.caltag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 5px;border-radius:2px;margin-top:5px;display:inline-block;border:1px solid;}
+.caltag.auto{color:var(--green);border-color:rgba(105,240,174,.25);}
+.caltag.manual{color:var(--orange);border-color:rgba(255,171,64,.25);}
+
+/* HOME */
+.loc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 12px;background:var(--s2);border:1px solid var(--border);border-radius:2px;}
+.loc-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;}
+.loc-sub{font-size:9px;color:var(--dim);font-family:'IBM Plex Mono',monospace;}
+
+/* MOBILE G3 BUTTON */
+.mobile-g3-btn{display:none;position:fixed;bottom:20px;right:20px;background:var(--gold);color:var(--text-inv);border:none;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;padding:12px 20px;border-radius:3px;cursor:pointer;z-index:99;box-shadow:0 4px 16px var(--gold-glow);}
+@media(max-width:768px){.mobile-g3-btn{display:block;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-toc">TOC</span>
+    <span class="logo-sub">Tactical Operations Center // LTC Holm</span>
+  </div>
+  <div class="hdr-right">
+    <span class="hdr-stat"><b id="proj-count">19</b> projects</span>
+    <span class="hdr-stat"><b>4</b> instances</span>
+    <span class="hdr-stat"><span class="pulse"></span>NOMINAL</span>
+    <span id="clock">--:--</span>
+    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+      <span class="toggle-icon" id="theme-icon">☀️</span>
+      <span id="theme-label">LIGHT</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ══════════════ LEFT ══════════════ -->
+  <div class="main">
+    <div class="tabs">
+      <div class="tab active" onclick="sw('projects')">Projects</div>
+      <div class="tab" onclick="sw('ecosystem')">Ecosystem</div>
+      <div class="tab" onclick="sw('claude')">Claude &amp; AI Tools</div>
+      <div class="tab" onclick="sw('calendar')">Calendar</div>
+      <div class="tab" onclick="sw('finances')">Finances</div>
+      <div class="tab" onclick="sw('home')">Home/Property</div>
+      <div class="tab" onclick="sw('infra')">Infrastructure</div>
+    </div>
+
+    <div class="tab-content">
+
+      <!-- ── PROJECTS ── -->
+      <div class="tc active" id="tab-projects">
+        <div class="pgrid" id="pgrid"></div>
+      </div>
+
+      <!-- ── ECOSYSTEM ── -->
+      <div class="tc" id="tab-ecosystem">
+        <div class="sec-h">System Overview</div>
+        <div class="sec-sub">Single-operator multi-domain portfolio. The risk is context-switching cost — the Notion closeout protocol and G3 picker solve this.</div>
+        <div class="eco-grid">
+          <div class="eco-card"><div class="eco-name">The Brain</div><div class="eco-desc">Four Claude instances covering browser, mobile, desktop, and API automation. Each has unique connector access.</div><div class="eco-tip">→ Claudius for deep work. Clodius for automation. Claude mobile for capture. Claudio for web research.</div></div>
+          <div class="eco-card"><div class="eco-name">The Memory</div><div class="eco-desc">Notion (structured, queryable), Google Drive (documents), Obsidian (local linked lore). Each serves a distinct role.</div><div class="eco-tip">→ Session closeouts → Notion. Long writing → Drive. Lore/world → Obsidian.</div></div>
+          <div class="eco-card"><div class="eco-name">The Muscle</div><div class="eco-desc">n8n (automation), RunPod (GPU burst), VPS (always-on), local machine (UE5/Blender), Pi 5 (TV channel).</div><div class="eco-tip">→ VPS hosts n8n so routines run without your machine being on.</div></div>
+          <div class="eco-card"><div class="eco-name">The Output</div><div class="eco-desc">Games (Overcast Studios), Companion (Astrid), Stories (Atreal), Essays, TV Channel (KPTV-12), RPG campaigns.</div><div class="eco-tip">→ Every project ends with a tangible artifact. If it doesn't, it's research.</div></div>
+        </div>
+        <div class="slabel">Priority Tiers</div>
+        <div class="eco-grid">
+          <div class="eco-card"><div class="eco-name" style="color:var(--gold)">Tier 1 // Unlock</div><div class="eco-desc">n8n Foundation, Calendar Mission Setup, Claude Ecosystem Map. Do these first — they enable everything else.</div></div>
+          <div class="eco-card"><div class="eco-name" style="color:var(--blue)">Tier 2 // Build</div><div class="eco-desc">Overcast Studios, Astrid, TIE Academy, AI GM System. Core projects that need Tier 1 infra running.</div></div>
+          <div class="eco-card"><div class="eco-name" style="color:var(--green)">Tier 3 // Create</div><div class="eco-desc">Essays, Atreal, Aedaeion, 5 Parsecs, SW Ships, TV Channel. High-reward creative — best after infra is stable.</div></div>
+          <div class="eco-card"><div class="eco-name" style="color:var(--orange)">Tier 4 // Sustain</div><div class="eco-desc">Home/property tasks, finance hygiene, calendar maintenance. Monthly/seasonal. Low friction, high consequence if ignored.</div></div>
+        </div>
+        <div class="info-card"><p><strong>The key insight:</strong> You never have to remember where you left off. Every session writes its state to Notion. Every new session reads it back. The G3 handles decision fatigue. The calendar handles scheduling pressure. Your only job is to execute the steps and log the closeout.</p></div>
+      </div>
+
+      <!-- ── CLAUDE & AI TOOLS ── -->
+      <div class="tc" id="tab-claude">
+        <div class="sec-h">Claude Instances</div>
+
+        <div class="claude-instance">
+          <div class="ci-header"><div class="ci-name">Claudio</div><div class="ci-platform">Chrome Extension // PC Browser</div></div>
+          <div class="ci-desc">Web-facing agent. Best for research, browsing tasks, pulling receipts from Gmail, Drive access on the fly, and any task where you're already in a browser. Cannot access local files or run code locally.</div>
+          <div class="ci-grid">
+            <div><div class="ci-col-label">Can Access</div><div class="ctag-row"><span class="ctag has">Google Drive</span><span class="ctag has">Gmail</span><span class="ctag has">Google Calendar</span><span class="ctag has">Notion</span><span class="ctag has">Web Search</span><span class="ctag has">Browser Control</span></div></div>
+            <div><div class="ci-col-label">Cannot Access</div><div class="ctag-row"><span class="ctag no">Local Files</span><span class="ctag no">Obsidian</span><span class="ctag no">RunPod</span><span class="ctag no">n8n</span><span class="ctag no">Terminal</span></div></div>
+          </div>
+          <div style="margin-top:9px"><div class="ci-col-label">Best Used For</div><div class="ci-usefor">Research pulls, Gmail receipt searches, Drive document drafting, calendar event creation, quick project lookups, web-based tool config (ErsatzTV docs, Pi setup guides).</div></div>
+        </div>
+
+        <div class="claude-instance">
+          <div class="ci-header"><div class="ci-name">Claude</div><div class="ci-platform">Phone App // Mobile</div></div>
+          <div class="ci-desc">On-the-go capture. Voice notes, camera input, quick reference. The fastest way to add something to Notion or Drive while away from desk. Not for heavy lifting.</div>
+          <div class="ci-grid">
+            <div><div class="ci-col-label">Can Access</div><div class="ctag-row"><span class="ctag has">Google Drive</span><span class="ctag has">Google Calendar</span><span class="ctag has">Notion</span><span class="ctag has">Web Search</span><span class="ctag has">Camera/Voice</span></div></div>
+            <div><div class="ci-col-label">Cannot Access</div><div class="ctag-row"><span class="ctag no">Local Files</span><span class="ctag no">Obsidian</span><span class="ctag no">n8n</span><span class="ctag no">Gmail</span><span class="ctag no">RunPod</span></div></div>
+          </div>
+          <div style="margin-top:9px"><div class="ci-col-label">Best Used For</div><div class="ci-usefor">Capturing ideas to Notion while away from desk, quick calendar adds, voice-to-text world-building notes, photo-to-Drive (property/home documentation), birthday lookups.</div></div>
+        </div>
+
+        <div class="claude-instance">
+          <div class="ci-header"><div class="ci-name">Claudius</div><div class="ci-platform">Desktop App // Local Machine</div></div>
+          <div class="ci-desc">Deepest access. Full local file system, Obsidian vault, UE5/Blender project files, terminal commands, n8n local instance. Primary for deep work sessions and the weekly Battle Captain TOC review.</div>
+          <div class="ci-grid">
+            <div><div class="ci-col-label">Can Access</div><div class="ctag-row"><span class="ctag has">Local Files</span><span class="ctag has">Obsidian Vault</span><span class="ctag has">Google Drive</span><span class="ctag has">Notion</span><span class="ctag has">n8n (local)</span><span class="ctag has">Terminal/CLI</span><span class="ctag has">UE5 Projects</span><span class="ctag has">Blender</span></div></div>
+            <div><div class="ci-col-label">Cannot Access</div><div class="ctag-row"><span class="ctag no">RunPod API (direct)</span><span class="ctag no">ConvAI</span><span class="ctag no">ElevenLabs</span></div></div>
+          </div>
+          <div style="margin-top:9px"><div class="ci-col-label">Best Used For</div><div class="ci-usefor">Deep UE5/Blender sessions, Obsidian world-building, essay writing with Drive save, weekly TOC review with Notion read/write, local file organization, Pi setup via terminal.</div></div>
+        </div>
+
+        <div class="claude-instance">
+          <div class="ci-header"><div class="ci-name">Clodius</div><div class="ci-platform">API Backend // Programmatic Access</div></div>
+          <div class="ci-desc">The automation engine. Called by n8n workflows. Has broadest API access but no UI. Powers Astrid's personality system, AI GM pipelines, birthday triggers, receipt filing, and session closeout logging. Never directly used — always invoked by a workflow.</div>
+          <div class="ci-grid">
+            <div><div class="ci-col-label">Can Access</div><div class="ctag-row"><span class="ctag has">n8n Workflows</span><span class="ctag has">Astrid DB (Notion)</span><span class="ctag has">Drive API</span><span class="ctag has">Notion API</span><span class="ctag has">ConvAI API</span><span class="ctag has">ElevenLabs API</span><span class="ctag has">RunPod API</span><span class="ctag has">Gmail API</span><span class="ctag has">Calendar API</span></div></div>
+            <div><div class="ci-col-label">Cannot Access</div><div class="ctag-row"><span class="ctag no">Obsidian (local)</span><span class="ctag no">Local Files</span><span class="ctag no">Browser UI</span></div></div>
+          </div>
+          <div style="margin-top:9px"><div class="ci-col-label">Best Used For</div><div class="ci-usefor">All automation: Astrid daily routines, birthday alerts, finance reminders, session logging, AI GM pipeline routing, receipt auto-filing, art generation triggers via RunPod.</div></div>
+        </div>
+
+        <hr class="div">
+        <div class="sec-h">Database Access Matrix</div>
+        <div class="db-matrix">
+          <div class="db-row header">
+            <div class="db-cell header-cell">Database</div>
+            <div class="db-cell header-cell">Claudio</div>
+            <div class="db-cell header-cell">Claude (mobile)</div>
+            <div class="db-cell header-cell">Claudius</div>
+            <div class="db-cell header-cell">Clodius</div>
+          </div>
+          <div class="db-row">
+            <div class="db-cell"><strong>Notion</strong></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W</span></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W</span></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W</span></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W (API)</span></div>
+          </div>
+          <div class="db-row">
+            <div class="db-cell"><strong>Google Drive</strong></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W</span></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W</span></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W</span></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W (API)</span></div>
+          </div>
+          <div class="db-row">
+            <div class="db-cell"><strong>Google Calendar</strong></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W</span></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W</span></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W</span></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W (API)</span></div>
+          </div>
+          <div class="db-row">
+            <div class="db-cell"><strong>Gmail</strong></div>
+            <div class="db-cell"><span class="db-yes">✓ Read</span></div>
+            <div class="db-cell"><span class="db-no">✗</span></div>
+            <div class="db-cell"><span class="db-partial">~ Via browser</span></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W (API)</span></div>
+          </div>
+          <div class="db-row">
+            <div class="db-cell"><strong>Obsidian Vault</strong></div>
+            <div class="db-cell"><span class="db-no">✗</span></div>
+            <div class="db-cell"><span class="db-no">✗</span></div>
+            <div class="db-cell"><span class="db-yes">✓ R/W (local)</span></div>
+            <div class="db-cell"><span class="db-no">✗ (local only)</span></div>
+          </div>
+          <div class="db-row">
+            <div class="db-cell"><strong>Local Files</strong></div>
+            <div class="db-cell"><span class="db-no">✗</span></div>
+            <div class="db-cell"><span class="db-no">✗</span></div>
+            <div class="db-cell"><span class="db-yes">✓ Full access</span></div>
+            <div class="db-cell"><span class="db-no">✗</span></div>
+          </div>
+          <div class="db-row">
+            <div class="db-cell"><strong>ConvAI / ElevenLabs</strong></div>
+            <div class="db-cell"><span class="db-no">✗</span></div>
+            <div class="db-cell"><span class="db-no">✗</span></div>
+            <div class="db-cell"><span class="db-no">✗</span></div>
+            <div class="db-cell"><span class="db-yes">✓ Via API</span></div>
+          </div>
+          <div class="db-row">
+            <div class="db-cell"><strong>RunPod</strong></div>
+            <div class="db-cell"><span class="db-no">✗</span></div>
+            <div class="db-cell"><span class="db-no">✗</span></div>
+            <div class="db-cell"><span class="db-partial">~ Via browser</span></div>
+            <div class="db-cell"><span class="db-yes">✓ Via API</span></div>
+          </div>
+        </div>
+
+        <div class="sec-h">Where Project Info Lives</div>
+        <div class="flow-card">
+          <div class="flow-title">Project File Locations</div>
+          <div class="flow-row"><div class="flow-proj">All Projects</div><div class="flow-locs"><span class="flow-loc fl-notion">Session Logs</span><span class="flow-loc fl-notion">Task Status</span><span class="flow-loc fl-notion">Next Steps</span></div></div>
+          <div class="flow-row"><div class="flow-proj">Essays / Writing</div><div class="flow-locs"><span class="flow-loc fl-drive">Drafts &amp; Final</span><span class="flow-loc fl-notion">Topic List</span><span class="flow-loc fl-notion">Status</span></div></div>
+          <div class="flow-row"><div class="flow-proj">Atreal / Aedaeion</div><div class="flow-locs"><span class="flow-loc fl-obsidian">Lore &amp; World</span><span class="flow-loc fl-drive">Drafts</span><span class="flow-loc fl-notion">Progress Log</span></div></div>
+          <div class="flow-row"><div class="flow-proj">Astrid</div><div class="flow-locs"><span class="flow-loc fl-notion">Personality DB</span><span class="flow-loc fl-notion">Interaction Logs</span><span class="flow-loc fl-drive">Config Files</span></div></div>
+          <div class="flow-row"><div class="flow-proj">TIE Academy / UE5</div><div class="flow-locs"><span class="flow-loc fl-local">UE5 Project Files</span><span class="flow-loc fl-drive">Design Docs</span><span class="flow-loc fl-notion">Session Log</span></div></div>
+          <div class="flow-row"><div class="flow-proj">AI GM System</div><div class="flow-locs"><span class="flow-loc fl-notion">Rules DB</span><span class="flow-loc fl-drive">Game Config Files</span><span class="flow-loc fl-notion">Campaign Logs</span></div></div>
+          <div class="flow-row"><div class="flow-proj">RPG Campaigns</div><div class="flow-locs"><span class="flow-loc fl-notion">Campaign DB</span><span class="flow-loc fl-obsidian">World Lore</span><span class="flow-loc fl-drive">Reference Sheets</span></div></div>
+          <div class="flow-row"><div class="flow-proj">TV Channel</div><div class="flow-locs"><span class="flow-loc fl-local">Media Library</span><span class="flow-loc fl-drive">Channel Config</span><span class="flow-loc fl-notion">Project Log</span></div></div>
+          <div class="flow-row"><div class="flow-proj">Overcast Studios (Biz)</div><div class="flow-locs"><span class="flow-loc fl-drive">Business Docs</span><span class="flow-loc fl-drive">Receipts</span><span class="flow-loc fl-notion">Task Tracker</span></div></div>
+          <div class="flow-row"><div class="flow-proj">Home / Property</div><div class="flow-locs"><span class="flow-loc fl-notion">Task Lists</span><span class="flow-loc fl-drive">Photos &amp; Docs</span></div></div>
+        </div>
+
+        <div class="info-card">
+          <p><strong>Closeout Protocol — every session:</strong> Describe what you did in 3–5 sentences. Any Claude instance can write the Notion log for you. The next session, any instance reads it back. This is the core loop that makes the whole system work — without it, each Claude starts cold.</p>
+        </div>
+
+        <hr class="div">
+        <div class="sec-h">AI Tools by Category</div>
+        <div class="slabel">Core AI</div>
+        <div class="tgrid">
+          <div class="ttool t-ai"><div class="tname">Claude (4 instances)</div><div class="tcat-label">AI BACKBONE</div><div class="tdesc">Reasoning, writing, planning, automation. The connective tissue across all projects.</div></div>
+          <div class="ttool t-ai"><div class="tname">ConvAI</div><div class="tcat-label">CONVERSATIONAL AI</div><div class="tdesc">Real-time voice/text characters. Astrid's live persona. NPC embodiment in RPG.</div></div>
+          <div class="ttool t-ai"><div class="tname">RunPod</div><div class="tcat-label">GPU COMPUTE</div><div class="tdesc">On-demand GPU for ComfyUI, local LLMs for RPG/NPC, batch image gen.</div></div>
+          <div class="ttool t-ai"><div class="tname">n8n</div><div class="tcat-label">AUTOMATION HUB</div><div class="tdesc">Central workflow engine. Connects all tools, runs Astrid routines, AI GM pipelines.</div></div>
+        </div>
+        <div class="slabel" style="margin-top:14px">Voice, Avatar & Video</div>
+        <div class="tgrid">
+          <div class="ttool t-voice"><div class="tname">ElevenLabs</div><div class="tcat-label">VOICE SYNTHESIS</div><div class="tdesc">Astrid's voice, NPC voices, TV channel narration and promos.</div></div>
+          <div class="ttool t-video"><div class="tname">HeyGen</div><div class="tcat-label">VIDEO AVATAR</div><div class="tdesc">AI video avatars. Future: Astrid presence, TV anchors, game trailers. No active project yet.</div></div>
+          <div class="ttool t-ai"><div class="tname">Voxta</div><div class="tcat-label">COMPANION / VAM</div><div class="tdesc">Companion AI layer for VaM. Voice + AI in interactive 3D. Astrid integration target.</div></div>
+          <div class="ttool t-video"><div class="tname">Higgsfield</div><div class="tcat-label">VIDEO GENERATION</div><div class="tdesc">AI video motion. TV promos, RPG cutscenes, Astrid video clips.</div></div>
+          <div class="ttool t-video"><div class="tname">Enhancr</div><div class="tcat-label">VIDEO ENHANCEMENT</div><div class="tdesc">AI upscaling. Vintage KPTV footage restoration, Zenith content enhancement.</div></div>
+        </div>
+        <div class="slabel" style="margin-top:14px">3D & Game Dev</div>
+        <div class="tgrid">
+          <div class="ttool t-3d"><div class="tname">Tripo</div><div class="tcat-label">AI 3D GENERATION</div><div class="tdesc">AI 3D model + texture gen. NPC assets, ship models, props for UE5.</div></div>
+          <div class="ttool t-3d"><div class="tname">Blender</div><div class="tcat-label">3D MODELING</div><div class="tdesc">Primary modeling, rigging, Meta Tailor clothing, UE5 pipeline.</div></div>
+          <div class="ttool t-3d"><div class="tname">Unreal Engine 5</div><div class="tcat-label">GAME ENGINE</div><div class="tdesc">TIE Academy, skill projects, Overcast Studios titles.</div></div>
+          <div class="ttool t-3d"><div class="tname">Meta Tailor</div><div class="tcat-label">CLOTHING SIM</div><div class="tdesc">Clothing simulation and MetaHuman export for UE5.</div></div>
+          <div class="ttool t-gen"><div class="tname">ComfyUI</div><div class="tcat-label">IMAGE PIPELINE</div><div class="tdesc">Stable Diffusion on RunPod. NPC portraits, world art, TV graphics.</div></div>
+        </div>
+        <div class="slabel" style="margin-top:14px">TV Channel Stack</div>
+        <div class="tgrid">
+          <div class="ttool t-tv"><div class="tname">Raspberry Pi 5</div><div class="tcat-label">CHANNEL HARDWARE</div><div class="tdesc">Runs the TV channel 24/7 + game emulation. Connects to Zenith via HDMI.</div></div>
+          <div class="ttool t-tv"><div class="tname">ErsatzTV</div><div class="tcat-label">CHANNEL SCHEDULER</div><div class="tdesc">Open-source fake broadcast channel. Schedules content with commercial breaks and bumpers.</div></div>
+          <div class="ttool t-tv"><div class="tname">Jellyfin</div><div class="tcat-label">MEDIA SERVER</div><div class="tdesc">Hosts and streams content library. Free, self-hosted Plex alternative.</div></div>
+          <div class="ttool t-tv"><div class="tname">RetroPie / Batocera</div><div class="tcat-label">GAME EMULATION</div><div class="tdesc">Full retro game emulation on Pi. NES, SNES, Genesis, N64, arcade.</div></div>
+          <div class="ttool t-tv"><div class="tname">FFmpeg</div><div class="tcat-label">VIDEO PROCESSING</div><div class="tdesc">Transcodes, adds commercial breaks, generates bumpers. Backbone of channel assembly.</div></div>
+        </div>
+      </div>
+
+      <!-- ── CALENDAR ── -->
+      <div class="tc" id="tab-calendar">
+        <div class="sec-h">Calendar Mission</div>
+        <div class="slabel">Six Domain Calendars</div>
+        <div class="cal-grid">
+          <div class="cal-node"><div class="cal-name">🎮 Projects</div><div class="cal-desc">Evening session blocks. Assigned from G3 picks.</div><span class="caltag manual">MANUAL SEED</span></div>
+          <div class="cal-node"><div class="cal-name">💼 Business</div><div class="cal-desc">Overcast Studios, WA filings, Udemy, invoices.</div><span class="caltag manual">MANUAL</span></div>
+          <div class="cal-node"><div class="cal-name">💰 Finance</div><div class="cal-desc">Monthly hygiene, tax deadlines, property tax.</div><span class="caltag auto">AUTO via n8n</span></div>
+          <div class="cal-node"><div class="cal-name">🏠 Home/Property</div><div class="cal-desc">DuPont tasks, Gods Valley trips, seasonal prep.</div><span class="caltag manual">MANUAL</span></div>
+          <div class="cal-node"><div class="cal-name">🎂 People</div><div class="cal-desc">Birthdays. Clodius sends 3-day advance prompt.</div><span class="caltag auto">AUTO REMINDERS</span></div>
+          <div class="cal-node"><div class="cal-name">⚔ TOC Review</div><div class="cal-desc">Sunday evening Battle Captain review. 20 min.</div><span class="caltag auto">RECURRING</span></div>
+        </div>
+      </div>
+
+      <!-- ── FINANCES ── -->
+      <div class="tc" id="tab-finances">
+        <div class="sec-h">Subscriptions</div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fname">Claude Pro</div><div class="famt mo">~$20/mo</div><div class="fdesc">All 4 instances.</div><span class="ftag ft-e">ESSENTIAL</span></div>
+          <div class="fcard"><div class="fname">ElevenLabs</div><div class="famt unk">$?/mo</div><div class="fdesc">Astrid voice, NPCs, TV narration.</div><span class="ftag ft-a">ACTIVE</span></div>
+          <div class="fcard"><div class="fname">ConvAI</div><div class="famt unk">$?/mo</div><div class="fdesc">Real-time AI characters.</div><span class="ftag ft-a">ACTIVE</span></div>
+          <div class="fcard"><div class="fname">RunPod</div><div class="famt unk">Usage-based</div><div class="fdesc">GPU on-demand only.</div><span class="ftag ft-a">ACTIVE</span></div>
+          <div class="fcard"><div class="fname">HeyGen</div><div class="famt unk">$?/mo</div><div class="fdesc">No active project.</div><span class="ftag ft-r">REVIEW USE</span></div>
+          <div class="fcard"><div class="fname">Higgsfield</div><div class="famt unk">$?/mo</div><div class="fdesc">Future: promos, clips.</div><span class="ftag ft-f">FUTURE USE</span></div>
+          <div class="fcard"><div class="fname">Enhancr</div><div class="famt unk">$?/mo</div><div class="fdesc">Video upscaling.</div><span class="ftag ft-a">ACTIVE</span></div>
+          <div class="fcard"><div class="fname">Tripo</div><div class="famt unk">$?/mo</div><div class="fdesc">AI 3D assets.</div><span class="ftag ft-a">ACTIVE</span></div>
+          <div class="fcard"><div class="fname">Google Workspace</div><div class="famt mo">$6–12/mo</div><div class="fdesc">Drive, Gmail, Calendar.</div><span class="ftag ft-e">ESSENTIAL</span></div>
+          <div class="fcard"><div class="fname">Notion</div><div class="famt mo">$0–16/mo</div><div class="fdesc">Project DB. Free may suffice.</div><span class="ftag ft-e">ESSENTIAL</span></div>
+          <div class="fcard"><div class="fname">Udemy</div><div class="famt unk">One-time</div><div class="fdesc">Buy on sale only.</div><span class="ftag ft-a">ACTIVE</span></div>
+        </div>
+        <div class="hygcard">
+          <h4>Monthly Hygiene — Before the 5th</h4>
+          <div class="hrow"><span class="hnum">01</span><div><div class="htxt">Gmail search: receipts + subscriptions from last 30 days</div></div></div>
+          <div class="hrow"><span class="hnum">02</span><div><div class="htxt">Update subscription costs above, flag anything unused</div></div></div>
+          <div class="hrow"><span class="hnum">03</span><div><div class="htxt">File Overcast Studios receipts → Drive/Business/Receipts/[YEAR]/[MONTH]</div></div></div>
+          <div class="hrow"><span class="hnum">04</span><div><div class="htxt">Log total monthly sub spend in Notion Finance page</div></div></div>
+        </div>
+      </div>
+
+      <!-- ── HOME / PROPERTY ── -->
+      <div class="tc" id="tab-home">
+        <div class="loc-hdr"><span style="font-size:20px">🏠</span><div><div class="loc-name" style="color:#80cbc4">DuPont Home</div><div class="loc-sub">DuPont, Washington</div></div></div>
+        <div class="pgrid" id="home-grid"></div>
+        <hr class="div">
+        <div class="loc-hdr"><span style="font-size:20px">🌲</span><div><div class="loc-name" style="color:#a5d6a7">Gods Valley</div><div class="loc-sub">Gods Valley Road, Nehalem, Oregon</div></div></div>
+        <div class="pgrid" id="property-grid"></div>
+      </div>
+
+      <!-- ── INFRASTRUCTURE ── -->
+      <div class="tc" id="tab-infra">
+        <div class="sec-h">n8n Workflows</div>
+        <div class="igrid">
+          <div class="inode"><div class="iname">Astrid Routine Engine</div><div class="idesc">Scheduled texts, selfies, check-ins. References Notion personality DB.</div></div>
+          <div class="inode"><div class="iname">AI GM Pipeline</div><div class="idesc">Routes GM/combat/NPC to models. Config files per game system.</div></div>
+          <div class="inode"><div class="iname">Session Logger</div><div class="idesc">Receives summary, writes Notion + Drive. Cross-instance sync.</div></div>
+          <div class="inode"><div class="iname">Birthday Trigger</div><div class="idesc">3 days before: push notification with name + message prompt.</div></div>
+          <div class="inode"><div class="iname">Receipt Auto-Filer</div><div class="idesc">Gmail → Drive. Overcast Studios receipts sorted by month.</div></div>
+          <div class="inode"><div class="iname">Finance Trigger</div><div class="idesc">1st of month: hygiene reminder + Notion checklist link.</div></div>
+          <div class="inode"><div class="iname">Stall Detector</div><div class="idesc">14 days no Notion log → flag in TOC review.</div></div>
+          <div class="inode"><div class="iname">Calendar Pusher</div><div class="idesc">Post-pick: pushes project to Calendar as tonight's block.</div></div>
+          <div class="inode"><div class="iname">TV Channel Monitor</div><div class="idesc">Watches Pi stream. Alerts if ErsatzTV drops. Auto-restarts.</div></div>
+        </div>
+        <div class="sec-h" style="margin-top:16px">Compute Stack</div>
+        <div class="igrid">
+          <div class="inode"><div class="iname">Local Machine</div><div class="idesc">UE5, Blender, Claudius, Obsidian. Primary workstation.</div></div>
+          <div class="inode"><div class="iname">RunPod (on-demand)</div><div class="idesc">GPU burst. Spin up only when running ComfyUI or LLMs.</div></div>
+          <div class="inode"><div class="iname">VPS (~$7/mo)</div><div class="idesc">Always-on n8n host. Astrid routines, birthday triggers, logging — without your machine on.</div></div>
+          <div class="inode"><div class="iname">Raspberry Pi 5</div><div class="idesc">TV channel box. ErsatzTV + Jellyfin + RetroPie. Always on, connected to Zenith.</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════ RIGHT: G3 ══════════════ -->
+  <div class="g3-panel" id="g3panel">
+    <div class="g3-header">
+      <div class="g3-title">G3 Operations <span class="g3-badge">S3 // OPS</span></div>
+      <div class="g3-sub">Tonight's Mission Brief</div>
+    </div>
+    <div class="g3-controls">
+      <div class="ctrl-label">Focus Area</div>
+      <div class="btn-row">
+        <button class="bsm on" onclick="setF(this,'all')">All</button>
+        <button class="bsm" onclick="setF(this,'ai')">AI</button>
+        <button class="bsm" onclick="setF(this,'unreal')">Unreal</button>
+        <button class="bsm" onclick="setF(this,'rpg')">RPG</button>
+        <button class="bsm" onclick="setF(this,'writing')">Writing</button>
+        <button class="bsm" onclick="setF(this,'tv')">TV</button>
+        <button class="bsm" onclick="setF(this,'infra')">Infra</button>
+      </div>
+      <div class="ctrl-label">Time Available</div>
+      <div class="btn-row">
+        <button class="bsm btime on" onclick="setT(this,'30m')">30 min</button>
+        <button class="bsm btime" onclick="setT(this,'1h')">1 hr</button>
+        <button class="bsm btime" onclick="setT(this,'2h')">2 hr</button>
+        <button class="bsm btime" onclick="setT(this,'deep')">Deep</button>
+      </div>
+      <button class="btn-brief" onclick="brief()">⚡ ISSUE TONIGHT'S BRIEF</button>
+    </div>
+    <div class="g3-output" id="g3out">
+      <div class="brief-empty">
+        <div class="be-icon">📋</div>
+        <div class="be-text">G3 standing by.<br>Set time available<br>and issue the brief.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<button class="mobile-g3-btn" onclick="document.getElementById('g3panel').classList.toggle('mobile-show')">⚡ G3</button>
+
+<!-- SITREP MODAL -->
+<div class="sitrep-overlay" id="sitrep-overlay" onclick="closeSitrep(event)">
+  <div class="sitrep-modal">
+    <button class="sr-close" onclick="closeSitrepBtn()">✕</button>
+    <div id="sitrep-body"></div>
+  </div>
+</div>
+
+<!-- PROJECT DETAIL MODAL -->
+<div class="moverlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="mclose" onclick="closeModalBtn()">✕</button>
+    <div id="mbody"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════ DATA ════════════════════
+const P = [
+  {id:'astrid',cat:'ai',cl:'AI / Companion',title:'Project Astrid',pri:9,eff:'h',time:'2h+',
+   scope:'Persistent AI companion: unified personality DB, multi-platform presence, automated routines via ConvAI + ElevenLabs + n8n.',
+   desc:'Core system: Notion DB tracks personality, memory, interactions. n8n schedules routines. Multiple AI models reference same files. Voxta for VAM integration.',
+   steps:['Map personality schema in Notion','Set up ConvAI character + API webhook','Design n8n routine workflow (texts, selfies)','Voxta/SillyTavern integration for VAM'],
+   cats:['ai'],tools:['ConvAI','ElevenLabs','n8n','Clodius API','Notion','Voxta'],
+   status:{done:[],wip:['Personality schema design'],next:['Build Notion DB structure','Set up ConvAI account','First n8n workflow'],tools_have:['Claude API','ElevenLabs','ConvAI','Notion'],tools_need:['n8n (configured)','Voxta setup'],intent:'Create a persistent AI companion that exists across platforms — texting, voice, VAM — drawing from a single shared personality database so every interaction is coherent.',},
+   ns:{'30m':[{t:'Draft Astrid personality schema fields',c:'can',n:'Claude generates full schema template'}],'1h':[{t:'Draft personality schema',c:'can',n:'Claude generates schema + sample entries'},{t:'Set up Notion DB field structure',c:'assist',n:'Claude walks you through Notion setup'}],'2h':[{t:'Notion DB structured',c:'assist',n:'Claude guides setup'},{t:'ConvAI character created',c:'you',n:'Requires your ConvAI account'},{t:'First n8n routine node',c:'assist',n:'Claude writes workflow JSON'}],'deep':[{t:'Complete DB + personality files',c:'can',n:''},{t:'ConvAI + n8n connected and tested',c:'you',n:'API keys required'},{t:'First routine firing',c:'assist',n:'Claude debugs logic'}]}},
+
+  {id:'tie',cat:'unreal',cl:'Unreal Engine',title:'TIE Fighter Academy',pri:8,eff:'h',time:'2h+',
+   scope:'Star Wars flight school in UE5. Ship systems, damage states, cockpit sim, MetaHuman instructors. Learning UE5 through the build.',
+   desc:'67 ship system nodes with damage states. MetaHuman integration. Cockpit with transparency challenges. Clothing pipeline via Meta Tailor.',
+   steps:['Complete weathered TIE cockpit windows','Fix skeletal mesh LOD issues','Build one ship system node','Integrate MetaHuman instructor'],
+   cats:['unreal'],tools:['UE5','Blender','MetaHuman','Meta Tailor'],
+   status:{done:['Initial ship system architecture designed','MetaHuman base character created'],wip:['TIE cockpit window transparency materials','Skeletal mesh LOD configuration'],next:['Resolve material blend mode on windows','Fix MetaHuman clothing LOD','Build first complete system node with damage states'],tools_have:['UE5','Blender','MetaHuman Creator','Meta Tailor'],tools_need:['Python script for clothing import (in progress)'],intent:'Build a fully playable Star Wars flight academy while simultaneously learning UE5 deeply — every system built teaches a skill that transfers to Overcast Studios commercial titles.'},
+   ns:{'30m':[{t:'Test one material fix on TIE window',c:'assist',n:'Claude diagnoses exact blend mode settings'}],'1h':[{t:'Material fixes applied and documented',c:'assist',n:'Claude walks through each setting'},{t:'Ship system node Blueprint stubbed',c:'assist',n:'Claude writes Blueprint pseudocode'}],'2h':[{t:'Cockpit window system complete',c:'assist',n:'Claude guides material pipeline'},{t:'One ship node with damage state built',c:'assist',n:'Claude writes Blueprint logic'}],'deep':[{t:'All cockpit materials resolved',c:'assist',n:''},{t:'3 ship nodes with damage states',c:'assist',n:'Claude writes Blueprint for each'},{t:'MetaHuman instructor in scene',c:'you',n:'Requires your UE5 env'}]}},
+
+  {id:'tv',cat:'tv',cl:'TV Channel',title:'KPTV-12 Replica',pri:8,eff:'h',time:'2h+',
+   scope:'Repair Zenith TV. Build fake broadcast channel replicating KPTV-12 with commercials. Pi 5 box also runs retro game emulation.',
+   desc:'ErsatzTV + Jellyfin on Pi 5 for scheduling and streaming. Content from archive.org, digitized VHS, AI-generated promos. RetroPie on same box for game emulation. Zenith repair is first physical step.',
+   steps:['Diagnose and repair Zenith TV (caps, CRT neck board)','Set up Pi 5 with Jellyfin + ErsatzTV','Build KPTV-12 content library (archive.org + personal)','Configure broadcast schedule with commercial breaks','Add RetroPie for game emulation mode','AI-generate station IDs and promos'],
+   cats:['tv'],tools:['Raspberry Pi 5','ErsatzTV','Jellyfin','RetroPie','FFmpeg','ElevenLabs','Higgsfield','Enhancr'],
+   status:{done:[],wip:[],next:['Identify Zenith model and research repair','Order Pi 5 if not already have one','Plan content library folder structure'],tools_have:['ElevenLabs (for promos)','Enhancr (for upscaling)','Higgsfield (future promos)'],tools_need:['Raspberry Pi 5','ErsatzTV (free)','Jellyfin (free)','RetroPie or Batocera (free)','Caps/components for Zenith repair'],intent:'Recreate the experience of watching a real local broadcast TV channel in the living room — KPTV-12 specifically — with commercials, bumpers, and the right era of content. Same box handles retro gaming.'},
+   ns:{'30m':[{t:'Research Zenith model — identify repair components',c:'can',n:'Claude walks through CRT diagnosis by model number'}],'1h':[{t:'Order Zenith caps + pi 5 if needed',c:'can',n:'Claude identifies exact component specs'},{t:'Flash Pi 5 OS',c:'assist',n:'Claude provides exact install commands'}],'2h':[{t:'Pi running Jellyfin',c:'assist',n:'Claude provides full install walkthrough'},{t:'Content library structure created',c:'can',n:'Claude designs folder + naming schema'},{t:'ErsatzTV installed',c:'assist',n:'Claude provides config'}],'deep':[{t:'Zenith repair underway',c:'you',n:'Physical — Claude guides'},{t:'Pi running ErsatzTV + first channel streaming',c:'assist',n:'Claude provides all config'},{t:'RetroPie installed',c:'assist',n:'Claude writes setup script'},{t:'First station ID produced via ElevenLabs',c:'assist',n:'Claude writes the voice script'}]}},
+
+  {id:'ue-skills',cat:'unreal',cl:'Unreal Engine',title:'Unreal Skill Tree',pri:6,eff:'m',time:'1h',
+   scope:'Structured UE5 learning: Udemy, GAS, multiplayer, inventory, Blender pipeline, PCG.',
+   desc:'Parallel skill-building to TIE Academy. GAS is key for RPG mechanics. PCG for procedural worlds.',
+   steps:['Current Udemy section','One GAS module','Multiplayer test project','Blender→UE5 export doc'],
+   cats:['unreal'],tools:['UE5','Udemy','Blender','GAS','PCG'],
+   status:{done:[],wip:['Udemy course in progress'],next:['Complete current Udemy section','Start GAS setup project'],tools_have:['UE5','Blender','Udemy course'],tools_need:['GAS plugin configured'],intent:'Build foundational UE5 skills systematically so TIE Academy and future Overcast titles have a solid technical base.'},
+   ns:{'30m':[{t:'One Udemy lesson + notes to Drive',c:'assist',n:'Claude summarizes key concepts'}],'1h':[{t:'Module complete + implement one concept',c:'assist',n:''}],'2h':[{t:'Full section + GAS prototype',c:'assist',n:'Claude writes GAS ability code'}],'deep':[{t:'Complete GAS ability + multiplayer test',c:'assist',n:''}]}},
+
+  {id:'essays',cat:'writing',cl:'Writing',title:'Essays',pri:5,eff:'l',time:'1h',
+   scope:'Consolidate topics across military doctrine, game design, AI. Write and submit to AUSA and other venues.',
+   desc:'Military professional writing and broader topics. Good low-energy project. Quick tangible outputs.',
+   steps:['Consolidate all topics to Drive doc','Rank by interest','Outline top 3','Write first complete draft'],
+   cats:['writing'],tools:['Google Drive','Claude'],
+   status:{done:[],wip:[],next:['Pull all essay ideas into one Drive doc','Rank by energy level','Outline top 3 topics'],tools_have:['Google Drive','Claude'],tools_need:[],intent:'Produce professional writing for AUSA and other venues that advances both career and personal intellectual development. Secondary: build a writing habit alongside technical projects.'},
+   ns:{'30m':[{t:'Build master topic list',c:'can',n:'Claude builds list from your described interests'}],'1h':[{t:'Topic list + one outline',c:'can',n:'Claude writes full outline'}],'2h':[{t:'Complete draft of one essay',c:'can',n:'Claude drafts, you edit'}],'deep':[{t:'Complete + polished for AUSA submission',c:'can',n:'Claude drafts and formats'}]}},
+
+  {id:'atreal',cat:'writing',cl:'Writing',title:'Book: Atreal',pri:6,eff:'m',time:'1h',
+   scope:'Write the Atreal novel. World, outline, scenes. Draws on Aedaeion lore from Obsidian.',
+   desc:'Long-form creative project. Obsidian vault holds lore. Sessions feed both the novel and the RPG world.',
+   steps:['Dump all Atreal notes to Drive','World overview','Chapter 1 outline','Write first scene'],
+   cats:['writing'],tools:['Google Drive','Obsidian','Claude'],
+   status:{done:[],wip:[],next:['Consolidate all existing notes to one Drive doc','Write 2-page world overview','Draft Chapter 1 outline'],tools_have:['Claude (writing)','Obsidian (for lore)','Google Drive'],tools_need:[],intent:'Write a novel set in the Aedaeion universe. The act of writing the novel develops the world, which feeds the RPG campaigns, which feeds the AI GM system — a creative loop.'},
+   ns:{'30m':[{t:'Write one scene or world entry',c:'can',n:'Describe it — Claude drafts it'}],'1h':[{t:'Scene + cross-reference Obsidian',c:'assist',n:''}],'2h':[{t:'Chapter outline + two scenes',c:'can',n:''}],'deep':[{t:'Complete chapter draft',c:'assist',n:''}]}},
+
+  {id:'aigm',cat:'rpg',cl:'RPG / Tabletop',title:'AI GM System',pri:8,eff:'h',time:'2h+',
+   scope:'Multi-agent RPG: GM AI, combat AI, NPC AI, rules DB. System-agnostic via config files (SW, Battletech, D&D).',
+   desc:'Core infrastructure for all solo play. GM + Combat + NPC agents with shared rule DB. Config files per system.',
+   steps:['Design agent architecture','n8n workflow skeleton','First game config (Star Wars)','Test GM agent'],
+   cats:['rpg','infra'],tools:['n8n','Clodius API','Notion','Drive','Multiple LLMs'],
+   status:{done:[],wip:[],next:['Sketch multi-agent architecture','Design Notion rules DB schema','Draft Star Wars game config file'],tools_have:['Claude API','Notion','Google Drive'],tools_need:['n8n (configured)','VPS for hosting','Game rule files digitized'],intent:'Build a reusable AI GM framework so any TTRPG system can be played solo with AI-powered game mastering, combat, and NPC management. Build once, play many systems.'},
+   ns:{'30m':[{t:'Sketch agent architecture',c:'can',n:'Claude draws full architecture diagram'}],'1h':[{t:'Architecture doc complete',c:'can',n:'Claude writes design doc'},{t:'n8n workflow stubbed',c:'assist',n:'Claude writes workflow JSON'}],'2h':[{t:'Working GM agent prototype',c:'can',n:'Claude builds + tests system prompt'},{t:'Combat agent scaffolded',c:'can',n:''}],'deep':[{t:'Multi-agent test session',c:'assist',n:'Claude acts as one agent to test'},{t:'Star Wars config complete',c:'can',n:''}]}},
+
+  {id:'5parsecs',cat:'rpg',cl:'RPG / Tabletop',title:'5 Parsecs Campaign',pri:7,eff:'m',time:'1h',
+   scope:'Solo sci-fi campaign in Aedaeion. Characters, NPCs, ship rules, art via RunPod.',
+   desc:'Low-friction solo play. Cross-references Aedaeion world. Feeds AI GM system.',
+   steps:['Campaign folder in Drive/Notion','Character sheets','Crew portraits via RunPod','First encounter'],
+   cats:['rpg'],tools:['5 Parsecs rules','Notion','RunPod','Obsidian'],
+   status:{done:[],wip:[],next:['Create campaign folder in Notion','Generate crew with 5 Parsecs tables','Set up first planet/job'],tools_have:['5 Parsecs rulebook','Notion','Obsidian (for world)'],tools_need:['RunPod session for crew portraits','AI GM system (future)'],intent:'Run a living solo sci-fi campaign in the Aedaeion universe. Each session advances the world-building while providing the fun of a narrative RPG.'},
+   ns:{'30m':[{t:'Set up campaign doc + name crew',c:'assist',n:'Claude generates names + backgrounds'}],'1h':[{t:'Crew + ship + first planet',c:'assist',n:'Claude runs 5 Parsecs tables'}],'2h':[{t:'Setup complete + first encounter',c:'can',n:'Claude acts as GM/narrator'}],'deep':[{t:'Full campaign session',c:'can',n:'Claude runs full AI GM'}]}},
+
+  {id:'swships',cat:'rpg',cl:'RPG / Tabletop',title:'SW Ship Combat Game',pri:7,eff:'m',time:'1h',
+   scope:'Star Wars tabletop ship game in the style of Blood Red Skies. Rules, ship cards, scenarios.',
+   desc:'Blood Red Skies momentum mechanic as inspiration. Playable with son.',
+   steps:['Draft core movement rules','Fighter stat cards','Create first scenario','Playtest'],
+   cats:['rpg','writing'],tools:['Google Drive','Claude','Canva'],
+   status:{done:[],wip:[],next:['Draft 1-page core rules','Design TIE and X-Wing stat cards','Create a simple engagement scenario'],tools_have:['Claude (design)','Google Drive','Blood Red Skies reference'],tools_need:['Canva or card template for printing'],intent:'Design a fun, fast tabletop ship combat game playable with my son. Simple enough to learn in 10 minutes, deep enough to be replayable. Could become an Overcast Studios product.'},
+   ns:{'30m':[{t:'Draft 1-page core rules',c:'can',n:'Claude writes rules doc from BRS structure'}],'1h':[{t:'Core rules + 3 ship cards',c:'can',n:'Claude designs balanced stats'}],'2h':[{t:'Complete ruleset + printable cards',c:'can',n:'Claude formats for print'}],'deep':[{t:'Full game + first playtest',c:'assist',n:'Claude narrates the test'}]}},
+
+  {id:'aedaeion',cat:'rpg',cl:'World Building',title:'Aedaeion Universe',pri:6,eff:'l',time:'30m',
+   scope:'Build out Aedaeion: history, factions, locations, tech. Feeds 5 Parsecs, Atreal, AI GM.',
+   desc:'Low-friction creative project. Everything created feeds 3+ other projects.',
+   steps:['Dump all notes to Obsidian','World overview','Faction sheets','Map one region'],
+   cats:['rpg','writing'],tools:['Obsidian','Drive','Claude','RunPod'],
+   status:{done:[],wip:[],next:['Consolidate all Aedaeion notes into Obsidian','Write 1-page world overview doc','Define 3 major factions'],tools_have:['Obsidian','Claude','Google Drive'],tools_need:['RunPod session for world art (future)'],intent:'Build a rich, internally consistent universe that serves as the shared setting for the Atreal novel, 5 Parsecs campaigns, and AI GM system games.'},
+   ns:{'30m':[{t:'Add 3 world entries to Obsidian',c:'can',n:'Claude generates detailed entries'}],'1h':[{t:'World overview + faction sheet',c:'can',n:'Claude writes both'}],'2h':[{t:'Region map + history doc',c:'can',n:'Claude writes history; you sketch map'}],'deep':[{t:'Full world bible draft',c:'assist',n:''}]}},
+
+  {id:'overcast',cat:'business',cl:'Business',title:'Overcast Studios (Company)',pri:8,eff:'m',time:'1h',
+   scope:'Stand up Overcast Studios as WA state game company. Registration, Workspace, receipt pipeline.',
+   desc:'Legal entity. Unlocks tax deductions, clean business accounting, professional branding.',
+   steps:['Research LLC vs sole prop in WA','Configure Google Workspace','Receipt Drive folder + Gmail filter','n8n receipt pipeline'],
+   cats:['business'],tools:['Google Workspace','Gmail','Drive','n8n','WA SOS'],
+   status:{done:[],wip:[],next:['Decide LLC vs sole prop','Go to WA SOS website and file','Set up Workspace org with business email'],tools_have:['Google Workspace (personal)','Gmail'],tools_need:['WA state business registration (~$200 LLC)','Business Google Workspace ($6/mo)'],intent:'Create a legitimate business entity for game development so tools, software, hardware, and relevant subscriptions are deductible, and Overcast Studios has a professional identity.'},
+   ns:{'30m':[{t:'Research WA LLC requirements',c:'can',n:'Claude provides clear LLC vs sole prop comparison'}],'1h':[{t:'Begin WA registration',c:'assist',n:'Claude walks through SOS filing'}],'2h':[{t:'Registration + Workspace + Drive structure',c:'assist',n:'Claude designs folder taxonomy'}],'deep':[{t:'Full setup + n8n receipt pipeline',c:'assist',n:'Claude writes workflow JSON'}]}},
+
+  {id:'cal-setup',cat:'business',cl:'Business',title:'Calendar Mission Setup',pri:9,eff:'l',time:'30m',
+   scope:'Fully populate Google Calendar with all domains: birthdays, finance dates, property tasks, Sunday TOC reviews.',
+   desc:'High leverage, low effort. One-time seeding enables all automated workflows.',
+   steps:['Create 6 domain calendars','Add all known birthdays','Seed tax dates','Set Sunday TOC review block'],
+   cats:['business','infra'],tools:['Google Calendar','Claudius or Claudio'],
+   status:{done:[],wip:[],next:['Create 6 domain calendars in Google Calendar','Add every known birthday from contacts','Add tax dates (Apr 15, Apr 30, Oct 31)'],tools_have:['Google Calendar','All Claude instances'],tools_need:['n8n configured for automation triggers'],intent:'Make Google Calendar the operational nerve center of the TOC. Every recurring obligation, deadline, and project session should be visible and automated.'},
+   ns:{'30m':[{t:'Create calendars + add 10 birthdays',c:'assist',n:'Claude tells you exactly which to create'}],'1h':[{t:'Full structure + all finance dates',c:'assist',n:'Claude provides every date'}],'2h':[{t:'Calendar + Sunday review + n8n triggers',c:'assist',n:'Claude writes automation config'}],'deep':[{t:'Complete with automations tested',c:'assist',n:''}]}},
+
+  {id:'n8n',cat:'infra',cl:'Infrastructure',title:'n8n Foundation',pri:9,eff:'h',time:'2h+',
+   scope:'Set up n8n as central automation hub on VPS. Build core workflows everything depends on.',
+   desc:'Critical infrastructure. Enables Astrid, AI GM, receipt logging, birthday triggers, calendar automation.',
+   steps:['Choose hosting','Install n8n','Build project logger workflow','Test Notion + Drive + Calendar APIs'],
+   cats:['infra'],tools:['n8n','VPS','Notion API','Drive API','Claude API'],
+   status:{done:[],wip:[],next:['Choose VPS provider (Hetzner or DigitalOcean recommended)','Install n8n on VPS','Connect Notion and Drive APIs'],tools_have:['Notion API access','Google Drive API access','Claude API'],tools_need:['VPS (~$7/mo)','n8n account (free self-hosted)','API keys configured'],intent:'Build the automation backbone that makes the entire TOC ecosystem run passively — routines fire, logs get written, reminders get sent — without manual intervention.'},
+   ns:{'30m':[{t:'Compare hosting options',c:'can',n:'Claude provides full cost + capability comparison'}],'1h':[{t:'Install n8n on chosen host',c:'assist',n:'Claude provides exact commands'}],'2h':[{t:'Working install + first API connection',c:'assist',n:'Claude walks through every credential'}],'deep':[{t:'Full setup + 2 working workflows',c:'can',n:'Claude writes all workflow JSON for import'}]}},
+
+  {id:'claude-map',cat:'infra',cl:'Infrastructure',title:'Claude Ecosystem Map',pri:7,eff:'l',time:'30m',
+   scope:'Document all Claude instances, connectors, workflows, and handoff protocol. Standardize closeout log.',
+   desc:'Meta-project. The Notion template is the key deliverable — any instance picks up where another left off.',
+   steps:['Audit current connections','Map instance → project types','Design closeout log format','Test handoff'],
+   cats:['infra'],tools:['Notion','Drive','All Claude instances'],
+   status:{done:['Initial mapping done in this dashboard'],wip:[],next:['Create Notion page with instance matrix','Build closeout log template in Notion','Test: Claudius writes log, Claudio reads it'],tools_have:['All 4 Claude instances','Notion','Google Drive'],tools_need:['Standardized Notion template (30 min to build)'],intent:'Ensure any Claude instance can instantly pick up any project without me re-explaining context. The closeout log is the mechanism.'},
+   ns:{'30m':[{t:'Draft instance capability table',c:'can',n:'Claude generates full table for Notion'}],'1h':[{t:'Full map + closeout log template',c:'can',n:'Claude writes both docs'}],'2h':[{t:'Complete doc + test handoff',c:'assist',n:''}],'deep':[{t:'Full tested workflows',c:'assist',n:''}]}},
+];
+
+const HOME_P = [
+  {id:'dup-maint',cat:'home',cl:'Home // DuPont WA',title:'Home Maintenance',pri:5,eff:'m',time:'1h',scope:'Ongoing maintenance for DuPont house. Repairs, seasonal prep.',desc:'Track and schedule. Preventive is cheaper than reactive.',steps:['Master task list in Notion','Seasonal tasks to Calendar','Prioritize deferred items'],cats:['home'],tools:['Notion','Calendar'],
+   status:{done:[],wip:[],next:['Brain-dump all deferred maintenance items','Add seasonal tasks to Calendar'],tools_have:['Notion','Google Calendar'],tools_need:[],intent:'Keep the DuPont property maintained proactively rather than reactively.'},
+   ns:{'30m':[{t:'List all deferred maintenance',c:'can',n:'Claude helps organize + prioritize'}],'1h':[{t:'Prioritized list + calendar blocks',c:'assist',n:''}],'2h':[{t:'List + first 2 tasks done',c:'you',n:'Physical work'}],'deep':[{t:'Full seasonal maintenance plan',c:'can',n:''}]}},
+  {id:'dup-improve',cat:'home',cl:'Home // DuPont WA',title:'Home Improvement',pri:4,eff:'m',time:'1h',scope:'Upgrades to DuPont property. Track projects, costs, contractors.',desc:'Planned upgrades vs deferred maintenance. Separate tracking.',steps:['List desired improvements','Estimate costs + priority','Notion tracker','Schedule first project'],cats:['home'],tools:['Notion','Drive'],
+   status:{done:[],wip:[],next:['Brain-dump improvement wishlist','Assign rough costs and priority'],tools_have:['Notion','Google Drive'],tools_need:[],intent:'Improve the DuPont property systematically with visibility into spend.'},
+   ns:{'30m':[{t:'Brain-dump improvement wishlist',c:'can',n:''}],'1h':[{t:'Prioritized list with rough costs',c:'assist',n:''}],'2h':[{t:'Plan + first project scoped',c:'assist',n:''}],'deep':[{t:'Full tracker with timeline',c:'can',n:'Claude builds Notion tracker template'}]}},
+];
+
+const PROP_P = [
+  {id:'gv-setup',cat:'property',cl:'Gods Valley // Nehalem OR',title:'Camper Setup',pri:6,eff:'h',time:'2h+',scope:'Set up camper at Gods Valley Road. Power, water, leveling, comfort.',desc:'Track all setup tasks, supply lists, planned work trips.',steps:['List all setup tasks','Requirements before first stay','Schedule first work trip','Gather supplies'],cats:['property'],tools:['Notion','Calendar','Drive'],
+   status:{done:[],wip:[],next:['Walk property and document current state','List all camper setup requirements','Order any needed supplies'],tools_have:['Notion','Google Calendar'],tools_need:['Physical supplies (on-site)'],intent:'Get the Gods Valley property to a comfortable, usable state as fast as possible for trips and eventual improvement work.'},
+   ns:{'30m':[{t:'Brain-dump all setup tasks',c:'can',n:'Claude helps organize by dependency'}],'1h':[{t:'Prioritized list + supply list',c:'can',n:'Claude generates supply list by category'}],'2h':[{t:'Full plan + schedule first trip',c:'assist',n:''}],'deep':[{t:'Complete plan + first trip booked',c:'you',n:'Calendar booking is yours'}]}},
+  {id:'gv-improve',cat:'property',cl:'Gods Valley // Nehalem OR',title:'Property Improvement',pri:5,eff:'h',time:'2h+',scope:'Long-term Gods Valley improvements: clearing, access, structures, utilities.',desc:'Vision and roadmap. Incremental progress each visit.',steps:['Document current state','1yr/5yr goals','Research OR permits','Budget + timeline'],cats:['property'],tools:['Notion','Drive','Photos'],
+   status:{done:[],wip:[],next:['Write 1-page property vision','List 1yr and 5yr goals','Research Tillamook County permit requirements'],tools_have:['Notion','Google Drive','Google Photos'],tools_need:[],intent:'Develop the Nehalem property toward a long-term vision — what does it look like in 5 years?'},
+   ns:{'30m':[{t:'Write 1-page property vision',c:'can',n:'Claude helps articulate and structure'}],'1h':[{t:'Vision + 1yr/5yr goals',c:'can',n:''}],'2h':[{t:'Goals + first project scoped',c:'assist',n:''}],'deep':[{t:'Full phased property plan',c:'can',n:''}]}},
+];
+
+const ALL_P = [...P,...HOME_P,...PROP_P];
+
+// ════════════════════ STATE ════════════════════
+let gF='all', gT='30m';
+
+// ════════════════════ RENDER ════════════════════
+function renderAll(){
+  const fil = gF==='all'?P:P.filter(p=>p.cats.includes(gF));
+  document.getElementById('pgrid').innerHTML=fil.map(cardHTML).join('');
+  document.getElementById('home-grid').innerHTML=HOME_P.map(cardHTML).join('');
+  document.getElementById('property-grid').innerHTML=PROP_P.map(cardHTML).join('');
+  document.getElementById('proj-count').textContent=ALL_P.length;
+}
+
+function cardHTML(p){
+  const eb=p.eff==='h'?'eh">HIGH':p.eff==='m'?'em">MED':'el">LOW';
+  return `<div class="pcard cat-${p.cat}">
+    <div class="pc-cat">${p.cl}</div>
+    <div class="pc-title">${p.title}</div>
+    <div class="pc-scope">${p.scope}</div>
+    ${p.steps.slice(0,3).map(s=>`<div class="pc-step"><div class="pc-bul"></div><div>${s}</div></div>`).join('')}
+    <div class="pc-foot">
+      <span class="eff ${eb} EFFORT</span>
+      <span class="etime">⏱ ${p.time}</span>
+      <button class="btn-sitrep" onclick="event.stopPropagation();openSitrep('${p.id}')">SITREP</button>
+    </div>
+  </div>`;
+}
+
+// ════════════════════ SITREP ════════════════════
+function openSitrep(id){
+  const p=ALL_P.find(x=>x.id===id);
+  if(!p||!p.status)return;
+  const s=p.status;
+  document.getElementById('sitrep-body').innerHTML=`
+    <div class="sr-header">
+      <button class="sr-close" onclick="closeSitrepBtn()">✕</button>
+      <div class="sr-cat">${p.cl.toUpperCase()} // SITREP</div>
+      <div class="sr-title">${p.title}</div>
+    </div>
+    <div class="sr-body">
+      <div class="sr-section">
+        <div class="sr-sec-label">Intent</div>
+        <div class="sr-text">${s.intent}</div>
+      </div>
+      <div class="sr-grid" style="margin-bottom:14px">
+        <div class="sr-box">
+          <div class="sr-box-label">Completed</div>
+          ${s.done.length?s.done.map(d=>`<div class="sr-item"><span class="sr-bullet">✓</span><span class="sr-done">${d}</span></div>`).join(''):'<div style="font-size:11px;color:var(--dim);padding:4px 0">Nothing completed yet</div>'}
+        </div>
+        <div class="sr-box">
+          <div class="sr-box-label">In Progress</div>
+          ${s.wip.length?s.wip.map(w=>`<div class="sr-item"><span class="sr-bullet">◈</span><span>${w}</span></div>`).join(''):'<div style="font-size:11px;color:var(--dim);padding:4px 0">Not started</div>'}
+        </div>
+      </div>
+      <div class="sr-section">
+        <div class="sr-sec-label">Immediate Next Steps</div>
+        ${s.next.map((n,i)=>`<div class="sr-item"><span class="sr-bullet">${String(i+1).padStart(2,'0')}.</span><span>${n}</span></div>`).join('')}
+      </div>
+      <div class="sr-section">
+        <div class="sr-sec-label">Tools</div>
+        <div style="margin-bottom:8px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:1px;margin-bottom:5px;">HAVE</div>
+          <div class="tool-list">${s.tools_have.map(t=>`<span class="tool-tag have">${t}</span>`).join('')}</div>
+        </div>
+        ${s.tools_need.length?`<div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:1px;margin-bottom:5px;">NEED</div><div class="tool-list">${s.tools_need.map(t=>`<span class="tool-tag need">${t}</span>`).join('')}</div></div>`:''}
+      </div>
+    </div>`;
+  document.getElementById('sitrep-overlay').classList.add('show');
+}
+function closeSitrep(e){if(e.target===document.getElementById('sitrep-overlay'))closeSitrepBtn();}
+function closeSitrepBtn(){document.getElementById('sitrep-overlay').classList.remove('show');}
+
+// ════════════════════ FILTER + TIME ════════════════════
+function setF(btn,f){
+  document.querySelectorAll('.bsm:not(.btime)').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');gF=f;renderAll();
+}
+function setT(btn,t){
+  document.querySelectorAll('.btime').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');gT=t;
+}
+
+// ════════════════════ G3 BRIEF ════════════════════
+const WHY=[
+  'High priority — has been idle too long.',
+  'Tier 1 infrastructure — unlocks downstream projects.',
+  'Strong creative momentum available here.',
+  'Low friction entry for tonight.',
+  'Advances a primary mission objective.',
+  'Cross-project leverage — feeds three others.',
+  'Highest output-per-hour ratio in current queue.',
+];
+const CR={can:'CLAUDE LEADS',assist:'CLAUDE ASSISTS',you:'YOU LEAD'};
+const CC={can:'cb-can',assist:'cb-ass',you:'cb-you'};
+const TL={'30m':'30 Minutes','1h':'1 Hour','2h':'2 Hours','deep':'Deep Work'};
+
+function brief(){
+  const pool=gF==='all'?ALL_P:ALL_P.filter(p=>p.cats.includes(gF));
+  const picks=pool.map(p=>({...p,score:p.pri*10+Math.random()*25})).sort((a,b)=>b.score-a.score).slice(0,3);
+  const now=new Date();
+  let canC=0,assC=0,youC=0;
+  picks.forEach(p=>{const st=(p.ns&&p.ns[gT])||[];st.forEach(s=>{if(s.c==='can')canC++;else if(s.c==='assist')assC++;else youC++;});});
+  const total=canC+assC+youC;
+
+  let h=`
+  <div class="brief-sec">
+    <div class="bsec-hdr" onclick="tog(this)"><span>▸ SITUATION</span><span style="font-size:8px">${now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</span></div>
+    <div class="bsec-body">
+      <div class="sit-box">
+        <div class="sit-lbl">SESSION // ${TL[gT].toUpperCase()} // ${gF==='all'?'ALL CATEGORIES':gF.toUpperCase()}</div>
+        <div class="sit-txt">3 mission recommendations for tonight. Each step is labeled by who leads — Claude or you. Read, choose 1–3, execute. Log closeout after.</div>
+      </div>
+    </div>
+  </div>
+  <div class="brief-sec">
+    <div class="bsec-hdr" onclick="tog(this)"><span>▸ WORKLOAD</span></div>
+    <div class="bsec-body">
+      <div class="wl-grid">
+        <div class="wl-b"><div class="wl-lbl">Projects</div><div class="wl-v" style="color:var(--gold)">${picks.length}</div><div class="wl-s">tonight</div></div>
+        <div class="wl-b"><div class="wl-lbl">Total Steps</div><div class="wl-v" style="color:var(--blue)">${total}</div><div class="wl-s">across picks</div></div>
+        <div class="wl-b"><div class="wl-lbl">Claude Leads</div><div class="wl-v" style="color:var(--green)">${canC}</div><div class="wl-s">steps</div></div>
+        <div class="wl-b"><div class="wl-lbl">Your Hands</div><div class="wl-v" style="color:var(--orange)">${youC}</div><div class="wl-s">steps</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="brief-sec">
+    <div class="bsec-hdr" onclick="tog(this)"><span>▸ RECOMMENDATIONS</span></div>
+    <div class="bsec-body">`;
+
+  picks.forEach((p,i)=>{
+    const steps=(p.ns&&p.ns[gT])||(p.ns&&p.ns['1h'])||p.steps.map(t=>({t,c:'assist',n:''}));
+    h+=`<div class="pick-card" onclick="openSitrep('${p.id}')">
+      <div class="pick-hdr">
+        <div class="pick-rank r${i+1}">${i+1}</div>
+        <div class="pick-inf">
+          <div class="pick-cat" style="color:${['var(--gold)','var(--blue)','var(--pink)'][i]}">${p.cl.toUpperCase()}</div>
+          <div class="pick-name">${p.title}</div>
+          <div class="pick-why">${WHY[Math.floor(Math.random()*WHY.length)]} Pri ${p.pri}/10.</div>
+        </div>
+      </div>
+      <div class="pick-body">
+        <div class="pick-sl">STEPS FOR ${TL[gT].toUpperCase()}</div>
+        ${steps.map((s,si)=>`<div class="step-row"><div class="step-n">${String(si+1).padStart(2,'0')}.</div><div class="step-c"><div class="step-t">${s.t}</div><div class="step-cl"><span class="cbadge ${CC[s.c]}">${CR[s.c]}</span>${s.n?`<span class="cnote">${s.n}</span>`:''}</div></div></div>`).join('')}
+      </div>
+    </div>`;
+  });
+
+  h+=`</div></div>
+  <div class="brief-sec">
+    <div class="bsec-hdr" onclick="tog(this)"><span>▸ CLOSEOUT PROTOCOL</span></div>
+    <div class="bsec-body">
+      <div class="step-row"><div class="step-n">01.</div><div class="step-c"><div class="step-t">Write 3–5 sentence session summary</div><div class="step-cl"><span class="cbadge cb-can">CLAUDE LEADS</span><span class="cnote">Tell me what you did — I'll write the Notion entry</span></div></div></div>
+      <div class="step-row"><div class="step-n">02.</div><div class="step-c"><div class="step-t">Mark Calendar event complete + set next session</div><div class="step-cl"><span class="cbadge cb-ass">CLAUDE ASSISTS</span></div></div></div>
+      <div class="step-row"><div class="step-n">03.</div><div class="step-c"><div class="step-t">Save produced files to Drive project folder</div><div class="step-cl"><span class="cbadge cb-you">YOU LEAD</span></div></div></div>
+    </div>
+  </div>`;
+
+  document.getElementById('g3out').innerHTML=h;
+  document.querySelectorAll('.bsec-body').forEach(b=>b.style.display='block');
+}
+
+function tog(hdr){const b=hdr.nextElementSibling;b.style.display=b.style.display==='none'?'block':'none';}
+
+// ════════════════════ DETAIL MODAL ════════════════════
+function openModal(id){
+  const p=ALL_P.find(x=>x.id===id);if(!p)return;
+  const steps=(p.ns&&p.ns[gT])||(p.ns&&p.ns['1h'])||p.steps.map(t=>({t,c:'assist',n:''}));
+  document.getElementById('mbody').innerHTML=`
+    <div class="mcat">${p.cl.toUpperCase()}</div>
+    <div class="mtitle">${p.title}</div>
+    <div class="msec"><div class="mseclbl">Scope</div><div class="mtext">${p.desc}</div></div>
+    <div class="msec"><div class="mseclbl">Steps for ${gT}</div>${steps.map((s,i)=>`<div class="mstep"><span class="msn">${String(i+1).padStart(2,'0')}.</span><div><div>${s.t}</div>${s.n?`<div style="font-size:10px;color:var(--dim);margin-top:2px;font-style:italic">${s.n}</div>`:''}</div></div>`).join('')}</div>
+    <div class="msec"><div class="mseclbl">All Next Steps</div>${p.steps.map((s,i)=>`<div class="mstep"><span class="msn">${String(i+1).padStart(2,'0')}.</span><span>${s}</span></div>`).join('')}</div>
+    ${p.tools?`<div class="msec"><div class="mseclbl">Tools</div><div class="mtags">${p.tools.map(t=>`<span class="mtag">${t}</span>`).join('')}</div></div>`:''}`;
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(e){if(e.target===document.getElementById('modal'))closeModalBtn();}
+function closeModalBtn(){document.getElementById('modal').classList.remove('show');}
+
+// ════════════════════ TABS ════════════════════
+const TN=['projects','ecosystem','claude','calendar','finances','home','infra'];
+function sw(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',TN[i]===n));
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+n).classList.add('active');
+}
+
+// ════════════════════ THEME ════════════════════
+function toggleTheme(){
+  const d=document.documentElement;
+  const isDark=d.getAttribute('data-theme')==='dark';
+  d.setAttribute('data-theme',isDark?'light':'dark');
+  document.getElementById('theme-icon').textContent=isDark?'🌙':'☀️';
+  document.getElementById('theme-label').textContent=isDark?'DARK':'LIGHT';
+  localStorage.setItem('toc-theme',isDark?'light':'dark');
+}
+// Restore saved theme
+const saved=localStorage.getItem('toc-theme');
+if(saved){
+  document.documentElement.setAttribute('data-theme',saved);
+  document.getElementById('theme-icon').textContent=saved==='light'?'🌙':'☀️';
+  document.getElementById('theme-label').textContent=saved==='light'?'DARK':'LIGHT';
+}
+
+// ════════════════════ CLOCK ════════════════════
+setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit'});},1000);
+
+renderAll();
+</script>
+</body>
+</html>

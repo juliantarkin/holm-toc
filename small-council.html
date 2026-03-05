@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Small Council // TOC</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+[data-theme="dark"]{
+  --bg:#080608;--surface:#100e14;--s2:#181520;--s3:#201c2c;
+  --border:#2e2840;--b2:#453e60;
+  --text:#ccc8dc;--dim:#5a5470;--bright:#f0ecff;--inv:#080608;
+  --shadow:rgba(0,0,0,.7);
+  --gold:#d4a827;--gold2:#f0c840;--gold-glow:rgba(212,168,39,.25);
+  --red:#c84040;--blue:#5878d4;--green:#48a878;--purple:#9060d8;
+  --silver:#9098b8;--bronze:#a87848;--teal:#3898a8;--rose:#c85878;
+  --cream:#e8dfc8;
+}
+[data-theme="light"]{
+  --bg:#f5f2ec;--surface:#fff;--s2:#f8f5ee;--s3:#ede8dc;
+  --border:#d4cdb8;--b2:#b8ae98;
+  --text:#2a2418;--dim:#8a7e68;--bright:#100800;--inv:#fff;
+  --shadow:rgba(0,0,0,.1);
+  --gold:#8a6800;--gold2:#b08000;--gold-glow:rgba(138,104,0,.15);
+  --red:#881818;--blue:#1830a0;--green:#186840;--purple:#5020a0;
+  --silver:#505870;--bronze:#704820;--teal:#086878;--rose:#881838;
+  --cream:#f0e8d0;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow-x:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh;transition:background .25s,color .25s;}
+
+/* PARCHMENT TEXTURE */
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 80% 60% at 15% 20%,rgba(212,168,39,.03),transparent 55%),
+  radial-gradient(ellipse 60% 80% at 85% 80%,rgba(144,96,216,.04),transparent 55%),
+  radial-gradient(ellipse 100% 50% at 50% 50%,rgba(200,64,64,.02),transparent 70%);
+  pointer-events:none;z-index:0;}
+[data-theme="light"] body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 80% 60% at 15% 20%,rgba(212,168,39,.06),transparent 55%);
+  pointer-events:none;z-index:0;}
+
+/* HEADER */
+.council-header{position:relative;z-index:10;text-align:center;padding:40px 20px 24px;border-bottom:1px solid var(--border);}
+[data-theme="dark"] .council-header::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.ch-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:5px;color:var(--dim);text-transform:uppercase;margin-bottom:10px;}
+.ch-title{font-family:'Cinzel',serif;font-size:36px;letter-spacing:6px;color:var(--gold2);margin-bottom:6px;line-height:1.1;}
+[data-theme="dark"] .ch-title{text-shadow:0 0 40px var(--gold-glow),0 0 80px rgba(212,168,39,.1);}
+.ch-sub{font-size:15px;color:var(--dim);font-style:italic;letter-spacing:1px;}
+.hdr-controls{position:absolute;top:20px;right:20px;display:flex;gap:8px;}
+.ctrl-btn{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:5px 10px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;border-radius:1px;transition:all .15s;letter-spacing:1px;}
+.ctrl-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* COMMANDER BANNER */
+.commander{position:relative;z-index:5;margin:24px auto;max-width:700px;padding:0 20px;}
+.cmd-card{background:var(--surface);border:1px solid var(--gold);border-radius:3px;padding:20px 24px;text-align:center;position:relative;overflow:hidden;}
+[data-theme="dark"] .cmd-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(212,168,39,.04),transparent 50%,rgba(212,168,39,.02));pointer-events:none;}
+.cmd-rank{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:4px;text-transform:uppercase;margin-bottom:6px;}
+.cmd-name{font-family:'Cinzel',serif;font-size:26px;letter-spacing:4px;color:var(--bright);}
+.cmd-title{font-size:14px;color:var(--dim);font-style:italic;margin-top:4px;}
+.cmd-desc{font-size:13px;color:var(--text);line-height:1.7;margin-top:12px;max-width:480px;margin-left:auto;margin-right:auto;}
+.cmd-seal{font-size:32px;margin-bottom:8px;}
+
+/* COUNCIL GRID */
+.council-wrap{position:relative;z-index:5;max-width:1100px;margin:0 auto;padding:20px;}
+.council-section-label{font-family:'Cinzel',serif;font-size:13px;letter-spacing:4px;color:var(--gold);text-align:center;margin:28px 0 16px;display:flex;align-items:center;gap:14px;}
+.council-section-label::before,.council-section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border));}
+.council-section-label::after{background:linear-gradient(270deg,transparent,var(--border));}
+
+.council-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px;}
+.council-grid.featured{grid-template-columns:repeat(auto-fill,minmax(340px,1fr));}
+
+/* COUNCIL MEMBER CARD */
+.member-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;transition:all .2s;cursor:pointer;position:relative;}
+.member-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.member-card:hover{transform:translateY(-3px);box-shadow:0 8px 32px var(--shadow);}
+.mc-chief::before{background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.mc-chief{border-color:var(--gold);}
+.mc-ops::before{background:linear-gradient(90deg,var(--red),#e05858);}
+.mc-seneschal::before{background:linear-gradient(90deg,var(--silver),#b8c0d8);}
+.mc-librarian::before{background:linear-gradient(90deg,var(--bronze),#d0a060);}
+.mc-archivist::before{background:linear-gradient(90deg,var(--teal),#60b8c8);}
+.mc-agent::before{background:linear-gradient(90deg,var(--rose),#e07898);}
+.mc-wargamer::before{background:linear-gradient(90deg,var(--blue),#7898e8);}
+.mc-dungeon::before{background:linear-gradient(90deg,var(--green),#68c898);}
+.mc-designer::before{background:linear-gradient(90deg,var(--purple),#b080f8);}
+.mc-herald::before{background:linear-gradient(90deg,var(--gold),var(--teal));}
+
+/* CARD HEADER */
+.mc-header{padding:16px 18px 12px;display:flex;gap:14px;align-items:flex-start;}
+.mc-sigil{font-size:32px;flex-shrink:0;width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:var(--s2);border:1px solid var(--border);border-radius:2px;}
+.mc-ident{flex:1;}
+.mc-role{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-bottom:3px;}
+.mc-chief .mc-role{color:var(--gold);}
+.mc-ops .mc-role{color:var(--red);}
+.mc-seneschal .mc-role{color:var(--silver);}
+.mc-librarian .mc-role{color:var(--bronze);}
+.mc-archivist .mc-role{color:var(--teal);}
+.mc-agent .mc-role{color:var(--rose);}
+.mc-wargamer .mc-role{color:var(--blue);}
+.mc-dungeon .mc-role{color:var(--green);}
+.mc-designer .mc-role{color:var(--purple);}
+.mc-herald .mc-role{color:var(--gold);}
+.mc-name{font-family:'Cinzel',serif;font-size:19px;letter-spacing:2px;color:var(--bright);line-height:1.1;}
+.mc-title{font-size:12px;color:var(--dim);font-style:italic;margin-top:2px;}
+.mc-instance{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border-radius:12px;border:1px solid;margin-top:6px;display:inline-block;letter-spacing:1px;}
+.inst-claudio{color:#4fc3f7;border-color:rgba(79,195,247,.3);background:rgba(79,195,247,.05);}
+.inst-claudius{color:#b39ddb;border-color:rgba(179,157,219,.3);background:rgba(179,157,219,.05);}
+.inst-mobile{color:#69f0ae;border-color:rgba(105,240,174,.3);background:rgba(105,240,174,.05);}
+.inst-clodius{color:#ffab40;border-color:rgba(255,171,64,.3);background:rgba(255,171,64,.05);}
+.inst-web{color:var(--gold);border-color:rgba(212,168,39,.3);background:rgba(212,168,39,.05);}
+
+/* CARD BODY */
+.mc-body{padding:0 18px 16px;}
+.mc-mandate{font-size:13px;color:var(--text);line-height:1.8;margin-bottom:12px;border-top:1px solid var(--border);padding-top:12px;}
+.mc-domain-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:6px;}
+.mc-domains{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;}
+.domain-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border:1px solid var(--border);border-radius:1px;color:var(--dim);}
+.mc-workflow-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:6px;}
+.mc-workflow{display:flex;flex-direction:column;gap:4px;}
+.wf-step{display:flex;gap:8px;font-size:12px;color:var(--text);padding:4px 0;border-bottom:1px solid var(--border);}
+.wf-step:last-child{border-bottom:none;}
+.wf-n{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);min-width:18px;flex-shrink:0;padding-top:1px;}
+.wf-t{flex:1;line-height:1.5;}
+.wf-who{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 5px;border-radius:1px;border:1px solid;flex-shrink:0;margin-top:2px;height:fit-content;}
+.ww-c{color:var(--green);border-color:rgba(72,168,120,.3);}
+.ww-y{color:var(--bronze);border-color:rgba(168,120,72,.3);}
+.ww-a{color:var(--blue);border-color:rgba(88,120,212,.3);}
+
+/* TRIGGER PHRASES */
+.mc-triggers{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.trigger-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:5px;}
+.trigger-list{display:flex;flex-direction:column;gap:3px;}
+.trigger-phrase{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--bright);background:var(--s2);padding:4px 8px;border-radius:1px;border-left:2px solid var(--border);}
+.mc-chief .trigger-phrase{border-left-color:var(--gold);}
+.mc-ops .trigger-phrase{border-left-color:var(--red);}
+.mc-seneschal .trigger-phrase{border-left-color:var(--silver);}
+.mc-librarian .trigger-phrase{border-left-color:var(--bronze);}
+.mc-archivist .trigger-phrase{border-left-color:var(--teal);}
+.mc-agent .trigger-phrase{border-left-color:var(--rose);}
+.mc-wargamer .trigger-phrase{border-left-color:var(--blue);}
+.mc-dungeon .trigger-phrase{border-left-color:var(--green);}
+.mc-designer .trigger-phrase{border-left-color:var(--purple);}
+.mc-herald .trigger-phrase{border-left-color:var(--gold);}
+
+/* DETAIL OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;align-items:flex-start;justify-content:center;padding:20px;backdrop-filter:blur(6px);overflow-y:auto;}
+.overlay.show{display:flex;}
+.detail-modal{background:var(--surface);border:1px solid var(--border);border-radius:3px;max-width:640px;width:100%;margin-top:20px;position:relative;overflow:hidden;}
+.dm-top{padding:24px 24px 18px;border-bottom:1px solid var(--border);}
+.dm-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;font-family:'Cinzel',serif;line-height:1;}
+.dm-role{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--dim);margin-bottom:6px;}
+.dm-name{font-family:'Cinzel',serif;font-size:30px;letter-spacing:3px;color:var(--bright);margin-bottom:4px;}
+.dm-subtitle{font-size:14px;color:var(--dim);font-style:italic;}
+.dm-body{padding:20px 24px;max-height:60vh;overflow-y:auto;}
+.dm-section{margin-bottom:18px;}
+.dm-sec-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:10px;}
+.dm-text{font-size:14px;color:var(--text);line-height:1.8;}
+.dm-step{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.dm-step:last-child{border-bottom:none;}
+.dm-n{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--gold);min-width:22px;padding-top:2px;}
+.dm-t{flex:1;color:var(--text);line-height:1.6;}
+.dm-note{font-size:11px;color:var(--dim);margin-top:3px;font-style:italic;}
+
+/* RELATIONSHIP MAP */
+.rel-map{background:var(--s2);border:1px solid var(--border);border-radius:2px;padding:14px;margin-top:12px;}
+.rm-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;}
+.rm-row{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.rm-row:last-child{border-bottom:none;}
+.rm-name{min-width:110px;font-family:'Cinzel',serif;font-size:12px;color:var(--bright);}
+.rm-rel{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border-radius:1px;border:1px solid;flex-shrink:0;}
+.rm-desc{color:var(--dim);flex:1;}
+
+/* FOOTER */
+.council-footer{position:relative;z-index:5;text-align:center;padding:24px;border-top:1px solid var(--border);margin-top:12px;}
+.cf-text{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:2px;line-height:1.8;}
+</style>
+</head>
+<body>
+
+<div class="council-header">
+  <div class="hdr-controls">
+    <button class="ctrl-btn" onclick="toggleTheme()">☀/🌙</button>
+  </div>
+  <div class="ch-eyebrow">The Tactical Operations Center</div>
+  <div class="ch-title">The Small Council</div>
+  <div class="ch-sub">Roles, domains, and mandates of the staff</div>
+</div>
+
+<!-- COMMANDER -->
+<div class="commander">
+  <div class="cmd-card">
+    <div class="cmd-seal">⚔</div>
+    <div class="cmd-rank">Commander // 7th Infantry Division (MDC-P)</div>
+    <div class="cmd-name">LTC Jamie Holm</div>
+    <div class="cmd-title">Director of Plans — Commander of the TOC</div>
+    <div class="cmd-desc">Sets priorities. Makes decisions. Provides intent. The council advises, executes, and maintains — but all authority flows from here. The commander's job is to <em>command</em>, not to manage. The staff manages.</div>
+  </div>
+</div>
+
+<div class="council-wrap">
+
+  <!-- SENIOR STAFF -->
+  <div class="council-section-label">Senior Staff</div>
+  <div class="council-grid featured">
+
+    <!-- CHIEF OF STAFF -->
+    <div class="member-card mc-chief" onclick="openDetail('cos')">
+      <div class="mc-header">
+        <div class="mc-sigil">🏛</div>
+        <div class="mc-ident">
+          <div class="mc-role">Chief of Staff // XO</div>
+          <div class="mc-name">The Architect</div>
+          <div class="mc-title">"What's next, and are we ready for it?"</div>
+          <span class="mc-instance inst-web">Claude (web) — this instance</span>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-mandate">Owns the staff, the timeline, and priorities. Runs the weekly Battle Captain review. Knows every project's status without being asked. Integrates across all domains. Anticipates problems before the commander sees them. When you sit down and say "where are we" — this is who answers.</div>
+        <div class="mc-domain-label">Domains</div>
+        <div class="mc-domains">
+          <span class="domain-tag">Project Priority</span><span class="domain-tag">Staff Integration</span><span class="domain-tag">Timeline</span><span class="domain-tag">Sitrep</span><span class="domain-tag">Cross-domain Sync</span><span class="domain-tag">Session Closeout</span>
+        </div>
+        <div class="mc-triggers">
+          <div class="trigger-label">Activate with</div>
+          <div class="trigger-list">
+            <div class="trigger-phrase">"Sitrep." / "Where are we."</div>
+            <div class="trigger-phrase">"What should I work on tonight?"</div>
+            <div class="trigger-phrase">"Run the weekly review."</div>
+            <div class="trigger-phrase">"Brief the staff."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3 OPERATIONS -->
+    <div class="member-card mc-ops" onclick="openDetail('s3')">
+      <div class="mc-header">
+        <div class="mc-sigil">⚡</div>
+        <div class="mc-ident">
+          <div class="mc-role">S3 // Operations Officer</div>
+          <div class="mc-name">The Operator</div>
+          <div class="mc-title">"What are we doing tonight, and how?"</div>
+          <span class="mc-instance inst-web">Claude (web) — G3 brief mode</span>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-mandate">Translates priorities into executable missions. Runs the G3 brief. Scores projects, picks tonight's targets, breaks them into time-bracketed steps, labels who leads each one. The Architect sets the week. The Operator runs the night. Same instance, different mode — "issue the brief" is the switch.</div>
+        <div class="mc-domain-label">Domains</div>
+        <div class="mc-domains">
+          <span class="domain-tag">G3 Brief</span><span class="domain-tag">Session Planning</span><span class="domain-tag">Step Sequencing</span><span class="domain-tag">Time Management</span><span class="domain-tag">Claude vs. You</span>
+        </div>
+        <div class="mc-triggers">
+          <div class="trigger-label">Activate with</div>
+          <div class="trigger-list">
+            <div class="trigger-phrase">"Issue the brief."</div>
+            <div class="trigger-phrase">"What are we doing tonight?"</div>
+            <div class="trigger-phrase">"I have 90 minutes. Go."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- HOUSEHOLD STAFF -->
+  <div class="council-section-label">The Household</div>
+  <div class="council-grid">
+
+    <!-- SENESCHAL -->
+    <div class="member-card mc-seneschal" onclick="openDetail('seneschal')">
+      <div class="mc-header">
+        <div class="mc-sigil">🗝</div>
+        <div class="mc-ident">
+          <div class="mc-role">Seneschal</div>
+          <div class="mc-name">The Keeper</div>
+          <div class="mc-title">"The house is in order."</div>
+          <span class="mc-instance inst-claudio">Claudio — Browser + Drive</span>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-mandate">Manages the household. Critical documents, personal tasks, calendar, finance, correspondence inbox, property records. If it's life admin — it's The Keeper. Knows where everything is. Alerts before things expire or go overdue. Never misfiles anything.</div>
+        <div class="mc-domains">
+          <span class="domain-tag">Critical Documents</span><span class="domain-tag">Personal Tasks</span><span class="domain-tag">Finance/Admin</span><span class="domain-tag">Calendar</span><span class="domain-tag">Property Records</span>
+        </div>
+        <div class="mc-triggers">
+          <div class="trigger-label">Activate with</div>
+          <div class="trigger-list">
+            <div class="trigger-phrase">"Where is my [document]?"</div>
+            <div class="trigger-phrase">"What's due this week?"</div>
+            <div class="trigger-phrase">"Run the monthly finance hygiene."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERALD -->
+    <div class="member-card mc-herald" onclick="openDetail('herald')">
+      <div class="mc-header">
+        <div class="mc-sigil">✉</div>
+        <div class="mc-ident">
+          <div class="mc-role">Herald</div>
+          <div class="mc-name">The Herald</div>
+          <div class="mc-title">"Your words, carried well."</div>
+          <span class="mc-instance inst-clodius">Clodius — n8n + Gmail API</span>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-mandate">Manages all correspondence. Monitors the inbox, triages by priority, drafts responses, surfaces recommended outreach. Knows who you haven't talked to in too long and why that matters. Never sends without approval — always prepares, never presumes. The voice of the household to the outside world.</div>
+        <div class="mc-domains">
+          <span class="domain-tag">Email Inbox</span><span class="domain-tag">Draft Responses</span><span class="domain-tag">Engagement Tracking</span><span class="domain-tag">Outreach Calendar</span><span class="domain-tag">Professional Comms</span>
+        </div>
+        <div class="mc-triggers">
+          <div class="trigger-label">Activate with</div>
+          <div class="trigger-list">
+            <div class="trigger-phrase">"What correspondence needs attention?"</div>
+            <div class="trigger-phrase">"Who should I reach out to this week?"</div>
+            <div class="trigger-phrase">"Draft a message to [person]."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- KNOWLEDGE STAFF -->
+  <div class="council-section-label">The Knowledge Staff</div>
+  <div class="council-grid">
+
+    <!-- LIBRARIAN -->
+    <div class="member-card mc-librarian" onclick="openDetail('librarian')">
+      <div class="mc-header">
+        <div class="mc-sigil">📚</div>
+        <div class="mc-ident">
+          <div class="mc-role">Librarian</div>
+          <div class="mc-name">The Librarian</div>
+          <div class="mc-title">"I know what you need before you ask."</div>
+          <span class="mc-instance inst-claudius">Claudius — Local + Drive + Notion</span>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-mandate">Master of the collection. Physical books, digital texts, Drive documents — all indexed, categorized, and mapped to projects. Ask what to read before starting any project and The Librarian produces a ranked reading list in seconds. Also stewards the Essay Registry: topics, drafts, and publication targets.</div>
+        <div class="mc-domains">
+          <span class="domain-tag">Book Index</span><span class="domain-tag">Drive Document Map</span><span class="domain-tag">Essay Registry</span><span class="domain-tag">Research Queries</span><span class="domain-tag">Reading Lists</span>
+        </div>
+        <div class="mc-triggers">
+          <div class="trigger-label">Activate with</div>
+          <div class="trigger-list">
+            <div class="trigger-phrase">"What should I read for [project]?"</div>
+            <div class="trigger-phrase">"What essays do I have in progress?"</div>
+            <div class="trigger-phrase">"Find me everything on [topic]."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARCHIVIST -->
+    <div class="member-card mc-archivist" onclick="openDetail('archivist')">
+      <div class="mc-header">
+        <div class="mc-sigil">🏺</div>
+        <div class="mc-ident">
+          <div class="mc-role">Archivist</div>
+          <div class="mc-name">The Archivist</div>
+          <div class="mc-title">"Nothing is lost. Everything is findable."</div>
+          <span class="mc-instance inst-claudius">Claudius — Local + Drive + Notion</span>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-mandate">Keeper of memory. The journal, the autobiography database, the photo archive, the session logs. Parses journal entries, extracts tasks and memories, tags everything. The Archivist is how the past becomes useful instead of just accumulated. When you want to write your life — this is where you start.</div>
+        <div class="mc-domains">
+          <span class="domain-tag">Journal Parse</span><span class="domain-tag">Autobiography DB</span><span class="domain-tag">Photo Archive</span><span class="domain-tag">Session Logs</span><span class="domain-tag">Memory Tagging</span>
+        </div>
+        <div class="mc-triggers">
+          <div class="trigger-label">Activate with</div>
+          <div class="trigger-list">
+            <div class="trigger-phrase">"Parse this week's journal."</div>
+            <div class="trigger-phrase">"Log that as a memory."</div>
+            <div class="trigger-phrase">"Pull everything tagged [person/place/era]."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LITERARY AGENT -->
+    <div class="member-card mc-agent" onclick="openDetail('agent')">
+      <div class="mc-header">
+        <div class="mc-sigil">🖊</div>
+        <div class="mc-ident">
+          <div class="mc-role">Literary Agent</div>
+          <div class="mc-name">The Agent</div>
+          <div class="mc-title">"Your ideas deserve an audience."</div>
+          <span class="mc-instance inst-web">Claude (web) — writing sessions</span>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-mandate">Turns raw ideas into publishable work. Essays, articles, AUSA submissions, the Atreal novel, autobiographical writing. Knows the difference between a first draft and a finished piece. Knows which venues want what. Knows your voice well enough to write in it. The Librarian finds the sources. The Agent does something with them.</div>
+        <div class="mc-domains">
+          <span class="domain-tag">Essay Drafting</span><span class="domain-tag">Article Structure</span><span class="domain-tag">Novel Drafts</span><span class="domain-tag">AUSA Submissions</span><span class="domain-tag">Voice Matching</span>
+        </div>
+        <div class="mc-triggers">
+          <div class="trigger-label">Activate with</div>
+          <div class="trigger-list">
+            <div class="trigger-phrase">"Let's work on the Gordion Knot piece."</div>
+            <div class="trigger-phrase">"Outline the Misfits essay."</div>
+            <div class="trigger-phrase">"I want to write a scene for Atreal."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CREATIVE STAFF -->
+  <div class="council-section-label">The Creative Staff</div>
+  <div class="council-grid">
+
+    <!-- WARGAME MASTER -->
+    <div class="member-card mc-wargamer" onclick="openDetail('wargamer')">
+      <div class="mc-header">
+        <div class="mc-sigil">🎲</div>
+        <div class="mc-ident">
+          <div class="mc-role">Wargame Master</div>
+          <div class="mc-name">The Strategist</div>
+          <div class="mc-title">"The game is the lesson."</div>
+          <span class="mc-instance inst-web">Claude (web) + Clodius (AI GM)</span>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-mandate">Runs all tabletop operations. 5 Parsecs campaigns, Star Wars ship combat, Battletech, any system. Designs the AI GM architecture, manages the multi-agent pipeline, writes game configs, runs combat resolution, voices NPCs. Also designs new systems — the SW ship combat game is a live project. Has a deep respect for rules and a deeper respect for good narrative.</div>
+        <div class="mc-domains">
+          <span class="domain-tag">5 Parsecs</span><span class="domain-tag">SW Ship Combat</span><span class="domain-tag">AI GM System</span><span class="domain-tag">Campaign Management</span><span class="domain-tag">Rule Design</span><span class="domain-tag">NPC Voices</span>
+        </div>
+        <div class="mc-triggers">
+          <div class="trigger-label">Activate with</div>
+          <div class="trigger-list">
+            <div class="trigger-phrase">"Run a 5 Parsecs encounter."</div>
+            <div class="trigger-phrase">"We need to design the ship combat rules."</div>
+            <div class="trigger-phrase">"What happened last session in the campaign?"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DUNGEON MASTER -->
+    <div class="member-card mc-dungeon" onclick="openDetail('dungeon')">
+      <div class="mc-header">
+        <div class="mc-sigil">🐉</div>
+        <div class="mc-ident">
+          <div class="mc-role">Dungeon Master</div>
+          <div class="mc-name">The Storyteller</div>
+          <div class="mc-title">"The world breathes because I will it."</div>
+          <span class="mc-instance inst-web">Claude (web) + Clodius (NPCs)</span>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-mandate">Master of the Aedaeion universe and all its inhabitants. Builds the world, runs the characters, drives the narrative of RPG sessions. Distinct from the Wargame Master in that The Storyteller prioritizes fiction over mechanics — the world is the point, the rules are in service of it. Owns the character database and the lore canon.</div>
+        <div class="mc-domains">
+          <span class="domain-tag">Aedaeion Lore</span><span class="domain-tag">RPG Sessions</span><span class="domain-tag">Character DB</span><span class="domain-tag">World Building</span><span class="domain-tag">NPC Personality</span><span class="domain-tag">Narrative</span>
+        </div>
+        <div class="mc-triggers">
+          <div class="trigger-label">Activate with</div>
+          <div class="trigger-list">
+            <div class="trigger-phrase">"Let's play. Set the scene."</div>
+            <div class="trigger-phrase">"Tell me about [character / location]."</div>
+            <div class="trigger-phrase">"I want to develop the Void Magister."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UNREAL DESIGNER -->
+    <div class="member-card mc-designer" onclick="openDetail('designer')">
+      <div class="mc-header">
+        <div class="mc-sigil">🎮</div>
+        <div class="mc-ident">
+          <div class="mc-role">Game Designer // Unreal</div>
+          <div class="mc-name">The Artificer</div>
+          <div class="mc-title">"Build the thing. Then build it better."</div>
+          <span class="mc-instance inst-claudius">Claudius — Local + UE5 + Blender</span>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-mandate">The technical creative. Owns all Unreal Engine and Blender work — TIE Academy, Overcast Studios titles, MetaHuman pipeline, clothing systems, material design. Writes Blueprint logic, diagnoses crashes, designs ship system nodes, manages the UE5 skill tree. The most hands-on member of the council — works in the files, not just about the files.</div>
+        <div class="mc-domains">
+          <span class="domain-tag">TIE Academy</span><span class="domain-tag">UE5 Blueprints</span><span class="domain-tag">Blender Pipeline</span><span class="domain-tag">MetaHuman</span><span class="domain-tag">Material Design</span><span class="domain-tag">Overcast Studios</span>
+        </div>
+        <div class="mc-triggers">
+          <div class="trigger-label">Activate with</div>
+          <div class="trigger-list">
+            <div class="trigger-phrase">"The TIE cockpit material is broken."</div>
+            <div class="trigger-phrase">"I need a Blueprint for [system]."</div>
+            <div class="trigger-phrase">"Clothing LOD is wrong again."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RELATIONSHIPS MAP -->
+  <div class="council-section-label">How the Staff Works Together</div>
+  <div style="max-width:700px;margin:0 auto 30px;">
+    <div class="rel-map">
+      <div class="rm-title">Command Relationships</div>
+      <div class="rm-row"><div class="rm-name">Architect → Operator</div><span class="rm-rel" style="color:var(--gold);border-color:rgba(212,168,39,.3)">same instance, mode shift</span><div class="rm-desc">Week-level strategy becomes night-level execution. "Sitrep" → "Issue the brief."</div></div>
+      <div class="rm-row"><div class="rm-name">Architect → All Staff</div><span class="rm-rel" style="color:var(--red);border-color:rgba(200,64,64,.3)">coordinates</span><div class="rm-desc">Sunday review. Architect reads all Notion logs, identifies conflicts, updates priorities, briefs commander.</div></div>
+      <div class="rm-row"><div class="rm-name">Librarian → Agent</div><span class="rm-rel" style="color:var(--bronze);border-color:rgba(168,120,72,.3)">feeds</span><div class="rm-desc">Librarian surfaces sources. Agent uses them. Same session often — Librarian first, then Agent.</div></div>
+      <div class="rm-row"><div class="rm-name">Archivist → Agent</div><span class="rm-rel" style="color:var(--teal);border-color:rgba(56,152,168,.3)">feeds</span><div class="rm-desc">Archivist mines journal and memory DB for material. Agent shapes it into publishable writing.</div></div>
+      <div class="rm-row"><div class="rm-name">Keeper → Herald</div><span class="rm-rel" style="color:var(--silver);border-color:rgba(144,152,184,.3)">coordinates</span><div class="rm-desc">Keeper manages task list. Herald manages correspondence. Both feed personal tasks queue in sitrep.</div></div>
+      <div class="rm-row"><div class="rm-name">Storyteller → Strategist</div><span class="rm-rel" style="color:var(--green);border-color:rgba(72,168,120,.3)">parallel</span><div class="rm-desc">Storyteller owns narrative. Strategist owns mechanics. Same campaign, different hats. Both report to commander.</div></div>
+      <div class="rm-row"><div class="rm-name">Artificer → Storyteller</div><span class="rm-rel" style="color:var(--purple);border-color:rgba(144,96,216,.3)">builds for</span><div class="rm-desc">TIE Academy is the Artificer's domain. The lore that lives in it belongs to the Storyteller. Design serves fiction.</div></div>
+      <div class="rm-row"><div class="rm-name">Clodius (API) → All</div><span class="rm-rel" style="color:var(--gold);border-color:rgba(212,168,39,.3)">executes</span><div class="rm-desc">Clodius runs the automation that all other staff members design. n8n workflows, API calls, scheduled tasks.</div></div>
+    </div>
+
+    <div class="rel-map" style="margin-top:12px;">
+      <div class="rm-title">Instance Assignment</div>
+      <div class="rm-row"><div class="rm-name" style="color:#d4a827">Claude (web)</div><span class="rm-rel" style="color:var(--gold);border-color:rgba(212,168,39,.3)">this session</span><div class="rm-desc">Architect, Operator, Agent. Strategy, briefs, writing. Has Drive + Notion + Calendar.</div></div>
+      <div class="rm-row"><div class="rm-name" style="color:#5878d4">Claudio</div><span class="rm-rel" style="color:var(--blue);border-color:rgba(88,120,212,.3)">browser</span><div class="rm-desc">Keeper, Herald (browser side). Drive, Gmail, Notion, Calendar. Web research, document access.</div></div>
+      <div class="rm-row"><div class="rm-name" style="color:#9060d8">Claudius</div><span class="rm-rel" style="color:var(--purple);border-color:rgba(144,96,216,.3)">desktop</span><div class="rm-desc">Artificer, Librarian, Archivist. Local files, UE5, Blender, Obsidian, full Notion. GitHub repo. Deep work.</div></div>
+      <div class="rm-row"><div class="rm-name" style="color:#48a878">Claude Mobile</div><span class="rm-rel" style="color:var(--green);border-color:rgba(72,168,120,.3)">phone</span><div class="rm-desc">Archivist (capture mode). Journal entries, photo scanning, book spines, quick task capture.</div></div>
+      <div class="rm-row"><div class="rm-name" style="color:#ffab40">Clodius</div><span class="rm-rel" style="color:var(--bronze);border-color:rgba(168,120,72,.3)">API / n8n</span><div class="rm-desc">Herald (automation side), Strategist (AI GM backend). Runs all workflows. Never directly invoked — always via n8n.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="council-footer">
+  <div class="cf-text">THE SMALL COUNCIL // TOC — LTC HOLM<br>
+  Every role answers to the commander. Every tool serves the mission.<br>
+  The staff manages so the commander can command.</div>
+</div>
+
+<!-- DETAIL OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeDetail(event)">
+  <div class="detail-modal" id="detail-modal">
+    <button class="dm-close" onclick="document.getElementById('overlay').classList.remove('show')">✕</button>
+    <div class="dm-top">
+      <div class="dm-role" id="dm-role"></div>
+      <div class="dm-name" id="dm-name"></div>
+      <div class="dm-subtitle" id="dm-subtitle"></div>
+    </div>
+    <div class="dm-body" id="dm-body"></div>
+  </div>
+</div>
+
+<script>
+const DETAILS = {
+  cos: {
+    role:'Chief of Staff // XO',name:'The Architect',subtitle:'"The staff works so the commander can command."',
+    sections:[
+      {label:'Full Mandate',text:'The Chief of Staff is the connective tissue of the entire TOC. Every project has an owner. Every tool has a role. But only the Chief of Staff sees the whole board and can tell the commander what matters most, right now, with confidence. Owns the Sunday review, the weekly priority ranking, and the session closeout protocol. When something falls through the cracks, it\'s the Chief of Staff\'s failure.'},
+      {label:'The Sunday Review',steps:[
+        {n:'01',t:'Read TOC // Current State — all six sections.',n2:''},
+        {n:'02',t:'Identify projects stalled >14 days and flag them.',n2:'These surface in the sitrep as "attention needed."'},
+        {n:'03',t:'Update G3 project scores and set the week\'s top 3.',n2:''},
+        {n:'04',t:'Review personal tasks — anything overdue or escalating.',n2:''},
+        {n:'05',t:'Review correspondence — anything waiting too long.',n2:''},
+        {n:'06',t:'Write the weekly brief. Commander reads it at the start of the week.',n2:''},
+      ]},
+      {label:'Session Closeout (every session)',steps:[
+        {n:'01',t:'Ask: "Want me to write the closeout for Notion?"',n2:''},
+        {n:'02',t:'Write: date, instance, what was done, what was produced (with links), open loops.',n2:''},
+        {n:'03',t:'Flag any tasks extracted for the Keeper.',n2:''},
+        {n:'04',t:'Update project "last touched" date.',n2:''},
+      ]},
+    ]
+  },
+  s3: {
+    role:'S3 // Operations Officer',name:'The Operator',subtitle:'"Tonight\'s mission, tonight\'s steps, tonight\'s wins."',
+    sections:[
+      {label:'Full Mandate',text:'The S3 takes the Chief of Staff\'s priority list and turns it into executable action. Runs the G3 brief: selects tonight\'s projects, scales the step list to time available, labels each step with who leads (Claude or you), estimates workload. The Operator doesn\'t set priorities — the Architect does that. The Operator makes priorities real.'},
+      {label:'G3 Brief Protocol',steps:[
+        {n:'01',t:'Receive time available and focus area from commander.',n2:''},
+        {n:'02',t:'Score all eligible projects: (priority × 10) + (days idle × 2) + random.',n2:''},
+        {n:'03',t:'Select top 3. Present as ranked recommendations.',n2:''},
+        {n:'04',t:'For each: pull the step list for the time bracket.',n2:'30m / 1h / 2h / deep work'},
+        {n:'05',t:'Label each step: CLAUDE LEADS / CLAUDE ASSISTS / YOU LEAD.',n2:''},
+        {n:'06',t:'Calculate workload summary: total steps, Claude steps, your steps.',n2:''},
+        {n:'07',t:'Present the brief. Wait for commander\'s go.',n2:''},
+      ]},
+    ]
+  },
+  seneschal: {
+    role:'Seneschal',name:'The Keeper',subtitle:'"The house is in order. It always is."',
+    sections:[
+      {label:'Full Mandate',text:'The medieval seneschal managed the lord\'s household — accounts, staff, properties, and daily operations. This Keeper does the same. Critical documents are indexed and accessible in seconds. Personal tasks never fall through cracks. Finance hygiene runs on schedule. Property matters for DuPont and Gods Valley are tracked and sequenced. The Keeper makes sure that life admin never bleeds into creative time.'},
+      {label:'Document Access Protocol',steps:[
+        {n:'01',t:'Commander asks for a document by name or type.',n2:'"Where is my passport?"'},
+        {n:'02',t:'Keeper queries Notion Document Index.',n2:''},
+        {n:'03',t:'Returns Drive link directly. No searching.',n2:''},
+        {n:'04',t:'Flags if document is expiring within 90 days.',n2:''},
+      ]},
+      {label:'Monthly Finance Hygiene',steps:[
+        {n:'01',t:'Search Gmail: receipts + subscriptions, last 30 days.',n2:'Before the 5th of each month'},
+        {n:'02',t:'Update subscription costs in Notion Finance tracker.',n2:'Flag anything unused or price-changed'},
+        {n:'03',t:'File Overcast Studios receipts to Drive.',n2:'/Business/Receipts/[YEAR]/[MONTH]'},
+        {n:'04',t:'Log total monthly spend in Notion.',n2:''},
+      ]},
+    ]
+  },
+  herald: {
+    role:'Herald',name:'The Herald',subtitle:'"Your reputation, maintained."',
+    sections:[
+      {label:'Full Mandate',text:'The herald in medieval courts carried the lord\'s messages, maintained relationships with allies, and managed the public face of the household. This Herald does the same for correspondence. Monitors Jamie@jamieholm.com, triages by category and priority, drafts responses for approval, tracks recommended outreach, and ensures that professional relationships don\'t atrophy through neglect. Never sends without explicit approval.'},
+      {label:'Inbox Triage Protocol',steps:[
+        {n:'01',t:'New email arrives → forwarded to Gmail via Cloudflare.',n2:'jamieholm.com → Gmail'},
+        {n:'02',t:'Clodius categorizes: Military/Professional / Personal / Vendor / Family.',n2:'Via n8n workflow'},
+        {n:'03',t:'Priority assigned: action needed / FYI / archive.',n2:''},
+        {n:'04',t:'Draft prepared if response likely needed.',n2:''},
+        {n:'05',t:'Surfaces in daily sitrep with draft ready for approval.',n2:'Commander approves or modifies'},
+      ]},
+      {label:'Outreach Cadence',steps:[
+        {n:'01',t:'Weekly: check Engagements DB for contacts overdue by cadence.',n2:''},
+        {n:'02',t:'Draft suggested messages with context.',n2:'"Haven\'t spoken since [date]. Here\'s a draft."'},
+        {n:'03',t:'Birthday within 7 days → message drafted automatically.',n2:'From People calendar'},
+        {n:'04',t:'Professional publication by a contact → congratulate within 48hr.',n2:''},
+      ]},
+    ]
+  },
+  librarian: {
+    role:'Librarian',name:'The Librarian',subtitle:'"The right source, for the right moment."',
+    sections:[
+      {label:'Full Mandate',text:'Knows the collection. Every physical book, every digital text, every Drive document — indexed, categorized, rated for utility, and mapped to projects. The Librarian is activated before any serious work session. You don\'t start writing the Gordion Knot article without asking The Librarian what to read first. Also stewards the Essay Registry — tracks status of all writing projects and knows which venues are right for what.'},
+      {label:'Book Ingestion (Physical)',steps:[
+        {n:'01',t:'Commander photographs spines (10–20 per photo).',n2:'Claude Mobile handles this'},
+        {n:'02',t:'Claude Mobile reads spines → extracts: title, author, year, publisher.',n2:''},
+        {n:'03',t:'Claudius populates Notion Library DB with full entry.',n2:''},
+        {n:'04',t:'Claude maps each book to relevant TOC projects and rates utility.',n2:''},
+      ]},
+      {label:'Research Query Protocol',steps:[
+        {n:'01',t:'Commander: "What should I read for [project]?"',n2:''},
+        {n:'02',t:'Librarian queries Notion DB filtered by project tag.',n2:''},
+        {n:'03',t:'Returns ranked list: most relevant first, with one-line note on what each contributes.',n2:''},
+        {n:'04',t:'For Drive documents: includes direct link.',n2:''},
+      ]},
+    ]
+  },
+  archivist: {
+    role:'Archivist',name:'The Archivist',subtitle:'"The past is a resource, not a burden."',
+    sections:[
+      {label:'Full Mandate',text:'Where the Librarian manages external knowledge, the Archivist manages personal memory. The journal, the session logs, the autobiography database, the photo archive. Parses raw journal entries into structured data. Extracts tasks for the Keeper, flags memories for the autobiography project, tags everything for retrieval. The Archivist is why nothing you say in passing is ever lost.'},
+      {label:'Weekly Journal Parse',steps:[
+        {n:'01',t:'Claudius reads all new journal transcripts from /Journal/Inbox/.',n2:'Sunday TOC review'},
+        {n:'02',t:'Extract tasks → add to Notion Personal Tasks with source tag.',n2:''},
+        {n:'03',t:'Flag memory candidates → add to Autobiography DB with initial tags.',n2:''},
+        {n:'04',t:'Tag each entry: mood, people, places, projects, themes.',n2:''},
+        {n:'05',t:'Move transcript from Inbox to /Journal/Archive/[year]/[month]/.',n2:''},
+        {n:'06',t:'Generate weekly summary for sitrep.',n2:'Main themes, action items, emotional tone'},
+      ]},
+      {label:'Autobiography Protocol',steps:[
+        {n:'01',t:'Memory entries accepted raw — any order, any time.',n2:'Voice, typed, or journal harvest'},
+        {n:'02',t:'Archivist assigns: time period, people, location, themes, chapter suggestion.',n2:''},
+        {n:'03',t:'Stored in Notion Memories DB with full tag set.',n2:''},
+        {n:'04',t:'When ready to write: filter by tag → Agent receives the material.',n2:''},
+      ]},
+    ]
+  },
+  agent: {
+    role:'Literary Agent',name:'The Agent',subtitle:'"Ideas deserve more than a drawer."',
+    sections:[
+      {label:'Full Mandate',text:'The Literary Agent is not a ghostwriter. The Agent knows your voice — the rhythm of your thinking, the way you build an argument, the level of technical depth you\'re comfortable at. The Agent\'s job is to take raw material — notes, ideas, half-written drafts, a passionate rant in a journal entry — and help shape it into something that deserves to be read. AUSA articles, War on the Rocks, the Misfits essay, Atreal. All of it.'},
+      {label:'Essay Development Protocol',steps:[
+        {n:'01',t:'Librarian surfaces sources. Archivist surfaces relevant journal material.',n2:''},
+        {n:'02',t:'Agent reads the raw draft or notes.',n2:''},
+        {n:'03',t:'Agent proposes structure: thesis, three key moves, conclusion.',n2:'For approval before writing'},
+        {n:'04',t:'Draft produced section by section.',n2:'Commander edits at each checkpoint'},
+        {n:'05',t:'Final edit pass: voice, tone, length for target venue.',n2:''},
+        {n:'06',t:'Submission brief produced: venue, word count, editor contact.',n2:''},
+      ]},
+      {label:'Active Essay Queue',steps:[
+        {n:'01',t:'Gordion Knot — data structure before AI. Strong draft. Priority.',n2:'AUSA / War on the Rocks target'},
+        {n:'02',t:'Misfits Songwriting Essay — ~60% done. Cultural venue.',n2:''},
+        {n:'03',t:'Huba Wass de Czega — military history. Companion to Gordion Knot.',n2:''},
+        {n:'04',t:'Division of 2050 — white paper. May be internal use only.',n2:''},
+        {n:'05',t:'Podcast & False Intimacy — low energy, high potential.',n2:''},
+      ]},
+    ]
+  },
+  wargamer: {
+    role:'Wargame Master',name:'The Strategist',subtitle:'"The map is not the territory. But it helps."',
+    sections:[
+      {label:'Full Mandate',text:'The Strategist runs all tabletop operations. Distinct from the Storyteller in one key way: the Strategist respects the rules. Mechanics matter. The game has to work. Runs 5 Parsecs encounters, designs the Star Wars ship combat system, builds the AI GM architecture. When combat happens, The Strategist handles it — dice, modifiers, terrain, consequences. When a new game system is being designed, The Strategist leads that project.'},
+      {label:'AI GM Pipeline',steps:[
+        {n:'01',t:'Commander selects game system and scenario.',n2:''},
+        {n:'02',t:'Strategist loads the correct config file for that system.',n2:'Each system has its own Notion page + Drive config'},
+        {n:'03',t:'n8n routes: narrative → GM agent, combat → Combat agent, NPCs → NPC agent.',n2:'Clodius handles the routing'},
+        {n:'04',t:'Each agent responds in character with its domain.',n2:''},
+        {n:'05',t:'Session log written to Notion campaign page.',n2:''},
+      ]},
+    ]
+  },
+  dungeon: {
+    role:'Dungeon Master',name:'The Storyteller',subtitle:'"The world is real. The rules are just the physics."',
+    sections:[
+      {label:'Full Mandate',text:'The Storyteller is the opposite of the Strategist in temperament. Where the Strategist counts hexes, the Storyteller breathes life into the thing you\'re walking toward. Owns the Aedaeion universe, all its lore, all its characters. Runs narrative RPG sessions with the character database open. Knows the Void Magister\'s voice, Kael Morrow\'s tells, Lyra\'s deflections. The campaign log is The Storyteller\'s memory.'},
+      {label:'Session Protocol',steps:[
+        {n:'01',t:'Reads last session\'s campaign log from Notion.',n2:''},
+        {n:'02',t:'Opens character DB — checks active characters, recent developments.',n2:''},
+        {n:'03',t:'Sets the scene based on where the last session ended.',n2:''},
+        {n:'04',t:'Runs the session. Combat handed off to Strategist if needed.',n2:''},
+        {n:'05',t:'Writes session summary to Notion campaign page.',n2:''},
+        {n:'06',t:'Flags any new world-building for Obsidian vault.',n2:'Claudius writes this'},
+      ]},
+    ]
+  },
+  designer: {
+    role:'Game Designer // Unreal',name:'The Artificer',subtitle:'"If you can imagine it, I can build it. Eventually."',
+    sections:[
+      {label:'Full Mandate',text:'The Artificer is the most technically demanding role on the council. Works in the actual files — UE5 project directories, Blender scenes, Python scripts, Blueprint graphs. Knows the TIE Academy project intimately: the cockpit material issues, the MetaHuman skeleton compatibility problems, the clothing LOD pipeline. Builds Overcast Studios games. Manages the UE5 skill tree. When something is broken, The Artificer diagnoses it. When something needs to be built, The Artificer builds it.'},
+      {label:'Active Technical Work',steps:[
+        {n:'01',t:'TIE cockpit window transparency — material blend mode resolution.',n2:'In progress'},
+        {n:'02',t:'MetaHuman clothing LOD configuration.',n2:'Skeletal mesh compatibility issue'},
+        {n:'03',t:'Python script for automated clothing import pipeline.',n2:'Blender → Meta Tailor → UE5'},
+        {n:'04',t:'Ship system node with damage states — Blueprint design.',n2:'67 nodes planned'},
+        {n:'05',t:'GAS (Gameplay Ability System) — skill-building track.',n2:'Parallel to TIE Academy'},
+      ]},
+      {label:'Session Protocol',steps:[
+        {n:'01',t:'Claudius reads last UE5 session log from Notion.',n2:''},
+        {n:'02',t:'Opens the relevant project files on local machine.',n2:''},
+        {n:'03',t:'Executes the next steps from the project\'s step list.',n2:''},
+        {n:'04',t:'Documents any new issues or solutions to Notion.',n2:''},
+        {n:'05',t:'Commits any script changes to GitHub repo.',n2:''},
+      ]},
+    ]
+  },
+};
+
+function openDetail(id){
+  const d=DETAILS[id];if(!d)return;
+  document.getElementById('dm-role').textContent=d.role;
+  document.getElementById('dm-name').textContent=d.name;
+  document.getElementById('dm-subtitle').textContent=d.subtitle;
+  let html='';
+  d.sections.forEach(s=>{
+    html+=`<div class="dm-section"><div class="dm-sec-label">${s.label}</div>`;
+    if(s.text)html+=`<div class="dm-text">${s.text}</div>`;
+    if(s.steps){
+      s.steps.forEach(st=>{
+        html+=`<div class="dm-step"><span class="dm-n">${st.n}</span><div class="dm-t">${st.t}${st.n2?`<div class="dm-note">${st.n2}</div>`:''}</div></div>`;
+      });
+    }
+    html+='</div>';
+  });
+  document.getElementById('dm-body').innerHTML=html;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeDetail(e){if(e.target===document.getElementById('overlay'))document.getElementById('overlay').classList.remove('show');}
+
+function toggleTheme(){
+  const d=document.documentElement;const dark=d.getAttribute('data-theme')==='dark';
+  d.setAttribute('data-theme',dark?'light':'dark');
+  localStorage.setItem('council-theme',dark?'light':'dark');
+}
+const st=localStorage.getItem('council-theme');if(st)document.documentElement.setAttribute('data-theme',st);
+</script>
+</body>
+</html>
