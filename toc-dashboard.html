@@ -90,6 +90,15 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 /* Compact-only info */
 .card-brief{font-size:10px;color:var(--orange);margin-top:3px;}
 
+/* Timestamps on card compact view */
+.card-ts{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;font-size:9px;color:var(--dim);font-family:'SF Mono',Consolas,monospace;}
+.card-ts .ts-item{display:flex;gap:3px;align-items:center;}
+.card-ts .ts-label{color:var(--dim);opacity:.7;}
+.card-ts .ts-val{color:var(--text);}
+.card-ts .ts-queue{color:var(--blue);}
+.card-ts .ts-running{color:var(--green);}
+.card-ts .ts-done{color:var(--dim);}
+
 /* Card type borders */
 .card-inbox{border-left:3px solid var(--red);}
 .card-active{border-left:3px solid var(--green);}
@@ -248,11 +257,33 @@ function elapsed(d){
   if(h<24)return h+'h '+m%60+'m';
   return Math.floor(h/24)+'d '+h%24+'h';
 }
+function elapsedBetween(from, to){
+  if(!from||!to)return '';
+  const m=Math.floor((new Date(to)-new Date(from))/60000);
+  if(m<60)return m+'m';
+  const h=Math.floor(m/60);
+  if(h<24)return h+'h '+(m%60)+'m';
+  return Math.floor(h/24)+'d '+(h%24)+'h';
+}
 function fmtDate(d){
   if(!d)return '';
   const x=new Date(d);
   return x.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+
          x.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});
+}
+
+const PROJECT_PREFIX = {
+  'TOC':'TOC','TOC Orchestration':'TOC',
+  'Ad Astra':'ASTRA','Finance':'FIN','Aedion':'AED',
+  'Delta Green RPG':'DG','AR Echo':'AREC','General':'GEN','Ethan':'ETH'
+};
+function displayId(jobId, project){
+  if(!jobId) return '';
+  const prefix = PROJECT_PREFIX[project];
+  if(!prefix || prefix==='TOC') return jobId;
+  const m = jobId.match(/TOC-(\d+)/);
+  if(!m) return jobId;
+  return prefix+'-'+m[1];
 }
 function agentTagClass(a){
   if(!a)return '';
@@ -377,7 +408,7 @@ function renderCard(t, type) {
   h += '<div class="card-compact">';
   h += '<div class="card-top">';
   h += '<div class="card-title">'+esc(t.task)+'</div>';
-  if(t.jobId) h += '<div class="card-job">'+esc(t.jobId)+'</div>';
+  if(t.jobId) h += '<div class="card-job">'+esc(displayId(t.jobId, t.project))+'</div>';
   h += '</div>';
   h += '<div class="card-tags">';
   if(t.category) h += '<span class="tag '+catTagClass(t.category)+'">'+esc(t.category)+'</span>';
@@ -387,8 +418,17 @@ function renderCard(t, type) {
   const model = getModelDisplay(t.agentType);
   if(model) h += '<span class="tag tag-model">'+esc(model)+'</span>';
   h += '</div>';
-  // Brief info on compact (active elapsed, blocker preview)
-  if(type==='active' && t.pickedUpAt) h += '<div class="card-brief">Running: '+elapsed(t.pickedUpAt)+'</div>';
+  // Timestamps row
+  h += '<div class="card-ts">';
+  if(t.created) h += '<span class="ts-item"><span class="ts-label">Created:</span><span class="ts-val">'+esc(fmtDate(t.created))+'</span></span>';
+  if((type==='queued'||type==='inbox') && t.created)
+    h += '<span class="ts-item"><span class="ts-label">In Queue:</span><span class="ts-queue">'+esc(elapsed(t.created))+'</span></span>';
+  if(type==='active' && t.pickedUpAt)
+    h += '<span class="ts-item"><span class="ts-label">Picked Up:</span><span class="ts-running">'+esc(fmtDate(t.pickedUpAt))+'</span></span>';
+  if(type==='done' && t.pickedUpAt && t.completedAt)
+    h += '<span class="ts-item"><span class="ts-label">Time to Complete:</span><span class="ts-done">'+esc(elapsedBetween(t.pickedUpAt, t.completedAt))+'</span></span>';
+  h += '</div>';
+  // Brief info on compact (blocker preview)
   if(type==='blocked' && t.blocker && !isExpanded) h += '<div class="card-brief" style="color:var(--red)">'+esc(t.blocker.substring(0,80))+(t.blocker.length>80?'...':'')+'</div>';
   h += '</div>';
 
