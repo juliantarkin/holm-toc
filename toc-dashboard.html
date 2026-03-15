@@ -213,7 +213,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
     <div class="modal-row"><label>TASK NAME</label><input type="text" id="fTask" placeholder="What needs to be done?"></div>
     <div class="modal-row"><label>CATEGORY</label><select id="fCategory"><option value="">Select...</option><option value="Build">Build</option><option value="Write">Write</option><option value="Research">Research</option><option value="Admin">Admin</option><option value="Test">Test</option><option value="Image/Media">Image/Media</option><option value="Decision">Decision</option></select></div>
     <div class="modal-row"><label>AGENT TYPE</label><select id="fAgentType"><option value="">Select...</option><option value="🧠 API (Reasoning)">🧠 API (Reasoning)</option><option value="🖥️ Code (Shell/SSH)">🖥️ Code (Shell/SSH)</option><option value="⚙️ Workflow (n8n)">⚙️ Workflow (n8n)</option><option value="👤 Human (Commander)">👤 Human (Commander)</option></select></div>
-    <div class="modal-row"><label>PRIORITY</label><select id="fPriority"><option value="">Select...</option><option value="🔴 FLASH">🔴 FLASH</option><option value="🟠 URGENT">🟠 URGENT</option><option value="⚪ ROUTINE">⚪ ROUTINE</option></select></div>
+    <div class="modal-row"><label>PRIORITY</label><select id="fPriority"><option value="">Select...</option><option value="🔴 FLASH">🔴 FLASH</option><option value="🟠 URGENT">🟠 URGENT</option><option value="🔵 ROUTINE">🔵 ROUTINE</option></select></div>
     <div class="modal-row"><label>PROJECT</label><select id="fProject"><option value="">Select...</option><option value="TOC Orchestration">TOC</option><option value="Ad Astra">Ad Astra</option><option value="Aedion">Aedion</option><option value="Finance">Finance</option><option value="General">General</option></select></div>
     <div class="modal-row"><label>DETAIL</label><textarea id="fDetail" placeholder="Instructions, context, links..."></textarea></div>
     <div class="modal-actions">
@@ -234,7 +234,7 @@ const STATUS_OPTS = [
   '\u2b1c Queued','\ud83d\udd35 In Progress','\u26d4 Blocked',
   '\ud83d\udccb Decomposing','\ud83d\udc41\ufe0f Review','\u2705 Complete'
 ];
-const PRIORITY_OPTS = ['\ud83d\udd34 FLASH','\ud83d\udfe0 URGENT','\u26aa ROUTINE'];
+const PRIORITY_OPTS = ['\ud83d\udd34 FLASH','\ud83d\udfe0 URGENT','\ud83d\udd35 ROUTINE'];
 const AGENT_TYPE_OPTS = [
   '\ud83e\udde0 API (Reasoning)','\ud83d\udda5\ufe0f Code (Shell/SSH)',
   '\u2699\ufe0f Workflow (n8n)','\ud83d\udc64 Human (Commander)'
