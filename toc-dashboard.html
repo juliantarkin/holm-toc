@@ -514,14 +514,14 @@ function renderCard(t, type) {
 
   // Controls (not on completed)
   if (type !== 'done') {
-    h += '<div class="exp-controls">';
-    h += '<select onchange="onStatusChange(this,\''+esc(t.id)+'\')"><option value="">Status...</option>';
+    h += '<div class="exp-controls" onclick="event.stopPropagation()">';
+    h += '<select onchange="onStatusChange(this,\''+esc(t.id)+'\')" onclick="event.stopPropagation()"><option value="">Status...</option>';
     STATUS_OPTS.forEach(v=>{ h += '<option value="'+esc(v)+'">'+esc(v)+'</option>'; });
     h += '</select>';
-    h += '<select onchange="onPriorityChange(this,\''+esc(t.id)+'\')"><option value="">Priority...</option>';
+    h += '<select onchange="onPriorityChange(this,\''+esc(t.id)+'\')" onclick="event.stopPropagation()"><option value="">Priority...</option>';
     PRIORITY_OPTS.forEach(v=>{ h += '<option value="'+esc(v)+'">'+esc(v)+'</option>'; });
     h += '</select>';
-    h += '<select onchange="onAgentTypeChange(this,\''+esc(t.id)+'\')"><option value="">Agent Type...</option>';
+    h += '<select onchange="onAgentTypeChange(this,\''+esc(t.id)+'\')" onclick="event.stopPropagation()"><option value="">Agent Type...</option>';
     AGENT_TYPE_OPTS.forEach(v=>{ h += '<option value="'+esc(v)+'">'+esc(v)+'</option>'; });
     h += '</select>';
     h += '<span class="exp-collapse" onclick="collapseCard(event)">COLLAPSE</span>';
