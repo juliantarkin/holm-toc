@@ -1,0 +1,16 @@
+﻿{
+  ""title"": ""Bot"",
+  ""type"": ""object"",
+  ""properties"": {
+    ""bot_id"": { ""type"": ""string"" },
+    ""name"": { ""type"": ""string"" },
+    ""project_id"": { ""type"": ""string"" },
+    ""role"": { ""type"": ""string"" },
+    ""prompt_file"": { ""type"": ""string"" },
+    ""allowed_tools"": {
+      ""type"": ""array"",
+      ""items"": { ""type"": ""string"" }
+    }
+  },
+  ""required"": [""bot_id"", ""name"", ""role""]
+}

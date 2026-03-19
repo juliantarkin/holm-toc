@@ -1,0 +1,14 @@
+﻿{
+  ""title"": ""Task"",
+  ""type"": ""object"",
+  ""properties"": {
+    ""task_id"": { ""type"": ""string"" },
+    ""project_id"": { ""type"": ""string"" },
+    ""task_type"": { ""type"": ""string"" },
+    ""input"": {},
+    ""requested_by"": { ""type"": ""string"" },
+    ""priority"": { ""type"": ""string"" },
+    ""created_at"": { ""type"": ""string"" }
+  },
+  ""required"": [""task_id"", ""task_type"", ""input""]
+}

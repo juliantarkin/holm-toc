@@ -1,0 +1,15 @@
+﻿{
+  ""title"": ""Project"",
+  ""type"": ""object"",
+  ""properties"": {
+    ""project_id"": { ""type"": ""string"" },
+    ""name"": { ""type"": ""string"" },
+    ""description"": { ""type"": ""string"" },
+    ""default_bot"": { ""type"": ""string"" },
+    ""allowed_tools"": {
+      ""type"": ""array"",
+      ""items"": { ""type"": ""string"" }
+    }
+  },
+  ""required"": [""project_id"", ""name""]
+}

@@ -1,0 +1,15 @@
+﻿{
+  ""title"": ""Run"",
+  ""type"": ""object"",
+  ""properties"": {
+    ""run_id"": { ""type"": ""string"" },
+    ""task_id"": { ""type"": ""string"" },
+    ""project_id"": { ""type"": ""string"" },
+    ""status"": { ""type"": ""string"" },
+    ""started_at"": { ""type"": ""string"" },
+    ""ended_at"": { ""type"": ""string"" },
+    ""result"": {},
+    ""error"": {}
+  },
+  ""required"": [""run_id"", ""task_id"", ""status""]
+}
