@@ -1,15 +1,62 @@
-﻿{
-  ""title"": ""Project"",
-  ""type"": ""object"",
-  ""properties"": {
-    ""project_id"": { ""type"": ""string"" },
-    ""name"": { ""type"": ""string"" },
-    ""description"": { ""type"": ""string"" },
-    ""default_bot"": { ""type"": ""string"" },
-    ""allowed_tools"": {
-      ""type"": ""array"",
-      ""items"": { ""type"": ""string"" }
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project.schema.json",
+  "title": "Project",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "default_bot_id": {
+      "type": "string"
+    },
+    "workflow_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "document_workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "approval_required": {
+          "type": "boolean",
+          "default": true
+        },
+        "writer_role": {
+          "type": "string",
+          "default": "assembler"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "allowed_tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     }
   },
-  ""required"": [""project_id"", ""name""]
+  "required": [
+    "project_id",
+    "name"
+  ]
 }

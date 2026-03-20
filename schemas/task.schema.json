@@ -1,14 +1,74 @@
-﻿{
-  ""title"": ""Task"",
-  ""type"": ""object"",
-  ""properties"": {
-    ""task_id"": { ""type"": ""string"" },
-    ""project_id"": { ""type"": ""string"" },
-    ""task_type"": { ""type"": ""string"" },
-    ""input"": {},
-    ""requested_by"": { ""type"": ""string"" },
-    ""priority"": { ""type"": ""string"" },
-    ""created_at"": { ""type"": ""string"" }
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "task.schema.json",
+  "title": "Task",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "document_edit",
+        "document_review",
+        "research",
+        "planning",
+        "orchestration"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requested_by": {
+      "type": "string"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "normal",
+        "high",
+        "urgent"
+      ],
+      "default": "normal"
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "source_document_path": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "target_audience": {
+          "type": "string"
+        },
+        "output_path": {
+          "type": "string"
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
   },
-  ""required"": [""task_id"", ""task_type"", ""input""]
+  "required": [
+    "task_id",
+    "project_id",
+    "task_type",
+    "title",
+    "input",
+    "created_at"
+  ]
 }

@@ -1,15 +1,107 @@
-﻿{
-  ""title"": ""Run"",
-  ""type"": ""object"",
-  ""properties"": {
-    ""run_id"": { ""type"": ""string"" },
-    ""task_id"": { ""type"": ""string"" },
-    ""project_id"": { ""type"": ""string"" },
-    ""status"": { ""type"": ""string"" },
-    ""started_at"": { ""type"": ""string"" },
-    ""ended_at"": { ""type"": ""string"" },
-    ""result"": {},
-    ""error"": {}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "run.schema.json",
+  "title": "Run",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "running",
+        "needs_review",
+        "completed",
+        "failed"
+      ]
+    },
+    "current_stage": {
+      "type": "string",
+      "enum": [
+        "intake",
+        "planner",
+        "researcher",
+        "critic",
+        "assembler",
+        "approval",
+        "finalize"
+      ]
+    },
+    "agent_outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "agent_role": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "artifact_path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent_role",
+          "status"
+        ]
+      },
+      "default": []
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "output_path": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
+    },
+    "error": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ended_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
   },
-  ""required"": [""run_id"", ""task_id"", ""status""]
+  "required": [
+    "run_id",
+    "task_id",
+    "project_id",
+    "status",
+    "current_stage",
+    "started_at"
+  ]
 }

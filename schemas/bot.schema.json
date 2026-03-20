@@ -1,16 +1,53 @@
-﻿{
-  ""title"": ""Bot"",
-  ""type"": ""object"",
-  ""properties"": {
-    ""bot_id"": { ""type"": ""string"" },
-    ""name"": { ""type"": ""string"" },
-    ""project_id"": { ""type"": ""string"" },
-    ""role"": { ""type"": ""string"" },
-    ""prompt_file"": { ""type"": ""string"" },
-    ""allowed_tools"": {
-      ""type"": ""array"",
-      ""items"": { ""type"": ""string"" }
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bot.schema.json",
+  "title": "Bot",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "bot_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt_file": {
+      "type": "string",
+      "minLength": 1
+    },
+    "default_workflow": {
+      "type": "string"
+    },
+    "routes_to_agents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "allowed_tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     }
   },
-  ""required"": [""bot_id"", ""name"", ""role""]
+  "required": [
+    "bot_id",
+    "name",
+    "project_id",
+    "role",
+    "prompt_file"
+  ]
 }
