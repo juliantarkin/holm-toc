@@ -50,10 +50,17 @@
         "goal": {
           "type": "string"
         },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
         "target_audience": {
           "type": "string"
         },
-        "output_path": {
+        "output_root": {
           "type": "string"
         }
       }
