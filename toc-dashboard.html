@@ -35,7 +35,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .task-row:last-child { border-bottom: none; }
 .task-row:hover { background: #faf9f6; }
 .task-row.done-row { opacity: 0.38; }
-.task-num { font-size: 11px; color: #ccc; min-width: 26px; padding-top: 1px; font-variant-numeric: tabular-nums; }
+.job-badge { font-size: 10px; font-weight: 600; color: #7c6f9f; background: #f0eefb; border: 1px solid #d8d3f0; border-radius: 4px; padding: 1px 6px; flex-shrink: 0; font-variant-numeric: tabular-nums; margin-top: 1px; }
+.done-row .job-badge { color: #aaa; background: #f5f4f0; border-color: #e0ded6; }
 .task-body { flex: 1; min-width: 0; }
 .task-title { font-size: 13px; color: #1a1a1a; line-height: 1.4; }
 .done-row .task-title { text-decoration: line-through; }
@@ -106,9 +107,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <span class="panel-id" id="p-id"></span>
       <span class="close-btn" onclick="closePanel()">close</span>
     </div>
-    <div class="panel-title" id="p-title"></div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
+      <span style="font-size:13px;font-weight:600;color:#7c6f9f;font-variant-numeric:tabular-nums;" id="p-jobnum"></span>
+      <span style="font-size:10px;color:#bbb;" id="p-id"></span>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:8px;">
+      <span style="font-size:15px;font-weight:700;color:#7c6f9f;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;" id="p-jobnum"></span>
+      <div class="panel-title" id="p-title"></div>
+    </div>
   </div>
   <div class="panel-scroll">
+    <div style="font-size:11px;color:#aaa;margin-bottom:2px;" id="p-jobref"></div>
+    <div style="font-size:10px;color:#aaa;margin-bottom:4px;font-variant-numeric:tabular-nums;" id="p-jobref"></div>
     <div class="panel-desc" id="p-desc"></div>
     <hr class="divider">
     <div>
@@ -228,8 +238,11 @@ async function openPanel(id) {
   const t=tasks.find(x=>x.id===id);
   if(!t) return;
   currentId=id;
-  document.getElementById('p-id').textContent=`#${t.id} · ${t.category||'?'} · ${t.sprint||'?'} · ${t.status}`;
+  document.getElementById('p-id').textContent=`${t.sprint||'?'} · ${t.category||'?'} · ${t.status}`;
+  document.getElementById('p-jobnum').textContent='#'+t.id;
   document.getElementById('p-title').textContent=t.title;
+  document.getElementById('p-jobref').textContent='Job #'+t.id+' · Reference this number in commits and dev log entries.';
+  document.getElementById('p-jobref').textContent='Job #'+t.id+' — reference this number in all dev log entries and commit messages.';
   document.getElementById('p-desc').textContent=t.description||'No description.';
   const nd=document.getElementById('notes-display');
   if(t.notes&&t.notes.trim()){
