@@ -35,7 +35,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .task-row:last-child { border-bottom: none; }
 .task-row:hover { background: #faf9f6; }
 .task-row.done-row { opacity: 0.38; }
-.task-num { font-size: 11px; color: #ccc; min-width: 26px; padding-top: 1px; }
+.task-num { font-size: 11px; color: #ccc; min-width: 26px; padding-top: 1px; font-variant-numeric: tabular-nums; }
 .task-body { flex: 1; min-width: 0; }
 .task-title { font-size: 13px; color: #1a1a1a; line-height: 1.4; }
 .done-row .task-title { text-decoration: line-through; }
@@ -47,10 +47,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .done-tag { background: #e8f5e9; color: #2e7d32; }
 .blocked-tag { background: #fde8e8; color: #c0392b; }
 .note-dot { font-size: 10px; color: #9b8ec4; font-weight: 600; }
+.log-dot { font-size: 10px; color: #1D9E75; font-weight: 600; }
 .arrow { font-size: 12px; color: #ddd; flex-shrink: 0; padding-top: 1px; }
 .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.12); z-index: 90; display: none; }
 .overlay.open { display: block; }
-.panel { position: fixed; top: 0; right: 0; width: 340px; height: 100vh; background: #fff; border-left: 1px solid #e0ded6; z-index: 100; transform: translateX(100%); transition: transform 0.2s ease; display: flex; flex-direction: column; }
+.panel { position: fixed; top: 0; right: 0; width: 360px; height: 100vh; background: #fff; border-left: 1px solid #e0ded6; z-index: 100; transform: translateX(100%); transition: transform 0.2s ease; display: flex; flex-direction: column; }
 .panel.open { transform: translateX(0); }
 .panel-top { padding: 14px 16px 12px; border-bottom: 1px solid #f0efe8; }
 .panel-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -65,7 +66,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .notes-display { font-size: 12px; color: #333; line-height: 1.65; white-space: pre-wrap; background: #faf9f6; border-radius: 5px; padding: 10px 12px; min-height: 32px; }
 .notes-display.empty { color: #ccc; font-style: italic; }
 .notes-ts { font-size: 10px; color: #bbb; margin-top: 4px; }
-.note-input { width: 100%; font-size: 12px; padding: 8px 10px; border: 1px solid #e0ded6; border-radius: 6px; background: #faf9f6; color: #1a1a1a; resize: none; font-family: inherit; min-height: 80px; }
+.note-input { width: 100%; font-size: 12px; padding: 8px 10px; border: 1px solid #e0ded6; border-radius: 6px; background: #faf9f6; color: #1a1a1a; resize: none; font-family: inherit; min-height: 72px; }
 .note-input:focus { outline: none; border-color: #9b8ec4; }
 .btn-row { display: flex; gap: 6px; margin-top: 6px; }
 .btn-save { font-size: 11px; padding: 5px 14px; border: 1px solid #9b8ec4; border-radius: 4px; background: #fff; color: #7c6f9f; cursor: pointer; font-weight: 500; }
@@ -75,23 +76,29 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .save-status { font-size: 10px; color: #aaa; padding-top: 4px; min-height: 16px; }
 .save-status.ok { color: #2e7d32; }
 .save-status.err { color: #c0392b; }
+.log-entry { padding: 8px 0; border-bottom: 1px solid #f0efe8; }
+.log-entry:last-child { border-bottom: none; }
+.log-header { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; flex-wrap: wrap; }
+.log-agent { font-size: 10px; padding: 1px 6px; border-radius: 3px; background: #e8f5e9; color: #2e7d32; font-weight: 500; }
+.log-action { font-size: 10px; padding: 1px 6px; border-radius: 3px; background: #f0efe8; color: #666; }
+.log-date { font-size: 10px; color: #bbb; }
+.log-result { font-size: 12px; color: #444; line-height: 1.55; }
+.log-notes { font-size: 11px; color: #999; margin-top: 2px; line-height: 1.4; }
+.loading-log { font-size: 11px; color: #bbb; font-style: italic; }
 </style>
 </head>
 <body>
-
 <div class="header">
   <h1>🏰 FRANKENSTEINCASTLE</h1>
   <div class="header-right">
     <span class="badge" id="total-badge">loading...</span>
-    <button class="refresh-btn" onclick="loadTasks()">↻ refresh</button>
+    <button class="refresh-btn" onclick="init()">↻ refresh</button>
   </div>
 </div>
-
 <div class="main">
   <div class="error-bar" id="error-bar"></div>
-  <div id="content"><div style="color:#aaa;font-size:12px;padding:20px 0">Loading tasks from Supabase...</div></div>
+  <div id="content"><div style="color:#aaa;font-size:12px;padding:20px 0">Loading from Supabase...</div></div>
 </div>
-
 <div class="overlay" id="overlay" onclick="closePanel()"></div>
 <div class="panel" id="panel">
   <div class="panel-top">
@@ -105,89 +112,80 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <div class="panel-desc" id="p-desc"></div>
     <hr class="divider">
     <div>
-      <div class="section-label">notes</div>
+      <div class="section-label">your notes</div>
       <div class="notes-display empty" id="notes-display">no notes yet</div>
       <div class="notes-ts" id="notes-ts"></div>
     </div>
     <hr class="divider">
     <div>
       <div class="section-label">edit notes</div>
-      <textarea class="note-input" id="note-input" placeholder="Context, decisions, blockers — read by Claude when this task comes up for action..."></textarea>
+      <textarea class="note-input" id="note-input" placeholder="Context, decisions, blockers — read by Claude when this task comes up..."></textarea>
       <div class="btn-row">
         <button class="btn-save" id="btn-save" onclick="saveNote()">save</button>
         <button class="btn-clear" onclick="document.getElementById('note-input').value=''">clear</button>
       </div>
       <div class="save-status" id="save-status"></div>
     </div>
+    <hr class="divider">
+    <div>
+      <div class="section-label">dev log</div>
+      <div id="log-entries"><span class="loading-log">loading...</span></div>
+    </div>
   </div>
 </div>
-
 <script>
 const SUPA = 'https://xtuwsgicohmlgazcushj.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0dXdzZ2ljb2htbGdhemN1c2hqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzI5ODQ1OCwiZXhwIjoyMDg4ODc0NDU4fQ.lvCpNoQwLViH_JS-ycbxfNciJjboggqiBLBHu2pAf38';
-
+const H = { apikey: KEY, Authorization: 'Bearer ' + KEY };
 const CATS = {
-  character:   '#7F77DD', 'life-sim': '#378ADD', infra: '#1D9E75',
-  debug:       '#D85A30', voice:      '#D4537E', photo: '#EF9F27',
-  memory:      '#639922', content:    '#888780', integration: '#B4B2A9',
-  review:      '#B4B2A9', ue5:        '#378ADD',
+  character:'#7F77DD','life-sim':'#378ADD',infra:'#1D9E75',debug:'#D85A30',
+  voice:'#D4537E',photo:'#EF9F27',memory:'#639922',content:'#888780',
+  integration:'#B4B2A9',review:'#B4B2A9',ue5:'#378ADD'
 };
-
 const SPRINTS = [
-  { key:'sprint-1', label:'Sprint 1 — foundation' },
-  { key:'sprint-2', label:'Sprint 2 — depth' },
-  { key:'sprint-3', label:'Sprint 3 — integrations' },
-  { key:'backlog',  label:'Backlog' },
+  {key:'sprint-1',label:'Sprint 1 — foundation'},
+  {key:'sprint-2',label:'Sprint 2 — depth'},
+  {key:'sprint-3',label:'Sprint 3 — integrations'},
+  {key:'backlog', label:'Backlog'},
 ];
+let tasks=[], openBars={}, currentId=null;
 
-let tasks = [];
-let openBars = {};
-let currentId = null;
+async function api(path) {
+  const r = await fetch(SUPA+path, {headers:H});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
 
-async function loadTasks() {
+async function init() {
   try {
-    const r = await fetch(SUPA + '/rest/v1/commander_tasks?order=id.asc&limit=200', {
-      headers: { apikey: KEY, Authorization: 'Bearer ' + KEY }
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    tasks = await r.json();
-    document.getElementById('error-bar').style.display = 'none';
+    tasks = await api('/rest/v1/commander_tasks?order=id.asc&limit=200');
+    document.getElementById('error-bar').style.display='none';
     render();
-    if (currentId) openPanel(currentId);
+    if(currentId) openPanel(currentId);
   } catch(e) {
-    const el = document.getElementById('error-bar');
-    el.textContent = 'Load failed: ' + e.message;
-    el.style.display = 'block';
-    document.getElementById('total-badge').textContent = 'error';
+    const el=document.getElementById('error-bar');
+    el.textContent='Load failed: '+e.message; el.style.display='block';
+    document.getElementById('total-badge').textContent='error';
   }
 }
 
-function pTag(p) {
-  return `<span class="tag ${p===1?'p1':p===2?'p2':'p3'}">P${p}</span>`;
-}
+function pTag(p){return`<span class="tag ${p===1?'p1':p===2?'p2':'p3'}">P${p}</span>`;}
 
 function render() {
-  const open = tasks.filter(t => t.status !== 'done').length;
-  document.getElementById('total-badge').textContent = open + ' open';
-  let html = '';
-
-  SPRINTS.forEach(({ key, label }) => {
-    const st = tasks.filter(t => t.sprint === key);
-    if (!st.length) return;
-    const map = {};
-    st.forEach(t => { const c = t.category || 'other'; (map[c] = map[c]||[]).push(t); });
-    html += `<div class="sprint-label">${label}</div>`;
-
-    Object.keys(map).forEach(cat => {
-      const ts = map[cat];
-      const active = ts.filter(t => t.status !== 'done');
-      const top3 = active.slice(0,3);
-      const color = CATS[cat] || '#aaa';
-      const bk = key+'_'+cat;
-      const isOpen = openBars[bk];
-      const pills = top3.map(t => `<span class="pill">#${t.id} ${t.title}</span>`).join('');
-
-      html += `<div class="cat-bar">
+  const open=tasks.filter(t=>t.status!=='done').length;
+  document.getElementById('total-badge').textContent=open+' open';
+  let html='';
+  SPRINTS.forEach(({key,label})=>{
+    const st=tasks.filter(t=>t.sprint===key);
+    if(!st.length) return;
+    const map={};
+    st.forEach(t=>{const c=t.category||'other';(map[c]=map[c]||[]).push(t);});
+    html+=`<div class="sprint-label">${label}</div>`;
+    Object.keys(map).forEach(cat=>{
+      const ts=map[cat], active=ts.filter(t=>t.status!=='done'), top3=active.slice(0,3);
+      const color=CATS[cat]||'#aaa', bk=key+'_'+cat, isOpen=openBars[bk];
+      const pills=top3.map(t=>`<span class="pill">#${t.id} ${t.title}</span>`).join('');
+      html+=`<div class="cat-bar">
         <div class="bar-header" onclick="toggle('${bk}')">
           <div class="bar-left">
             <div class="cat-dot" style="background:${color}"></div>
@@ -200,13 +198,12 @@ function render() {
           </div>
         </div>
         <div class="task-list ${isOpen?'open':''}" id="bar-${bk}">`;
-
-      ts.forEach(t => {
-        const done = t.status === 'done';
-        const hasNotes = t.notes && t.notes.trim();
-        const blocked = t.blocked_by && t.blocked_by.length ? t.blocked_by[0] : null;
-        html += `<div class="task-row ${done?'done-row':''}" onclick="openPanel(${t.id})">
-          <span class="task-num">${t.id}</span>
+      ts.forEach(t=>{
+        const done=t.status==='done';
+        const hasNotes=t.notes&&t.notes.trim();
+        const blocked=t.blocked_by&&t.blocked_by.length?t.blocked_by[0]:null;
+        html+=`<div class="task-row ${done?'done-row':''}" onclick="openPanel(${t.id})">
+          <span class="task-num">#${t.id}</span>
           <div class="task-body">
             <div class="task-title">${t.title}</div>
             <div class="task-meta">
@@ -219,81 +216,90 @@ function render() {
           <span class="arrow">›</span>
         </div>`;
       });
-      html += `</div></div>`;
+      html+=`</div></div>`;
     });
   });
-
-  document.getElementById('content').innerHTML = html;
+  document.getElementById('content').innerHTML=html;
 }
 
-function toggle(bk) {
-  openBars[bk] = !openBars[bk];
-  render();
-}
+function toggle(bk){openBars[bk]=!openBars[bk];render();}
 
-function openPanel(id) {
-  const t = tasks.find(x => x.id === id);
-  if (!t) return;
-  currentId = id;
-  document.getElementById('p-id').textContent = `#${t.id} · ${t.category||'?'} · ${t.sprint||'?'} · ${t.status}`;
-  document.getElementById('p-title').textContent = t.title;
-  document.getElementById('p-desc').textContent = t.description || 'No description.';
-  const nd = document.getElementById('notes-display');
-  if (t.notes && t.notes.trim()) {
-    nd.textContent = t.notes;
-    nd.classList.remove('empty');
-    const ts = t.notes_updated_at ? new Date(t.notes_updated_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'America/Los_Angeles'})+' PST' : '';
-    document.getElementById('notes-ts').textContent = ts ? 'updated ' + ts : '';
+async function openPanel(id) {
+  const t=tasks.find(x=>x.id===id);
+  if(!t) return;
+  currentId=id;
+  document.getElementById('p-id').textContent=`#${t.id} · ${t.category||'?'} · ${t.sprint||'?'} · ${t.status}`;
+  document.getElementById('p-title').textContent=t.title;
+  document.getElementById('p-desc').textContent=t.description||'No description.';
+  const nd=document.getElementById('notes-display');
+  if(t.notes&&t.notes.trim()){
+    nd.textContent=t.notes; nd.classList.remove('empty');
+    const ts=t.notes_updated_at?new Date(t.notes_updated_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'America/Los_Angeles'})+' PST':'';
+    document.getElementById('notes-ts').textContent=ts?'updated '+ts:'';
   } else {
-    nd.textContent = 'no notes yet';
-    nd.classList.add('empty');
-    document.getElementById('notes-ts').textContent = '';
+    nd.textContent='no notes yet'; nd.classList.add('empty');
+    document.getElementById('notes-ts').textContent='';
   }
-  document.getElementById('note-input').value = t.notes || '';
-  document.getElementById('save-status').textContent = '';
-  document.getElementById('save-status').className = 'save-status';
+  document.getElementById('note-input').value=t.notes||'';
+  document.getElementById('save-status').textContent='';
+  document.getElementById('save-status').className='save-status';
   document.getElementById('panel').classList.add('open');
   document.getElementById('overlay').classList.add('open');
+  loadLog(id);
 }
 
-function closePanel() {
+async function loadLog(id) {
+  const el=document.getElementById('log-entries');
+  el.innerHTML='<span class="loading-log">loading...</span>';
+  try {
+    const entries=await api(`/rest/v1/dev_log?task_id=eq.${id}&order=created_at.desc&limit=20`);
+    if(!entries.length){el.innerHTML='<span class="loading-log">no log entries yet</span>';return;}
+    el.innerHTML=entries.map(e=>{
+      const d=new Date(e.created_at);
+      const ds=d.toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'America/Los_Angeles'});
+      return`<div class="log-entry">
+        <div class="log-header">
+          <span class="log-agent">${e.agent}</span>
+          <span class="log-action">${e.action}</span>
+          <span class="log-date">${ds}</span>
+        </div>
+        <div class="log-result">${e.result||''}</div>
+        ${e.notes?`<div class="log-notes">${e.notes}</div>`:''}
+      </div>`;
+    }).join('');
+  } catch(err){el.innerHTML=`<span class="loading-log">error: ${err.message}</span>`;}
+}
+
+function closePanel(){
   document.getElementById('panel').classList.remove('open');
   document.getElementById('overlay').classList.remove('open');
-  currentId = null;
+  currentId=null;
 }
 
-async function saveNote() {
-  if (!currentId) return;
-  const note = document.getElementById('note-input').value.trim();
-  const btn = document.getElementById('btn-save');
-  const st = document.getElementById('save-status');
-  btn.disabled = true;
-  st.textContent = 'saving...';
-  st.className = 'save-status';
+async function saveNote(){
+  if(!currentId) return;
+  const note=document.getElementById('note-input').value.trim();
+  const btn=document.getElementById('btn-save'), st=document.getElementById('save-status');
+  btn.disabled=true; st.textContent='saving...'; st.className='save-status';
   try {
-    const r = await fetch(SUPA + '/rest/v1/commander_tasks?id=eq.' + currentId, {
-      method: 'PATCH',
-      headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json', Prefer: 'return=representation' },
-      body: JSON.stringify({ notes: note, notes_updated_at: new Date().toISOString() })
+    const r=await fetch(SUPA+'/rest/v1/commander_tasks?id=eq.'+currentId,{
+      method:'PATCH',
+      headers:{...H,'Content-Type':'application/json',Prefer:'return=representation'},
+      body:JSON.stringify({notes:note,notes_updated_at:new Date().toISOString()})
     });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const rows = await r.json();
-    const t = tasks.find(x => x.id === currentId);
-    if (t && rows[0]) { t.notes = rows[0].notes; t.notes_updated_at = rows[0].notes_updated_at; }
-    openPanel(currentId);
-    render();
-    st.textContent = 'saved ✓';
-    st.className = 'save-status ok';
-  } catch(e) {
-    st.textContent = 'error: ' + e.message;
-    st.className = 'save-status err';
-  } finally {
-    btn.disabled = false;
-  }
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const rows=await r.json();
+    const t=tasks.find(x=>x.id===currentId);
+    if(t&&rows[0]){t.notes=rows[0].notes;t.notes_updated_at=rows[0].notes_updated_at;}
+    openPanel(currentId); render();
+    st.textContent='saved ✓'; st.className='save-status ok';
+  } catch(e){
+    st.textContent='error: '+e.message; st.className='save-status err';
+  } finally {btn.disabled=false;}
 }
 
-loadTasks();
-setInterval(loadTasks, 300000);
+init();
+setInterval(init,300000);
 </script>
 </body>
 </html>
