@@ -112,6 +112,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .log-result { font-size: 12px; color: #444; line-height: 1.55; }
 .log-notes { font-size: 11px; color: #999; margin-top: 2px; line-height: 1.4; }
 .loading-log { font-size: 11px; color: #bbb; font-style: italic; }
+
+/* Cost tracker panel */
+.cost-panel { background: #fff; border: 1px solid #e0ded6; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; }
+.cost-panel-title { font-size: 10px; font-weight: 600; color: #999; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.cost-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.cost-cell { background: #faf9f6; border-radius: 6px; padding: 8px 10px; }
+.cost-cell-label { font-size: 10px; color: #aaa; margin-bottom: 3px; }
+.cost-cell-value { font-size: 16px; font-weight: 600; color: #1a1a1a; }
+.cost-cell-sub { font-size: 10px; color: #aaa; margin-top: 2px; }
+.cost-breakdown { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.cost-chip { font-size: 10px; padding: 2px 8px; background: #f0efe8; border: 1px solid #e0ded6; border-radius: 20px; color: #555; }
 </style>
 </head>
 <body>
@@ -133,6 +144,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 <div class="main">
   <div class="error-bar" id="error-bar"></div>
+  <div class="cost-panel" id="cost-panel" style="display:none">
+    <div class="cost-panel-title">💰 API Cost Tracker</div>
+    <div class="cost-grid" id="cost-grid">
+      <div class="cost-cell"><div class="cost-cell-label">Today</div><div class="cost-cell-value" id="cost-24h">—</div><div class="cost-cell-sub">USD</div></div>
+      <div class="cost-cell"><div class="cost-cell-label">This Week</div><div class="cost-cell-value" id="cost-7d">—</div><div class="cost-cell-sub">USD</div></div>
+      <div class="cost-cell"><div class="cost-cell-label">This Month</div><div class="cost-cell-value" id="cost-30d">—</div><div class="cost-cell-sub">USD</div></div>
+      <div class="cost-cell"><div class="cost-cell-label">All Time</div><div class="cost-cell-value" id="cost-all">—</div><div class="cost-cell-sub">USD</div></div>
+    </div>
+    <div class="cost-breakdown" id="cost-breakdown"></div>
+  </div>
+
   <div id="content"><div style="color:#aaa;font-size:12px;padding:20px 0">Loading...</div></div>
 </div>
 
@@ -213,6 +235,7 @@ async function api(path) {
 }
 
 async function load() {
+  loadCosts();
   try {
     document.getElementById('error-bar').style.display='none';
     tasks = await api('/rest/v1/commander_tasks?select=*&order=priority.asc,id.asc&limit=300');
@@ -417,6 +440,42 @@ async function loadLog(id) {
 }
 
 load();
+
+// ── Cost tracking ─────────────────────────────────────────────────────────
+async function loadCosts() {
+  try {
+    const r = await fetch(SUPA + '/rest/v1/fc_cost_summary', {
+      headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY }
+    });
+    if (!r.ok) return;
+    const rows = await r.json();
+    if (!rows || !rows.length) return;
+
+    let total24h = 0, total7d = 0, total30d = 0, totalAll = 0;
+    const breakdown = [];
+    rows.forEach(row => {
+      total24h += parseFloat(row.cost_24h || 0);
+      total7d  += parseFloat(row.cost_7d  || 0);
+      total30d += parseFloat(row.cost_30d || 0);
+      totalAll += parseFloat(row.total_cost_usd || 0);
+      breakdown.push({ workflow: row.workflow, total: parseFloat(row.total_cost_usd || 0), calls: row.calls });
+    });
+
+    const fmt = v => v < 0.01 ? '<$0.01' : '$' + v.toFixed(3);
+    document.getElementById('cost-24h').textContent = fmt(total24h);
+    document.getElementById('cost-7d').textContent = fmt(total7d);
+    document.getElementById('cost-30d').textContent = fmt(total30d);
+    document.getElementById('cost-all').textContent = fmt(totalAll);
+
+    const bc = document.getElementById('cost-breakdown');
+    bc.innerHTML = breakdown.map(b =>
+      `<span class="cost-chip">${b.workflow}: $${parseFloat(b.total).toFixed(3)} (${b.calls} calls)</span>`
+    ).join('');
+
+    document.getElementById('cost-panel').style.display = 'block';
+  } catch(e) { console.warn('cost load failed', e); }
+}
+
 </script>
 </body>
 </html>
