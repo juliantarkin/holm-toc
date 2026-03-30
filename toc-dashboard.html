@@ -45,6 +45,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .p1 { background: #fde8e8; color: #c0392b; }
 .p2 { background: #fef3e2; color: #b7770d; }
 .p3 { background: #e8f5e9; color: #2e7d32; }
+.decision-tag { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; border-radius: 3px; font-size: 10px; padding: 1px 5px; font-weight: 600; }
+.decision-row { background: #fffbf5; border-left: 3px solid #e65100; }
 .done-tag { background: #e8f5e9; color: #2e7d32; }
 .blocked-tag { background: #fde8e8; color: #c0392b; }
 .note-dot { font-size: 10px; color: #9b8ec4; font-weight: 600; }
@@ -150,7 +152,8 @@ const H = { apikey: KEY, Authorization: 'Bearer ' + KEY };
 const CATS = {
   character:'#7F77DD','life-sim':'#378ADD',infra:'#1D9E75',debug:'#D85A30',
   voice:'#D4537E',photo:'#EF9F27',memory:'#639922',content:'#888780',
-  integration:'#B4B2A9',review:'#B4B2A9',ue5:'#378ADD'
+  integration:'#B4B2A9',review:'#B4B2A9',ue5:'#378ADD',
+  rpg:'#A0522D',discord:'#5865F2'
 };
 const SPRINTS = [
   {key:'sprint-1',label:'Sprint 1 — foundation'},
@@ -210,9 +213,10 @@ function render() {
         <div class="task-list ${isOpen?'open':''}" id="bar-${bk}">`;
       ts.forEach(t=>{
         const done=t.status==='done';
+        const isDecision=t.status==='decision-pending';
         const hasNotes=t.notes&&t.notes.trim();
         const blocked=t.blocked_by&&t.blocked_by.length?t.blocked_by[0]:null;
-        html+=`<div class="task-row ${done?'done-row':''}" onclick="openPanel(${t.id})">
+        html+=`<div class="task-row ${done?'done-row':''} ${isDecision?'decision-row':''}" onclick="openPanel(${t.id})">
           <span class="task-num">#${t.id}</span>
           <div class="task-body">
             <div class="task-title">${t.title}</div>
