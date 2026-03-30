@@ -3,85 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FrankensteinCastle — Task Dashboard</title>
+<title>FRANKENSTEINCASTLE</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; color: #1a1a1a; font-size: 14px; }
-.header { padding: 14px 20px; background: #fff; border-bottom: 1px solid #e5e3dc; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
-.header h1 { font-size: 13px; font-weight: 500; letter-spacing: 0.05em; color: #666; }
-.header-right { display: flex; gap: 8px; align-items: center; }
+
+/* Header */
+.header { padding: 14px 20px 12px; border-bottom: 1px solid #e8e6df; background: #fff; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+.header-title { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; color: #888; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+.header-right { display: flex; align-items: center; gap: 10px; }
 .badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; background: #f0efe8; color: #666; border: 1px solid #e0ded6; }
 .refresh-btn { font-size: 11px; padding: 3px 10px; border: 1px solid #e0ded6; border-radius: 4px; background: #fff; color: #666; cursor: pointer; }
 .refresh-btn:hover { background: #f5f4f0; }
-.main { padding: 16px 20px; max-width: 960px; }
-.error-bar { background: #fde8e8; border: 1px solid #f0c0c0; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; font-size: 12px; color: #c0392b; display: none; }
-.sprint-label { font-size: 10px; font-weight: 600; color: #999; letter-spacing: 0.1em; text-transform: uppercase; margin: 20px 0 8px; }
+
+/* Project filter bar */
+.filter-bar { padding: 10px 20px; background: #fff; border-bottom: 1px solid #e8e6df; display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-btn { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid #e0ded6; background: #f5f4f0; color: #666; cursor: pointer; transition: all 0.1s; }
+.filter-btn:hover { background: #ebe9e2; }
+.filter-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+
+/* Main layout */
+.main { padding: 16px 20px 40px; max-width: 1100px; }
+.error-bar { background: #fde8e8; border: 1px solid #f0c0c0; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; font-size: 12px; color: #c03030; display: none; }
+
+/* Project section */
+.project-section { margin-bottom: 28px; }
+.project-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e0ded6; }
+.project-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.project-name { font-size: 13px; font-weight: 700; color: #1a1a1a; letter-spacing: 0.03em; text-transform: uppercase; }
+.project-count { font-size: 11px; color: #aaa; }
+
+/* Sprint label */
+.sprint-label { font-size: 10px; font-weight: 600; color: #999; letter-spacing: 0.1em; text-transform: uppercase; margin: 14px 0 6px; }
 .sprint-label:first-of-type { margin-top: 0; }
-.cat-bar { border: 1px solid #e5e3dc; border-radius: 8px; margin-bottom: 5px; background: #fff; overflow: hidden; }
-.bar-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 14px; cursor: pointer; transition: background 0.1s; gap: 12px; }
-.bar-header:hover { background: #faf9f6; }
-.bar-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; overflow: hidden; }
-.cat-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.cat-name { font-size: 12px; font-weight: 500; color: #333; flex-shrink: 0; min-width: 90px; }
-.pills { display: flex; gap: 4px; overflow: hidden; min-width: 0; }
-.pill { font-size: 11px; padding: 2px 8px; border-radius: 20px; background: #f0efe8; color: #666; border: 1px solid #e0ded6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; flex-shrink: 0; }
-.bar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.task-count { font-size: 11px; color: #bbb; }
-.chevron { font-size: 9px; color: #ccc; transition: transform 0.15s; }
+
+/* Category row */
+.cat-row { margin-bottom: 4px; }
+.cat-header { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 5px; cursor: pointer; background: #faf9f6; }
+.cat-header:hover { background: #f0efe8; }
+.cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.cat-name { font-size: 12px; font-weight: 500; color: #333; flex-shrink: 0; min-width: 80px; }
+.cat-pills { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+.pill { font-size: 11px; padding: 2px 8px; border-radius: 20px; background: #f0efe8; color: #666; border: 1px solid #e0ded6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; cursor: pointer; }
+.pill:hover { background: #e5e3dc; }
+.pill.done-pill { color: #bbb; background: #f5f4f0; border-color: #e8e6df; text-decoration: line-through; }
+.pill.decision-pill { background: #fff3e0; color: #e65100; border-color: #ffcc80; font-weight: 600; }
+.cat-count { font-size: 11px; color: #bbb; margin-left: auto; flex-shrink: 0; }
+.chevron { font-size: 9px; color: #ccc; transition: transform 0.15s; flex-shrink: 0; }
 .chevron.open { transform: rotate(180deg); }
-.task-list { display: none; border-top: 1px solid #f0efe8; }
+
+/* Task list (expanded) */
+.task-list { padding: 4px 0 4px 20px; display: none; }
 .task-list.open { display: block; }
-.task-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 14px; border-bottom: 1px solid #f5f4f0; cursor: pointer; transition: background 0.1s; }
-.task-row:last-child { border-bottom: none; }
-.task-row:hover { background: #faf9f6; }
-.task-row.done-row { opacity: 0.38; }
-.job-badge { font-size: 10px; font-weight: 600; color: #7c6f9f; background: #f0eefb; border: 1px solid #d8d3f0; border-radius: 4px; padding: 1px 6px; flex-shrink: 0; font-variant-numeric: tabular-nums; margin-top: 1px; }
-.done-row .job-badge { color: #aaa; background: #f5f4f0; border-color: #e0ded6; }
-.task-body { flex: 1; min-width: 0; }
-.task-title { font-size: 13px; color: #1a1a1a; line-height: 1.4; }
-.done-row .task-title { text-decoration: line-through; }
-.task-meta { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; align-items: center; }
-.tag { font-size: 10px; padding: 1px 6px; border-radius: 3px; font-weight: 500; }
+.task-row { display: flex; align-items: flex-start; gap: 8px; padding: 7px 10px; border-radius: 5px; cursor: pointer; transition: background 0.1s; border-left: 2px solid transparent; margin-bottom: 2px; }
+.task-row:hover { background: #f0efe8; }
+.task-row.done-row { opacity: 0.5; }
+.task-row.decision-row { border-left-color: #e65100; background: #fffbf5; }
+.task-row.decision-row:hover { background: #fff3e0; }
+.task-badges { display: flex; gap: 4px; flex-shrink: 0; padding-top: 1px; }
+.badge-p { font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 3px; }
 .p1 { background: #fde8e8; color: #c0392b; }
 .p2 { background: #fef3e2; color: #b7770d; }
 .p3 { background: #e8f5e9; color: #2e7d32; }
-.decision-tag { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; border-radius: 3px; font-size: 10px; padding: 1px 5px; font-weight: 600; }
-.decision-row { background: #fffbf5; border-left: 3px solid #e65100; }
-.done-tag { background: #e8f5e9; color: #2e7d32; }
-.blocked-tag { background: #fde8e8; color: #c0392b; }
+.done-tag { background: #e8f5e9; color: #2e7d32; font-size: 10px; padding: 1px 5px; border-radius: 3px; }
+.blocked-tag { background: #fde8e8; color: #c0392b; font-size: 10px; padding: 1px 5px; border-radius: 3px; }
+.decision-tag { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; font-size: 10px; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
+.task-title { font-size: 13px; color: #1a1a1a; line-height: 1.4; flex: 1; }
+.task-meta { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
 .note-dot { font-size: 10px; color: #9b8ec4; font-weight: 600; }
 .log-dot { font-size: 10px; color: #1D9E75; font-weight: 600; }
-.arrow { font-size: 12px; color: #ddd; flex-shrink: 0; padding-top: 1px; }
-.overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.12); z-index: 90; display: none; }
+.arrow { font-size: 12px; color: #ddd; flex-shrink: 0; }
+
+/* Badges */
+.job-badge { font-size: 10px; font-weight: 600; color: #7c6f9f; background: #f0eefb; border: 1px solid #d8d3f0; border-radius: 4px; padding: 1px 6px; }
+
+/* Side panel */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.15); z-index: 99; }
 .overlay.open { display: block; }
-.panel { position: fixed; top: 0; right: 0; width: 360px; height: 100vh; background: #fff; border-left: 1px solid #e0ded6; z-index: 100; transform: translateX(100%); transition: transform 0.2s ease; display: flex; flex-direction: column; }
+.panel { position: fixed; top: 0; right: 0; width: 380px; height: 100vh; background: #fff; border-left: 1px solid #e0ded6; z-index: 100; transform: translateX(100%); transition: transform 0.2s; display: flex; flex-direction: column; }
 .panel.open { transform: translateX(0); }
 .panel-top { padding: 14px 16px 12px; border-bottom: 1px solid #f0efe8; }
 .panel-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .panel-id { font-size: 10px; color: #bbb; }
 .close-btn { font-size: 11px; color: #aaa; cursor: pointer; padding: 2px 8px; border: 1px solid #e5e3dc; border-radius: 4px; }
-.close-btn:hover { background: #f5f4f0; }
+.panel-jobnum { font-size: 15px; font-weight: 700; color: #7c6f9f; }
+.panel-jobref { font-size: 10px; color: #aaa; margin-bottom: 4px; }
 .panel-title { font-size: 14px; font-weight: 500; color: #1a1a1a; line-height: 1.4; }
 .panel-scroll { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
-.panel-desc { font-size: 12px; color: #555; line-height: 1.65; }
-.divider { border: none; border-top: 1px solid #f0efe8; }
+.panel-desc { font-size: 12px; color: #555; line-height: 1.65; white-space: pre-wrap; }
 .section-label { font-size: 10px; font-weight: 600; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
-.notes-display { font-size: 12px; color: #333; line-height: 1.65; white-space: pre-wrap; background: #faf9f6; border-radius: 5px; padding: 10px 12px; min-height: 32px; }
+.notes-display { font-size: 12px; color: #333; line-height: 1.65; white-space: pre-wrap; background: #faf9f6; border-radius: 5px; padding: 10px 12px; min-height: 40px; }
 .notes-display.empty { color: #ccc; font-style: italic; }
 .notes-ts { font-size: 10px; color: #bbb; margin-top: 4px; }
-.note-input { width: 100%; font-size: 12px; padding: 8px 10px; border: 1px solid #e0ded6; border-radius: 6px; background: #faf9f6; color: #1a1a1a; resize: none; font-family: inherit; min-height: 72px; }
+.note-input { width: 100%; font-size: 12px; padding: 8px 10px; border: 1px solid #e0ded6; border-radius: 6px; background: #faf9f6; color: #1a1a1a; resize: vertical; min-height: 80px; font-family: inherit; }
 .note-input:focus { outline: none; border-color: #9b8ec4; }
-.btn-row { display: flex; gap: 6px; margin-top: 6px; }
-.btn-save { font-size: 11px; padding: 5px 14px; border: 1px solid #9b8ec4; border-radius: 4px; background: #fff; color: #7c6f9f; cursor: pointer; font-weight: 500; }
-.btn-save:hover { background: #f5f3fb; }
-.btn-save:disabled { opacity: 0.4; cursor: default; }
+.btn-row { display: flex; gap: 6px; }
+.btn-save { font-size: 11px; padding: 5px 14px; border: 1px solid #9b8ec4; border-radius: 4px; background: #fff; color: #7c6f9f; cursor: pointer; }
+.btn-save:hover { background: #f0eefb; }
 .btn-clear { font-size: 11px; padding: 5px 10px; border: 1px solid #e0ded6; border-radius: 4px; background: #fff; color: #aaa; cursor: pointer; }
 .save-status { font-size: 10px; color: #aaa; padding-top: 4px; min-height: 16px; }
 .save-status.ok { color: #2e7d32; }
 .save-status.err { color: #c0392b; }
-.log-entry { padding: 8px 0; border-bottom: 1px solid #f0efe8; }
-.log-entry:last-child { border-bottom: none; }
-.log-header { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; flex-wrap: wrap; }
+.log-item { border-top: 1px solid #f0efe8; padding-top: 8px; }
+.log-meta { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; flex-wrap: wrap; }
 .log-agent { font-size: 10px; padding: 1px 6px; border-radius: 3px; background: #e8f5e9; color: #2e7d32; font-weight: 500; }
 .log-action { font-size: 10px; padding: 1px 6px; border-radius: 3px; background: #f0efe8; color: #666; }
 .log-date { font-size: 10px; color: #bbb; }
@@ -91,17 +115,27 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 </style>
 </head>
 <body>
+
 <div class="header">
-  <h1>🏰 FRANKENSTEINCASTLE</h1>
+  <div class="header-title">
+    <img src="https://juliantarkin.github.io/holm-toc/favicon.ico" width="16" height="16" onerror="this.style.display='none'" />
+    FRANKENSTEINCASTLE
+  </div>
   <div class="header-right">
-    <span class="badge" id="total-badge">loading...</span>
-    <button class="refresh-btn" onclick="init()">↻ refresh</button>
+    <span class="badge" id="open-count">—</span>
+    <button class="refresh-btn" onclick="load()">↻ refresh</button>
   </div>
 </div>
+
+<div class="filter-bar" id="filter-bar">
+  <button class="filter-btn active" onclick="setFilter('all', this)">all</button>
+</div>
+
 <div class="main">
   <div class="error-bar" id="error-bar"></div>
-  <div id="content"><div style="color:#aaa;font-size:12px;padding:20px 0">Loading from Supabase...</div></div>
+  <div id="content"><div style="color:#aaa;font-size:12px;padding:20px 0">Loading...</div></div>
 </div>
+
 <div class="overlay" id="overlay" onclick="closePanel()"></div>
 <div class="panel" id="panel">
   <div class="panel-top">
@@ -110,213 +144,278 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <span class="close-btn" onclick="closePanel()">close</span>
     </div>
     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
-      <span style="font-size:13px;font-weight:600;color:#7c6f9f;font-variant-numeric:tabular-nums;" id="p-jobnum"></span>
-      <span style="font-size:10px;color:#bbb;" id="p-id"></span>
+      <span class="panel-jobnum" id="p-jobnum"></span>
+      <span class="panel-id" id="p-proj"></span>
     </div>
-    <div style="display:flex;align-items:baseline;gap:8px;">
-      <span style="font-size:15px;font-weight:700;color:#7c6f9f;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;" id="p-jobnum"></span>
-      <div class="panel-title" id="p-title"></div>
-    </div>
+    <div class="panel-jobref" id="p-jobref"></div>
+    <div class="panel-title" id="p-title"></div>
   </div>
   <div class="panel-scroll">
-    <div style="font-size:11px;color:#aaa;margin-bottom:2px;" id="p-jobref"></div>
-    <div style="font-size:10px;color:#aaa;margin-bottom:4px;font-variant-numeric:tabular-nums;" id="p-jobref"></div>
-    <div class="panel-desc" id="p-desc"></div>
-    <hr class="divider">
+    <div>
+      <div class="section-label">description</div>
+      <div class="panel-desc" id="p-desc">—</div>
+    </div>
     <div>
       <div class="section-label">your notes</div>
       <div class="notes-display empty" id="notes-display">no notes yet</div>
       <div class="notes-ts" id="notes-ts"></div>
     </div>
-    <hr class="divider">
     <div>
       <div class="section-label">edit notes</div>
-      <textarea class="note-input" id="note-input" placeholder="Context, decisions, blockers — read by Claude when this task comes up..."></textarea>
-      <div class="btn-row">
-        <button class="btn-save" id="btn-save" onclick="saveNote()">save</button>
-        <button class="btn-clear" onclick="document.getElementById('note-input').value=''">clear</button>
+      <textarea class="note-input" id="note-input" placeholder="Add notes, decisions, context..."></textarea>
+      <div class="btn-row" style="margin-top:6px;">
+        <button class="btn-save" onclick="saveNote()">save note</button>
+        <button class="btn-clear" onclick="clearNote()">clear</button>
       </div>
       <div class="save-status" id="save-status"></div>
     </div>
-    <hr class="divider">
     <div>
       <div class="section-label">dev log</div>
-      <div id="log-entries"><span class="loading-log">loading...</span></div>
+      <div id="dev-log"><div class="loading-log">loading...</div></div>
     </div>
   </div>
 </div>
+
 <script>
 const SUPA = 'https://xtuwsgicohmlgazcushj.supabase.co';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0dXdzZ2ljb2htbGdhemN1c2hqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzI5ODQ1OCwiZXhwIjoyMDg4ODc0NDU4fQ.lvCpNoQwLViH_JS-ycbxfNciJjboggqiBLBHu2pAf38';
-const H = { apikey: KEY, Authorization: 'Bearer ' + KEY };
-const CATS = {
-  character:'#7F77DD','life-sim':'#378ADD',infra:'#1D9E75',debug:'#D85A30',
-  voice:'#D4537E',photo:'#EF9F27',memory:'#639922',content:'#888780',
-  integration:'#B4B2A9',review:'#B4B2A9',ue5:'#378ADD',
-  rpg:'#A0522D',discord:'#5865F2'
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0dXdzZ2ljb2htbGdhemN1c2hqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyOTg0NTgsImV4cCI6MjA4ODg3NDQ1OH0.RGVQdsMwc5U0R9avkBEMTHRkFkqjCrXTjRY3DMx5x3M';
+
+// Project config
+const PROJECTS = {
+  astrid:   { label: 'Project Astrid',     color: '#7F77DD', desc: 'AI companion pipeline' },
+  toc:      { label: 'TOC / Infrastructure', color: '#1D9E75', desc: 'Task ops center, VPS, n8n' },
+  rpg:      { label: 'RPG Online',          color: '#A0522D', desc: 'Automated DM, TTRPG systems' },
+  ue5:      { label: 'UE5 Projects',         color: '#378ADD', desc: 'Unreal Engine dev' },
+  cdcl:     { label: 'CDCL / Writing',       color: '#639922', desc: 'Cross-Domain Contact Layer' },
+  infra:    { label: 'Shared Infra',         color: '#888780', desc: 'Cross-project infrastructure' },
+  personal: { label: 'Personal',             color: '#D4537E', desc: 'Personal tasks' },
+  other:    { label: 'Uncategorised',        color: '#B4B2A9', desc: '' },
 };
-const SPRINTS = [
-  {key:'sprint-1',label:'Sprint 1 — foundation'},
-  {key:'sprint-2',label:'Sprint 2 — depth'},
-  {key:'sprint-3',label:'Sprint 3 — integrations'},
-  {key:'backlog', label:'Backlog'},
-];
-let tasks=[], openBars={}, currentId=null;
+
+// Category colors (within a project)
+const CAT_COLORS = {
+  character:'#7F77DD', 'life-sim':'#378ADD', infra:'#1D9E75', debug:'#D85A30',
+  voice:'#D4537E', photo:'#EF9F27', memory:'#639922', content:'#888780',
+  integration:'#B4B2A9', review:'#B4B2A9', ue5:'#378ADD', rpg:'#A0522D',
+  discord:'#5865F2', toc:'#1D9E75', cdcl:'#639922', personal:'#D4537E',
+};
+
+const SPRINT_ORDER = ['sprint-1','sprint-2','sprint-3','backlog','staging'];
+const SPRINT_LABELS = { 'sprint-1':'Sprint 1 — Foundation', 'sprint-2':'Sprint 2 — Depth', 'sprint-3':'Sprint 3 — Integrations', backlog:'Backlog', staging:'Staging / Incoming' };
+
+let tasks = [], currentId = null, activeFilter = 'all', openBars = {};
 
 async function api(path) {
-  const r = await fetch(SUPA+path, {headers:H});
+  const r = await fetch(SUPA+path, {headers:{apikey:KEY,Authorization:'Bearer '+KEY}});
   if(!r.ok) throw new Error('HTTP '+r.status);
   return r.json();
 }
 
-async function init() {
+async function load() {
   try {
-    tasks = await api('/rest/v1/commander_tasks?order=id.asc&limit=200');
     document.getElementById('error-bar').style.display='none';
-    render();
+    tasks = await api('/rest/v1/commander_tasks?select=*&order=priority.asc,id.asc&limit=300');
+    renderFilters();
+    renderAll();
     if(currentId) openPanel(currentId);
   } catch(e) {
-    const el=document.getElementById('error-bar');
-    el.textContent='Load failed: '+e.message; el.style.display='block';
-    document.getElementById('total-badge').textContent='error';
+    const eb=document.getElementById('error-bar');
+    eb.style.display='block'; eb.textContent='Load error: '+e.message;
   }
 }
 
-function pTag(p){return`<span class="tag ${p===1?'p1':p===2?'p2':'p3'}">P${p}</span>`;}
+function setFilter(val, btn) {
+  activeFilter = val;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
 
-function render() {
-  const open=tasks.filter(t=>t.status!=='done').length;
-  document.getElementById('total-badge').textContent=open+' open';
-  let html='';
-  SPRINTS.forEach(({key,label})=>{
-    const st=tasks.filter(t=>t.sprint===key);
-    if(!st.length) return;
-    const map={};
-    st.forEach(t=>{const c=t.category||'other';(map[c]=map[c]||[]).push(t);});
-    html+=`<div class="sprint-label">${label}</div>`;
-    Object.keys(map).forEach(cat=>{
-      const ts=map[cat], active=ts.filter(t=>t.status!=='done'), top3=active.slice(0,3);
-      const color=CATS[cat]||'#aaa', bk=key+'_'+cat, isOpen=openBars[bk];
-      const pills=top3.map(t=>`<span class="pill">#${t.id} ${t.title}</span>`).join('');
-      html+=`<div class="cat-bar">
-        <div class="bar-header" onclick="toggle('${bk}')">
-          <div class="bar-left">
+function renderFilters() {
+  const bar = document.getElementById('filter-bar');
+  const projects = [...new Set(tasks.map(t=>t.project||'other'))].sort();
+  bar.innerHTML = '<button class="filter-btn'+(activeFilter==='all'?' active':'') +'" onclick="setFilter(\'all\', this)">all</button>';
+  projects.forEach(p => {
+    const cfg = PROJECTS[p]||{label:p,color:'#aaa'};
+    bar.innerHTML += `<button class="filter-btn${activeFilter===p?' active':''}" onclick="setFilter('${p}', this)" style="${activeFilter===p?'background:'+cfg.color+';color:#fff;border-color:'+cfg.color:''}"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${cfg.color};margin-right:5px;vertical-align:middle;"></span>${cfg.label}</button>`;
+  });
+}
+
+function renderAll() {
+  const filtered = activeFilter==='all' ? tasks : tasks.filter(t=>(t.project||'other')===activeFilter);
+  const open = filtered.filter(t=>t.status!=='done').length;
+  document.getElementById('open-count').textContent = open+' open';
+
+  // Group by project
+  const byProject = {};
+  filtered.forEach(t => {
+    const p = t.project||'other';
+    (byProject[p]=byProject[p]||[]).push(t);
+  });
+
+  const projectOrder = Object.keys(PROJECTS).filter(p=>byProject[p]);
+  // Add any unknown projects
+  Object.keys(byProject).forEach(p=>{ if(!PROJECTS[p]) projectOrder.push(p); });
+
+  let html = '';
+  projectOrder.forEach(proj => {
+    const pts = byProject[proj];
+    if(!pts||!pts.length) return;
+    const cfg = PROJECTS[proj]||{label:proj,color:'#aaa',desc:''};
+    const openCount = pts.filter(t=>t.status!=='done').length;
+
+    html += `<div class="project-section" id="proj-${proj}">
+      <div class="project-header">
+        <div class="project-dot" style="background:${cfg.color}"></div>
+        <span class="project-name">${cfg.label}</span>
+        ${cfg.desc?`<span style="font-size:11px;color:#aaa;">${cfg.desc}</span>`:''}
+        <span class="project-count" style="margin-left:auto;">${openCount} open</span>
+      </div>`;
+
+    // Group by sprint
+    const bySprint = {};
+    pts.forEach(t=>{ const s=t.sprint||'backlog'; (bySprint[s]=bySprint[s]||[]).push(t); });
+    const sprintKeys = SPRINT_ORDER.filter(s=>bySprint[s]);
+    Object.keys(bySprint).forEach(s=>{ if(!SPRINT_ORDER.includes(s)) sprintKeys.push(s); });
+
+    sprintKeys.forEach(sprint => {
+      const sts = bySprint[sprint];
+      const label = SPRINT_LABELS[sprint]||sprint;
+      html += `<div class="sprint-label">${label}</div>`;
+
+      // Group by category
+      const byCat = {};
+      sts.forEach(t=>{ const c=t.category||'other'; (byCat[c]=byCat[c]||[]).push(t); });
+
+      Object.keys(byCat).forEach(cat => {
+        const cts = byCat[cat];
+        const color = CAT_COLORS[cat]||cfg.color;
+        const openCts = cts.filter(t=>t.status!=='done');
+        const bk = proj+'_'+sprint+'_'+cat;
+        const isOpen = !!openBars[bk];
+
+        const pills = cts.slice(0,3).map(t => {
+          const isDecision = t.status==='decision-pending';
+          const isDone = t.status==='done';
+          const label = '#'+t.id+' '+t.title;
+          const cls = isDone?'pill done-pill':isDecision?'pill decision-pill':'pill';
+          return `<span class="${cls}" onclick="event.stopPropagation();openPanel(${t.id})" title="${t.title}">${label.slice(0,32)}${label.length>32?'…':''}</span>`;
+        }).join('');
+        const more = cts.length>3?`<span style="font-size:11px;color:#aaa;">+${cts.length-3}</span>`:'';
+
+        html += `<div class="cat-row">
+          <div class="cat-header" onclick="toggleCat('${bk}')">
             <div class="cat-dot" style="background:${color}"></div>
             <span class="cat-name">${cat}</span>
-            <div class="pills">${pills}</div>
+            <div class="cat-pills">${pills}${more}</div>
+            <span class="cat-count">${openCts.length}</span>
+            <span class="chevron${isOpen?' open':''}" id="chev-${bk}">▼</span>
           </div>
-          <div class="bar-right">
-            <span class="task-count">${active.length}</span>
-            <span class="chevron ${isOpen?'open':''}">▼</span>
-          </div>
-        </div>
-        <div class="task-list ${isOpen?'open':''}" id="bar-${bk}">`;
-      ts.forEach(t=>{
-        const done=t.status==='done';
-        const isDecision=t.status==='decision-pending';
-        const hasNotes=t.notes&&t.notes.trim();
-        const blocked=t.blocked_by&&t.blocked_by.length?t.blocked_by[0]:null;
-        html+=`<div class="task-row ${done?'done-row':''} ${isDecision?'decision-row':''}" onclick="openPanel(${t.id})">
-          <span class="task-num">#${t.id}</span>
-          <div class="task-body">
-            <div class="task-title">${t.title}</div>
-            <div class="task-meta">
-              ${pTag(t.priority||2)}
-              ${done?'<span class="tag done-tag">done</span>':''}
-              ${blocked?`<span class="tag blocked-tag">blocked #${blocked}</span>`:''}
-              ${hasNotes?'<span class="note-dot">● note</span>':''}
-            </div>
-          </div>
-          <span class="arrow">›</span>
-        </div>`;
+          <div class="task-list${isOpen?' open':''}" id="list-${bk}">`;
+
+        cts.forEach(t => {
+          const done = t.status==='done';
+          const isDecision = t.status==='decision-pending';
+          const blocked = t.status==='blocked';
+          const pTag = t.priority<=1?'<span class="badge-p p1">P1</span>':t.priority===2?'<span class="badge-p p2">P2</span>':'<span class="badge-p p3">P3</span>';
+          const statusTag = done?'<span class="done-tag">done</span>':blocked?'<span class="blocked-tag">blocked</span>':isDecision?'<span class="decision-tag">⚡ decide</span>':'';
+          const noteIndicator = t.notes?'<span class="note-dot" title="has notes">●</span>':'';
+          html += `<div class="task-row${done?' done-row':''} ${isDecision?' decision-row':''}" onclick="openPanel(${t.id})">
+            <div class="task-badges">${pTag}${statusTag}</div>
+            <span class="task-title">${t.title}</span>
+            <div class="task-meta">${noteIndicator}<span class="arrow">›</span></div>
+          </div>`;
+        });
+
+        html += `</div></div>`;
       });
-      html+=`</div></div>`;
     });
+
+    html += `</div>`;
   });
-  document.getElementById('content').innerHTML=html;
+
+  document.getElementById('content').innerHTML = html || '<div style="color:#aaa;font-size:12px;padding:20px 0">No tasks.</div>';
 }
 
-function toggle(bk){openBars[bk]=!openBars[bk];render();}
+function toggleCat(key) {
+  openBars[key] = !openBars[key];
+  const list = document.getElementById('list-'+key);
+  const chev = document.getElementById('chev-'+key);
+  if(list) list.classList.toggle('open', !!openBars[key]);
+  if(chev) chev.classList.toggle('open', !!openBars[key]);
+}
 
 async function openPanel(id) {
-  const t=tasks.find(x=>x.id===id);
+  const t = tasks.find(x=>x.id===id);
   if(!t) return;
-  currentId=id;
-  document.getElementById('p-id').textContent=`${t.sprint||'?'} · ${t.category||'?'} · ${t.status}`;
-  document.getElementById('p-jobnum').textContent='#'+t.id;
-  document.getElementById('p-title').textContent=t.title;
-  document.getElementById('p-jobref').textContent='Job #'+t.id+' · Reference this number in commits and dev log entries.';
-  document.getElementById('p-jobref').textContent='Job #'+t.id+' — reference this number in all dev log entries and commit messages.';
-  document.getElementById('p-desc').textContent=t.description||'No description.';
-  const nd=document.getElementById('notes-display');
-  if(t.notes&&t.notes.trim()){
-    nd.textContent=t.notes; nd.classList.remove('empty');
-    const ts=t.notes_updated_at?new Date(t.notes_updated_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'America/Los_Angeles'})+' PST':'';
-    document.getElementById('notes-ts').textContent=ts?'updated '+ts:'';
-  } else {
-    nd.textContent='no notes yet'; nd.classList.add('empty');
-    document.getElementById('notes-ts').textContent='';
-  }
-  document.getElementById('note-input').value=t.notes||'';
+  currentId = id;
+  const cfg = PROJECTS[t.project]||{label:t.project||'?',color:'#aaa'};
+  document.getElementById('p-jobnum').textContent = '#'+t.id;
+  document.getElementById('p-proj').textContent = cfg.label+(t.project?'':'');
+  document.getElementById('p-id').textContent = (t.sprint||'?')+' · '+(t.category||'?')+' · '+(t.status||'?');
+  document.getElementById('p-jobref').textContent = t.type?t.type.toUpperCase():'';
+  document.getElementById('p-title').textContent = t.title;
+  document.getElementById('p-desc').textContent = t.description||'No description.';
+  const nd = document.getElementById('notes-display');
+  nd.textContent = t.notes||'no notes yet';
+  nd.className = 'notes-display'+(t.notes?'':' empty');
+  document.getElementById('notes-ts').textContent = t.notes_updated_at?'updated '+new Date(t.notes_updated_at).toLocaleDateString():'';
+  document.getElementById('note-input').value = t.notes||'';;
   document.getElementById('save-status').textContent='';
-  document.getElementById('save-status').className='save-status';
   document.getElementById('panel').classList.add('open');
   document.getElementById('overlay').classList.add('open');
   loadLog(id);
 }
 
-async function loadLog(id) {
-  const el=document.getElementById('log-entries');
-  el.innerHTML='<span class="loading-log">loading...</span>';
-  try {
-    const entries=await api(`/rest/v1/dev_log?task_id=eq.${id}&order=created_at.desc&limit=20`);
-    if(!entries.length){el.innerHTML='<span class="loading-log">no log entries yet</span>';return;}
-    el.innerHTML=entries.map(e=>{
-      const d=new Date(e.created_at);
-      const ds=d.toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'America/Los_Angeles'});
-      return`<div class="log-entry">
-        <div class="log-header">
-          <span class="log-agent">${e.agent}</span>
-          <span class="log-action">${e.action}</span>
-          <span class="log-date">${ds}</span>
-        </div>
-        <div class="log-result">${e.result||''}</div>
-        ${e.notes?`<div class="log-notes">${e.notes}</div>`:''}
-      </div>`;
-    }).join('');
-  } catch(err){el.innerHTML=`<span class="loading-log">error: ${err.message}</span>`;}
-}
-
-function closePanel(){
+function closePanel() {
   document.getElementById('panel').classList.remove('open');
   document.getElementById('overlay').classList.remove('open');
-  currentId=null;
+  currentId = null;
 }
 
-async function saveNote(){
+async function saveNote() {
   if(!currentId) return;
-  const note=document.getElementById('note-input').value.trim();
-  const btn=document.getElementById('btn-save'), st=document.getElementById('save-status');
-  btn.disabled=true; st.textContent='saving...'; st.className='save-status';
+  const val = document.getElementById('note-input').value.trim();
+  const ss = document.getElementById('save-status');
+  ss.textContent='saving...'; ss.className='save-status';
   try {
-    const r=await fetch(SUPA+'/rest/v1/commander_tasks?id=eq.'+currentId,{
-      method:'PATCH',
-      headers:{...H,'Content-Type':'application/json',Prefer:'return=representation'},
-      body:JSON.stringify({notes:note,notes_updated_at:new Date().toISOString()})
+    const r = await fetch(SUPA+'/rest/v1/commander_tasks?id=eq.'+currentId, {
+      method:'PATCH', headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',Prefer:'return=representation'},
+      body: JSON.stringify({notes:val,notes_updated_at:new Date().toISOString()})
     });
     if(!r.ok) throw new Error('HTTP '+r.status);
-    const rows=await r.json();
-    const t=tasks.find(x=>x.id===currentId);
-    if(t&&rows[0]){t.notes=rows[0].notes;t.notes_updated_at=rows[0].notes_updated_at;}
-    openPanel(currentId); render();
-    st.textContent='saved ✓'; st.className='save-status ok';
-  } catch(e){
-    st.textContent='error: '+e.message; st.className='save-status err';
-  } finally {btn.disabled=false;}
+    const updated = await r.json();
+    if(updated[0]) { const t=tasks.find(x=>x.id===currentId); if(t){t.notes=val;t.notes_updated_at=updated[0].notes_updated_at;} }
+    ss.textContent='✓ saved'; ss.className='save-status ok';
+    document.getElementById('notes-display').textContent=val||'no notes yet';
+    document.getElementById('notes-display').className='notes-display'+(val?'':' empty');
+  } catch(e){ ss.textContent='Error: '+e.message; ss.className='save-status err'; }
 }
 
-init();
-setInterval(init,300000);
+function clearNote() {
+  document.getElementById('note-input').value='';
+}
+
+async function loadLog(id) {
+  const el = document.getElementById('dev-log');
+  el.innerHTML = '<div class="loading-log">loading...</div>';
+  try {
+    const logs = await api('/rest/v1/dev_log?task_id=eq.'+id+'&order=created_at.desc&limit=10');
+    if(!logs.length){el.innerHTML='<div class="loading-log">no entries</div>';return;}
+    el.innerHTML = logs.map(l=>`
+      <div class="log-item">
+        <div class="log-meta">
+          <span class="log-agent">${l.agent||'?'}</span>
+          <span class="log-action">${l.action||'?'}</span>
+          <span class="log-date">${l.session_date||''}</span>
+        </div>
+        <div class="log-result">${l.result||''}</div>
+        ${l.notes?`<div class="log-notes">${l.notes}</div>`:''}
+      </div>`).join('');
+  } catch(e){el.innerHTML='<div class="loading-log">error loading log</div>';}
+}
+
+load();
 </script>
 </body>
 </html>
