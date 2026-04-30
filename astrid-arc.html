@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astrid Arc View — TOC</title>
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16181c;
+    --border: #2a2d35;
+    --text: #c9cbd0;
+    --muted: #6b7280;
+    --accent: #7c8cff;
+    --red: #ef4444;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --purple: #a855f7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'SF Mono', 'Fira Mono', monospace; font-size: 13px; padding: 24px; }
+  h1 { font-size: 18px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+  .subtitle { color: var(--muted); font-size: 11px; margin-bottom: 28px; }
+  .section { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 18px; margin-bottom: 18px; }
+  .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+  .stat-card { text-align: center; }
+  .stat-name { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.06em; margin-bottom: 6px; }
+  .stat-bar-wrap { height: 60px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 4px; }
+  .stat-bar { width: 28px; background: var(--accent); border-radius: 2px 2px 0 0; transition: height 0.4s; opacity: 0.85; }
+  .stat-val { font-size: 14px; font-weight: 600; color: var(--text); }
+  .reflection-list { list-style: none; }
+  .reflection-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .reflection-item:last-child { border-bottom: none; }
+  .reflection-meta { color: var(--muted); font-size: 11px; margin-bottom: 4px; }
+  .shift-badge { display: inline-block; background: var(--amber); color: #000; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 1px 5px; border-radius: 3px; margin-left: 6px; }
+  .reflection-preview { color: var(--text); line-height: 1.5; }
+  .myth-item { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; line-height: 1.5; color: var(--text); }
+  .myth-item:last-child { border-bottom: none; }
+  .myth-meta { color: var(--muted); font-size: 10px; margin-top: 3px; }
+  .error { color: var(--red); font-size: 12px; padding: 8px; }
+  .loading { color: var(--muted); font-size: 12px; padding: 8px; }
+  .refresh-btn { background: none; border: 1px solid var(--border); color: var(--muted); padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; font-family: inherit; }
+  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .header-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; }
+  .updated-at { color: var(--muted); font-size: 10px; }
+  .stat-bar.high { background: var(--green); }
+  .stat-bar.low { background: var(--red); opacity: 0.8; }
+  .stat-bar.mid { background: var(--amber); }
+  .no-data { color: var(--muted); font-size: 12px; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="header-row">
+  <div>
+    <h1>Astrid Arc View</h1>
+    <div class="subtitle">Growth ledger / identity trajectory — read only</div>
+  </div>
+  <div style="text-align:right">
+    <button class="refresh-btn" onclick="loadAll()">Refresh</button>
+    <div class="updated-at" id="last-refresh">—</div>
+  </div>
+</div>
+
+<div class="section" id="stats-section">
+  <div class="section-title">Current State — 7 Stats (astrid_user_state)</div>
+  <div id="stats-content" class="loading">Loading...</div>
+</div>
+
+<div class="section" id="reflections-section">
+  <div class="section-title">Interior Reflections — Last 7 Days <span style="color:var(--amber);font-size:10px;margin-left:8px;">NAMED SHIFTS FLAGGED</span></div>
+  <div id="reflections-content" class="loading">Loading...</div>
+</div>
+
+<div class="section" id="myths-section">
+  <div class="section-title">Self-Myth Revisions (Qdrant-logged)</div>
+  <div id="myths-content" class="loading">Loading...</div>
+</div>
+
+<script>
+const SUPA_URL = 'https://xtuwsgicohmlgazcushj.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0dXdzZ2ljb2htbGdhemN1c2hqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzI5ODQ1OCwiZXhwIjoyMDg4ODc0NDU4fQ.lvCpNoQwLViH_JS-ycbxfNciJjboggqiBLBHu2pAf38';
+
+async function supa(path) {
+  const r = await fetch(SUPA_URL + '/rest/v1/' + path, {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+
+function statColor(v) {
+  if (v >= 0.7) return 'high';
+  if (v >= 0.4) return 'mid';
+  return 'low';
+}
+
+function fmtDate(ts) {
+  if (!ts) return '—';
+  return new Date(ts).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'America/Los_Angeles' }) + ' PST';
+}
+
+async function loadStats() {
+  const el = document.getElementById('stats-content');
+  try {
+    const rows = await supa('astrid_stat_current?user_id=eq.commander');
+    if (!rows.length) { el.innerHTML = '<div class="no-data">No data.</div>'; return; }
+    const s = rows[0];
+    const stats = [
+      { name: 'Vitality', key: 'vitality' },
+      { name: 'Equil.', key: 'equilibrium' },
+      { name: 'Connection', key: 'connection' },
+      { name: 'Seen', key: 'seen' },
+      { name: 'Desire', key: 'desire' },
+      { name: 'Aliveness', key: 'aliveness' },
+      { name: 'Agency', key: 'agency' }
+    ];
+    const cards = stats.map(st => {
+      const v = parseFloat(s[st.key] || 0);
+      const pct = Math.round(v * 100);
+      const cls = statColor(v);
+      return `<div class="stat-card">
+        <div class="stat-name">${st.name}</div>
+        <div class="stat-bar-wrap"><div class="stat-bar ${cls}" style="height:${Math.max(4, pct * 0.56)}px"></div></div>
+        <div class="stat-val">${v.toFixed(3)}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div class="stat-grid">${cards}</div>
+      <div style="margin-top:10px;color:var(--muted);font-size:10px;">Updated ${fmtDate(s.updated_at)} &mdash; Point-in-time from astrid_user_state. Trajectory view pending stat_snapshot logging.</div>`;
+  } catch(e) {
+    el.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+  }
+}
+
+async function loadReflections() {
+  const el = document.getElementById('reflections-content');
+  try {
+    const rows = await supa('astrid_reflection_arc?order=ts.desc&limit=10');
+    if (!rows.length) { el.innerHTML = '<div class="no-data">No reflections in last 7 days.</div>'; return; }
+    const items = rows.map(r => {
+      const shiftBadge = r.named_shift ? '<span class="shift-badge">Named Shift</span>' : '';
+      return `<li class="reflection-item">
+        <div class="reflection-meta">${fmtDate(r.ts)} &mdash; ${r.content_length} chars${shiftBadge}</div>
+        <div class="reflection-preview">${escHtml(r.preview || '')}</div>
+      </li>`;
+    }).join('');
+    el.innerHTML = `<ul class="reflection-list">${items}</ul>`;
+  } catch(e) {
+    el.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+  }
+}
+
+async function loadMyths() {
+  const el = document.getElementById('myths-content');
+  try {
+    const rows = await supa('astrid_self_myth_revisions?order=ts.desc&limit=20');
+    if (!rows.length) { el.innerHTML = '<div class="no-data">No self-myth revisions logged yet. Job runs daily at 03:00 UTC when shift-signaling reflections are found.</div>'; return; }
+    const items = rows.map(r => `<div class="myth-item">
+      ${escHtml(r.content || '')}
+      <div class="myth-meta">${fmtDate(r.ts)}</div>
+    </div>`).join('');
+    el.innerHTML = items;
+  } catch(e) {
+    el.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+  }
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function loadAll() {
+  document.getElementById('last-refresh').textContent = 'Loading...';
+  await Promise.all([loadStats(), loadReflections(), loadMyths()]);
+  document.getElementById('last-refresh').textContent = 'Last refresh: ' + new Date().toLocaleTimeString();
+}
+
+loadAll();
+</script>
+</body>
+</html>
