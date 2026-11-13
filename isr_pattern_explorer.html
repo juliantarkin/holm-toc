@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>ISR Pattern Explorer</title>
+<style>:root{--ink:#172d3e;--muted:#627383;--line:#dde5ea;--paper:#fff;--bg:#f1f5f7;--teal:#087f74;--teal-soft:#e2f4ef;--blue:#477fab;--orange:#d38e34;--dark:#102635;--radius:14px}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.45}button,input,select{font:inherit}button,select,summary,input[type=range],input[type=checkbox]{cursor:pointer}button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #52bba6;outline-offset:3px}button{touch-action:manipulation}h1,h2,h3,p{margin:0}a{color:#126f83;text-underline-offset:3px}.topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 30px;background:var(--paper);border-bottom:1px solid var(--line);gap:16px}.brand{display:flex;align-items:center;gap:13px}.brand-mark{display:grid;place-items:center;background:var(--teal-soft);border-radius:13px;width:45px;height:45px}.brand-mark svg{width:30px;height:30px;stroke:var(--teal);stroke-width:1.5;fill:none}.brand-mark path{fill:var(--teal);stroke:none}.eyebrow{font-size:10px;letter-spacing:.17em;font-weight:750;color:var(--teal);margin-bottom:3px}h1{font-size:23px;letter-spacing:-.6px;font-weight:750}.header-note{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:12px}.badge{border:1px solid #cfdfd7;background:#f0f8f3;border-radius:30px;padding:5px 10px;font-weight:650;color:#3e6956}.workspace{max-width:1700px;margin:auto;display:grid;grid-template-columns:310px minmax(0,1fr);gap:25px;padding:26px 30px}.controls{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);align-self:start;overflow:hidden;box-shadow:0 3px 12px #20344503}.control-section{padding:21px 20px;border-bottom:1px solid var(--line)}.section-kicker{display:flex;align-items:center;gap:8px;font-weight:750;font-size:12px;letter-spacing:.015em;margin-bottom:18px}.section-kicker>span:first-child{color:var(--teal);font-size:10px;background:#edf6f3;border:1px solid #dbece5;border-radius:5px;padding:2px 5px}label{font-size:12px;font-weight:650;display:block;margin-bottom:7px}select,input[type=number]{display:block;width:100%;background:#fff;border:1px solid #cdd9e0;color:var(--ink);border-radius:8px;min-height:40px;padding:8px 10px;font-size:13px}select{padding-right:25px}.profile-card{display:flex;gap:10px;align-items:center;margin:17px 0 9px}.profile-card h2{font-size:14px;line-height:1.3}.profile-card p{font-size:11px;color:var(--muted);margin-top:3px}.profile-icon{display:grid;place-items:center;flex-shrink:0;width:46px;height:46px;background:#eef3f6;border-radius:11px;color:#446b82}.profile-icon svg{width:32px;height:32px;fill:currentColor;stroke:currentColor}.subtle,.pattern-description{font-size:12px;line-height:1.55;color:var(--muted)}.asset-section>.subtle{margin-bottom:18px}.pattern-description{margin-top:10px;min-height:36px}.sensor-mode-row{margin-top:16px}.small-note{font-size:11px;line-height:1.5;color:var(--muted);margin-top:7px}.range-control{margin-top:18px}.range-control:first-of-type{margin-top:0}.range-label{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}.range-label label{margin:0;font-size:12px;font-weight:600}.range-label output{font-size:11px;font-weight:700;color:#276a65;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}input[type=range]{accent-color:var(--teal);height:18px;width:100%;margin:0;display:block}input[type=range]:disabled{opacity:.4;cursor:default}.checkbox-row{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;margin:15px 0 0}.checkbox-row input{accent-color:var(--teal);width:14px;height:14px;margin:0}.checkbox-row.small{margin:0;font-size:11px;white-space:nowrap}.advanced-section summary,.export-section summary{list-style:none;position:relative}.advanced-section summary::-webkit-details-marker,.export-section summary::-webkit-details-marker{display:none}.advanced-section summary:after,.export-section summary:after{content:'+';position:absolute;right:0;top:0;color:var(--muted);font-size:16px}.advanced-section[open] summary:after,.export-section[open] summary:after{content:'−'}.advanced-section summary .section-kicker,.export-section summary .section-kicker{margin-bottom:0}.advanced-section[open] summary .section-kicker,.export-section[open] summary .section-kicker{margin-bottom:18px}.assumption-readout{background:#f5f8fa;border-radius:7px;margin-top:17px;padding:9px 10px;font-size:11px;color:#526778;line-height:1.65}.control-actions{padding:16px 20px}.button{border:1px solid transparent;border-radius:8px;padding:10px 13px;font-weight:650;font-size:12px;transition:background .15s,transform .15s}.button:hover{filter:brightness(.97)}.button:active{transform:translateY(1px)}.primary{background:var(--teal);border-color:var(--teal);color:#fff}.secondary{background:white;border-color:#cfdae1;color:#405a6c}.wide,.control-actions .button{width:100%}.export-section{border-top:1px solid var(--line);border-bottom:0}.export-section .wide{margin-top:13px}.export-divider{font-size:11px;font-weight:650;margin:20px 0 13px;color:var(--muted)}.input-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px}.input-pair>div{min-width:0}.input-pair label{font-size:11px}.export-buttons{margin-top:12px}.export-status{font-size:11px;margin-top:9px;color:var(--teal)}.export-status.error{color:#a24b3f}.visualization{min-width:0}.viz-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:1px 0 17px}.viz-heading h2{font-size:20px;letter-spacing:-.4px}.viz-heading p{font-size:12px;color:var(--muted);margin-top:4px}.mode-badge{font-size:9px;font-weight:750;letter-spacing:.09em;white-space:nowrap;color:#597281;border:1px solid #d6e0e5;border-radius:5px;padding:5px 7px}.map-card{border-radius:var(--radius);overflow:hidden;background:var(--dark);border:1px solid #153245;box-shadow:0 8px 20px #1831440a}.map-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid #ffffff10;gap:10px}.segmented{display:flex;gap:2px;background:#071d2b;padding:3px;border-radius:7px}.segmented button{border:0;color:#91a8b8;background:transparent;font-size:11px;font-weight:650;padding:6px 13px;border-radius:5px}.segmented button.selected{background:#294354;color:#f6fafc;box-shadow:0 1px 3px #0002}.map-tools{display:flex;gap:7px}.map-tools button,.zoom-controls button{background:#213d4f;border:1px solid #ffffff12;color:#c8d9e4;font-size:11px;border-radius:6px;padding:6px 9px}.map-tools button:hover,.zoom-controls button:hover{background:#325064}.map-tools button.active{background:#197f74;color:#fff;border-color:#43b59e}.map-stage{height:465px;min-height:300px;position:relative;overflow:hidden}.map-stage canvas{width:100%;height:100%;display:block;touch-action:pan-y}.map-state{pointer-events:none;position:absolute;left:18px;top:16px;display:flex;align-items:flex-start;gap:9px;max-width:65%;padding:8px 10px;background:#0d2533c9;border:1px solid #ffffff0b;border-radius:8px;backdrop-filter:blur(5px)}.status-dot{width:8px;height:8px;border-radius:50%;background:#73d8b6;flex-shrink:0;margin-top:5px;box-shadow:0 0 0 4px #45c5a815}.status-dot.blind{background:#f4ba6a;box-shadow:0 0 0 4px #f4ba6a13}.map-state strong{display:block;font-size:12px;color:#e1f0f3;font-weight:650}.map-state span:not(.status-dot){font-size:10px;color:#9fb6c6;display:block;margin-top:2px}.map-conditions{position:absolute;right:16px;bottom:14px;color:#748f9f;font-size:8px;letter-spacing:.12em;font-weight:650;pointer-events:none}.map-conditions span{padding:0 6px;color:#4b6473}.zoom-controls{position:absolute;right:13px;top:15px;display:flex;flex-direction:column;gap:5px}.zoom-controls button{width:28px;height:28px;font-size:18px;padding:0}.map-scale{position:absolute;left:18px;bottom:15px;font-size:10px;color:#9db3c0;pointer-events:none}.map-scale:before{content:'';display:block;width:55px;border:1px solid #9db3c0;border-top:0;height:5px;margin-bottom:4px}.map-placement-hint{position:absolute;bottom:42px;left:50%;transform:translateX(-50%);background:#e9ba70;color:#23333a;font-weight:650;font-size:11px;border-radius:20px;padding:8px 13px;white-space:nowrap;pointer-events:none}.map-footer{padding:11px 15px;background:#0c2230;display:flex;align-items:center;justify-content:space-between;gap:10px;color:#9bb2c1;border-top:1px solid #ffffff0a}.legend{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.legend span{font-size:10px;display:flex;align-items:center;gap:5px;white-space:nowrap}.legend i.line{width:16px;height:3px;border-radius:2px}.legend i.blue{background:#729ec8}.legend i.green{background:#67cfad}.legend i.point{width:6px;height:6px;border-radius:1px;transform:rotate(45deg);background:#eab66f}.legend i.area{width:10px;height:8px;background:#4ea89a55;border:1px solid #4ea89a}.telemetry{display:flex;align-items:center;flex-wrap:wrap;gap:8px 23px;padding:12px 3px 17px;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}.telemetry strong{margin-left:5px;font-weight:650;color:#345569}.telemetry #pointCoordinates{margin-left:auto;font-size:10px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:17px}.metric{border:1px solid var(--line);background:white;border-radius:11px;padding:16px 16px 14px;min-height:109px}.metric>span{font-size:11px;color:var(--muted);font-weight:600;display:block}.metric>strong{font-size:26px;letter-spacing:-.8px;line-height:1.4;display:block;margin:3px 0 2px;font-variant-numeric:tabular-nums;font-weight:720}.metric:first-child strong{color:var(--teal)}.metric>small{font-size:10px;line-height:1.4;color:#7b8995;display:block}.timeline-card{background:white;border:1px solid var(--line);border-radius:12px;padding:19px 21px}.timeline-heading{display:flex;align-items:start;justify-content:space-between;gap:15px}.timeline-heading h3{font-size:13px}.timeline-heading p{font-size:11px;color:var(--muted);margin-top:4px;max-width:560px}.time-badge{font-size:11px;color:#536c79;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600;margin-top:1px}.timeline-track{height:38px;position:relative;margin:18px 0 0;border-radius:6px;overflow:hidden}.timeline-track canvas{display:block;width:100%;height:100%}.timeline-track input[type=range]{position:absolute;left:0;top:0;height:100%;width:100%;opacity:0;cursor:ew-resize}.timeline-ticks{display:flex;justify-content:space-between;font-size:10px;color:#82929c;margin-top:5px;font-variant-numeric:tabular-nums}.playback-controls{display:flex;align-items:center;gap:9px;margin-top:18px}.playback-controls .small-button{padding:7px 12px;font-size:11px;min-width:67px}.playback-controls label{margin:0 0 0 8px;font-size:11px;color:var(--muted);font-weight:500}.playback-controls select{width:70px;min-height:32px;padding:4px 7px;font-size:11px}.playback-controls .small-note{margin:0 0 0 auto;text-align:right}.model-status{font-size:11px;color:#657b88;border-left:3px solid #bfd3cc;padding:7px 11px;margin:14px 1px;line-height:1.55}.model-status.warning{border-color:#d9a050;background:#fff9ee;color:#895f2c;border-radius:0 7px 7px 0}.reference-panel{border-top:1px solid #dbe4e8;margin-top:16px;padding-top:15px}.reference-panel>summary{font-size:12px;font-weight:650;color:#56707e}.reference-content{display:grid;grid-template-columns:1fr 1fr;gap:30px;padding:18px 0 0;font-size:12px;line-height:1.65;color:#627481}.reference-content h3{font-size:12px;color:#2b485a;margin-bottom:7px}.reference-content p{margin-bottom:12px}.reference-content ul{padding-left:17px;margin:7px 0}.reference-content li{margin-bottom:7px}.page-footer{margin-top:25px;font-size:10px;color:#8c9da6;display:flex;gap:8px;flex-wrap:wrap;padding-bottom:8px}.fatal{margin:20px;padding:18px;border:1px solid #d9947e;background:#fff3ee;color:#813c2e;border-radius:10px}.hidden,[hidden]{display:none!important}
+@media(min-width:1500px){.workspace{grid-template-columns:330px minmax(0,1fr)}.map-stage{height:530px}}
+@media(max-width:1100px){.workspace{padding:22px 20px;gap:18px;grid-template-columns:280px minmax(0,1fr)}.topbar{padding:19px 20px}.control-section{padding:19px 16px}.control-actions{padding:16px}.map-stage{height:430px}.legend{gap:10px}.map-footer{flex-wrap:wrap}.metrics{gap:9px}.metric{padding:13px 11px}.metric>strong{font-size:23px}.metric>span{font-size:10px}.header-note>span:last-child{display:none}.telemetry #pointCoordinates{margin-left:0}.playback-controls .small-note{display:none}.reference-content{grid-template-columns:1fr;gap:8px}}
+@media(max-width:800px){.workspace{display:flex;flex-direction:column;padding:18px 16px;gap:18px}.controls{width:100%;display:grid;grid-template-columns:1fr 1fr}.asset-section{grid-row:span 2;border-right:1px solid var(--line)}.controls>.control-section:nth-child(2){border-bottom:0}.advanced-section,.export-section{grid-column:1/-1}.advanced-section[open]{display:grid;grid-template-columns:1fr 1fr;column-gap:24px}.advanced-section summary,.advanced-section .assumption-readout,.advanced-section>.small-note{grid-column:1/-1}.advanced-section .range-control{margin-top:8px}.control-actions{grid-column:1/-1;padding:12px 16px;border-top:1px solid var(--line)}.map-stage{height:430px}.viz-heading{margin-top:3px}.metric>span{font-size:11px}.metric>strong{font-size:25px}.metric{padding:16px}.export-section .input-pair{max-width:420px}.export-section>input,.export-section>.wide{max-width:420px}.header-note{font-size:10px}.topbar{padding:18px 16px}.topbar h1{font-size:21px}.brand-mark{width:40px;height:40px}.reference-content{grid-template-columns:1fr 1fr;gap:20px}}
+@media(max-width:520px){.topbar{align-items:start;padding:17px 15px}.brand{gap:9px}.brand-mark{width:35px;height:35px;border-radius:10px}.brand-mark svg{width:26px;height:26px}.eyebrow{font-size:8px;letter-spacing:.13em}h1,.topbar h1{font-size:19px;letter-spacing:-.5px}.header-note .badge{font-size:9px;padding:4px 6px;white-space:nowrap;margin-top:1px}.workspace{padding:16px 12px}.controls{display:block}.asset-section{border-right:0}.control-section{padding:17px 16px}.controls>.control-section:nth-child(2){border-bottom:1px solid var(--line)}.advanced-section[open]{display:block}.advanced-section .range-control{margin-top:17px}.section-kicker{margin-bottom:14px}.profile-card{margin:14px 0 7px}.profile-card p{font-size:11px}.asset-section>.subtle{margin-bottom:13px}.pattern-description{min-height:0}.range-control{margin-top:16px}.viz-heading h2{font-size:18px}.viz-heading p{font-size:11px}.viz-heading .mode-badge{display:none}.map-toolbar{padding:10px 9px;gap:6px}.map-tools{gap:4px}.map-tools button{padding:6px;font-size:10px}.segmented button{padding:6px 9px;font-size:10px}.map-stage{height:350px}.map-state{top:10px;left:10px;padding:6px 8px;max-width:77%}.map-state strong{font-size:11px}.map-state span:not(.status-dot){font-size:9px}.map-conditions{font-size:6px;letter-spacing:.06em;right:9px}.map-conditions span{padding:0 3px}.map-scale{left:12px;font-size:9px}.zoom-controls{right:8px;top:10px}.zoom-controls button{width:25px;height:25px}.map-footer{padding:10px 11px;gap:10px}.legend{gap:9px}.legend span{font-size:9px}.map-footer>.checkbox-row{font-size:10px}.map-placement-hint{font-size:10px;max-width:95%;white-space:normal;text-align:center}.telemetry{gap:7px 16px;font-size:10px;padding:10px 1px 13px}.telemetry #pointCoordinates{width:100%;font-size:9px}.metrics{grid-template-columns:1fr 1fr;gap:9px}.metric{min-height:98px;padding:13px 14px}.metric>strong{font-size:24px}.metric>span{font-size:10px}.metric>small{font-size:9px}.timeline-card{padding:16px 14px}.timeline-heading{display:block}.time-badge{display:block;margin-top:8px}.timeline-heading p{font-size:10px}.timeline-track{margin-top:13px}.playback-controls{gap:6px}.playback-controls label{margin-left:3px;font-size:10px}.playback-controls select{width:62px}.playback-controls .small-button{padding:7px 10px;min-width:60px}.reference-content{grid-template-columns:1fr;gap:8px}.page-footer{font-size:9px;gap:5px}input[type=number],select{font-size:16px}.playback-controls select{font-size:12px}.range-label output{font-size:11px}}
+@media(prefers-reduced-motion:reduce){button{transition:none}}
+
+.mobile-scene-link{display:none}.flight-section summary{list-style:none;position:relative}.flight-section summary::-webkit-details-marker{display:none}.flight-section summary:after{content:"+";position:absolute;right:0;top:0;color:var(--muted);font-size:16px}.flight-section[open] summary:after{content:"−"}.flight-section summary .section-kicker{margin-bottom:0}.flight-section[open] summary .section-kicker{margin-bottom:18px}@media(max-width:800px){.mobile-scene-link{display:inline-block;font-size:12px;font-weight:650;margin-top:13px}.flight-section[open] .range-control:first-of-type{margin-top:0}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><ellipse cx="16" cy="16" rx="13" ry="7" transform="rotate(-30 16 16)"/><circle cx="16" cy="16" r="3"/><path d="M23 4l5 5-7 1z"/></svg></span><div><div class="eyebrow">COLLECTION GEOMETRY</div><h1>ISR Pattern Explorer</h1></div></div>
+  <div class="header-note"><span class="badge">Illustrative profiles</span><span>Single file · Works offline</span></div>
+</header>
+<main class="workspace">
+  <aside class="controls" aria-label="Scenario controls">
+    <section class="control-section asset-section">
+      <div class="section-kicker"><span>01</span> Platform & pattern</div>
+      <label for="assetSelect">ISR asset</label>
+      <select id="assetSelect"></select>
+      <div class="profile-card"><div id="profileIcon" class="profile-icon" aria-hidden="true"></div><div><h2 id="profileTitle">Loading profile</h2><p id="profileSubtitle"></p></div></div>
+      <p class="subtle" id="profileDescription"></p>
+      <label for="patternSelect">Flight pattern</label>
+      <select id="patternSelect"></select>
+      <p class="pattern-description" id="patternDescription"></p>
+      <div class="sensor-mode-row"><label for="sensorMode">Sensor task</label><select id="sensorMode"><option value="track">Track reference point</option><option value="nadir">Survey straight down</option></select></div>
+      <p class="small-note" id="sensorHint"></p>
+      <a href="#scene" class="mobile-scene-link">View animation ↓</a>
+    </section>
+    <details class="control-section flight-section" open>
+      <summary><span class="section-kicker"><span>02</span> Flight geometry</span></summary>
+      <div class="range-control"><div class="range-label"><label for="altitudeInput">Altitude above plane</label><output id="altitudeValue" for="altitudeInput"></output></div><input id="altitudeInput" type="range" min="50" max="10000" step="50"></div>
+      <div class="range-control" id="speedControl"><div class="range-label"><label for="speedInput">Groundspeed</label><output id="speedValue" for="speedInput"></output></div><input id="speedInput" type="range" min="5" max="180" step="1"></div>
+      <div class="range-control" id="scaleControl"><div class="range-label"><label id="scaleLabel" for="scaleInput">Pattern scale</label><output id="scaleValue" for="scaleInput"></output></div><input id="scaleInput" type="range" min="100" max="18000" step="50"><p class="small-note" id="scaleHelp"></p></div>
+      <div class="range-control" id="aspectControl"><div class="range-label"><label id="aspectLabel" for="aspectInput">Shape ratio</label><output id="aspectValue" for="aspectInput"></output></div><input id="aspectInput" type="range" min="1" max="5" step="0.1"><p class="small-note" id="aspectHelp"></p></div>
+      <div class="range-control"><div class="range-label"><label for="headingInput">Pattern orientation</label><output id="headingValue" for="headingInput"></output></div><input id="headingInput" type="range" min="0" max="359" step="1"></div>
+      <label class="checkbox-row" id="directionControl"><input type="checkbox" id="directionInput"><span>Clockwise / right turns</span></label>
+    </details>
+    <details class="control-section advanced-section" open>
+      <summary><span class="section-kicker"><span>03</span> Sensor assumptions</span></summary>
+      <div class="range-control"><div class="range-label"><label for="fovInput">Full field of view</label><output id="fovValue" for="fovInput"></output></div><input id="fovInput" type="range" min="4" max="80" step="1"></div>
+      <div class="range-control"><div class="range-label"><label for="rangeInput">Assumed observation range</label><output id="rangeValue" for="rangeInput"></output></div><input id="rangeInput" type="range" min="500" max="40000" step="100"></div>
+      <div class="assumption-readout" id="sensorEnvelope"></div>
+      <p class="small-note">Range is an illustrative slant-range cutoff. It is not a detection or identification rating.</p>
+    </details>
+    <div class="control-actions"><button id="resetProfileBtn" class="button secondary">Reset asset example</button></div>
+    <details class="control-section export-section">
+      <summary><span class="section-kicker"><span>04</span> Export scenario</span></summary>
+      <p class="subtle">JSON includes local coordinates, sensor settings, observation intervals, and assumptions.</p>
+      <button id="exportJsonBtn" class="button primary wide">Download JSON</button>
+      <div class="export-divider">Optional geographic anchor for KML / KMZ</div>
+      <div class="input-pair"><div><label for="latitudeInput">Latitude °</label><input id="latitudeInput" type="number" step="any" min="-80" max="80" placeholder="e.g. 0.0"></div><div><label for="longitudeInput">Longitude °</label><input id="longitudeInput" type="number" step="any" min="-180" max="180" placeholder="e.g. 0.0"></div></div>
+      <label for="groundElevationInput">Ground plane elevation, m MSL</label><input id="groundElevationInput" type="number" step="1" value="0">
+      <div class="input-pair export-buttons"><button id="exportKmlBtn" class="button secondary">KML</button><button id="exportKmzBtn" class="button primary">KMZ</button></div>
+      <p class="small-note">Local route anchor = (0, 0). Export timestamps use a synthetic start time. Geographic conversion is a local approximation.</p>
+      <div id="exportStatus" class="export-status" role="status" aria-live="polite"></div>
+    </details>
+  </aside>
+  <section class="visualization" id="scene" aria-label="Flight and observation visualization">
+    <div class="viz-heading"><div><h2 id="scenarioTitle">Observation geometry</h2><p id="scenarioSubtitle">Change the asset to load its pattern menu and example settings.</p></div><span class="mode-badge" id="patternType">LOCAL SCENE</span></div>
+    <div class="map-card">
+      <div class="map-toolbar"><div class="segmented" aria-label="View mode"><button id="planBtn" class="selected" aria-pressed="true">Plan</button><button id="obliqueBtn" aria-pressed="false">Oblique</button></div><div class="map-tools"><button id="targetToolBtn" title="Choose a new point on the ground plane">Move point</button><button id="recenterTargetBtn" title="Return reference point to the route anchor">Center point</button><button id="fitBtn" title="Fit the route and point in view">Fit</button></div></div>
+      <div class="map-stage" id="mapStage"><canvas id="mapCanvas" aria-label="Animated aircraft route, reference point, and sensor footprint"></canvas><div class="map-state"><span class="status-dot" id="observationDot"></span><div><strong id="observationState">Preparing model</strong><span id="observationReason"></span></div></div><div class="map-conditions">FLAT PLANE <span>·</span> CLEAR VIEW <span>·</span> NO WIND</div><div class="zoom-controls"><button id="zoomInBtn" aria-label="Zoom in">+</button><button id="zoomOutBtn" aria-label="Zoom out">−</button></div><div class="map-scale" id="mapScale"></div><div class="map-placement-hint" id="placementHint" hidden>Tap the ground plane to move the reference point</div></div>
+      <div class="map-footer"><div class="legend"><span><i class="line blue"></i>Route</span><span><i class="line green"></i>Observation</span><span><i class="point"></i>Reference point</span><span><i class="area"></i>Sensor footprint</span></div><label class="checkbox-row small"><input id="showAccessInput" type="checkbox" checked><span>Color look windows</span></label></div>
+    </div>
+    <div class="telemetry"><span>Slant range <strong id="currentRange">—</strong></span><span>Heading <strong id="currentHeading">—</strong></span><span>Bank <strong id="currentBank">—</strong></span><span id="pointCoordinates">Point E 0.00 · N 0.00 km</span></div>
+    <div class="metrics" aria-label="Observation statistics"><div class="metric"><span>Observed time</span><strong id="observedFraction">—</strong><small id="totalObserved">of the pass</small></div><div class="metric"><span>Longest look</span><strong id="longestLook">—</strong><small id="lookNote">Uninterrupted observation</small></div><div class="metric"><span>Longest blind gap</span><strong id="maxGap">—</strong><small id="gapNote">Between usable looks</small></div><div class="metric"><span id="durationLabel">Circuit time</span><strong id="durationValue">—</strong><small id="routeLength">—</small></div></div>
+    <section class="timeline-card" aria-label="Playback and observation timeline"><div class="timeline-heading"><div><h3>Observation timeline</h3><p id="timelineDescription">Green intervals indicate that the reference point meets the modeled sensor conditions.</p></div><span class="time-badge" id="timeBadge">00:00 / 00:00</span></div><div class="timeline-track"><canvas id="timelineCanvas" aria-label="Look windows throughout the route"></canvas><input id="scrubber" type="range" min="0" max="1000" value="0" step="1" aria-label="Scrub scenario time"></div><div class="timeline-ticks"><span>Start</span><span id="timelineMid">—</span><span id="timelineEnd">—</span></div><div class="playback-controls"><button id="playBtn" class="button primary small-button">Pause</button><button id="resetTimeBtn" class="button secondary small-button" title="Return to the start">Restart</button><label for="playbackRate">Playback</label><select id="playbackRate"><option value="1">1×</option><option value="5">5×</option><option value="20" selected>20×</option><option value="60">60×</option><option value="120">120×</option></select><span id="playbackPolicy" class="small-note"></span></div></section>
+    <div class="model-status" id="modelStatus" role="status"></div>
+    <details class="reference-panel"><summary>How this model works & source references</summary><div class="reference-content"><div><h3>What the green intervals mean</h3><p>Observation is calculated from the actual route, aircraft attitude, sensor pointing envelope, field of view, and the assumed slant-range cutoff. The sensor uses ideal pointing within its envelope. Terrain, cloud, atmospheric quality, acquisition delay, and tracking-rate limits are not modeled.</p><p>These four editable profiles are examples, not specifications for named operational aircraft. Their pattern menus are demonstration choices. A field of view is an instantaneous footprint; a pointing envelope is the region a sensor can aim into.</p><p>For a repeating route, an observation spanning the start/end seam is merged. Open area searches stop after one pass. A completely visible route is labeled continuous within the modeled duration.</p></div><div><h3>Reading the display</h3><p>The amber point is the object being observed. Move it to compare an orbit around a point with an offset observation geometry. Survey mode points the sensor down; its footprint moves with the aircraft. The metrics describe this one reference point, not complete coverage of the surrounding area.</p><p>Bank checks are a simplified coordinated-turn feasibility check. When a route exceeds the profile's assumed bank limit, the displayed access describes the geometric route only.</p><h3>Public foundations</h3><ul><li><a href="https://studylib.net/doc/26943100/fleet-ops-fti" target="_blank" rel="noopener">CNATRA P-882 (2018), Ch. 8</a> — observation and search patterns.</li><li><a href="https://irp.fas.org/doddir/dod/jp3_09_3.pdf" target="_blank" rel="noopener">JP 3-09.3 (2014), pp. III-85–86</a> — observation and holding geometry.</li><li><a href="https://help.agi.com/stk/Content/stk/AccessConstraints.htm" target="_blank" rel="noopener">STK access constraints</a> — intersecting visibility conditions.</li><li><a href="https://developers.google.com/kml/documentation/kmlreference#gxtrack" target="_blank" rel="noopener">Google KML reference</a> — timed geographic tracks.</li></ul></div></div></details>
+    <footer class="page-footer">ISR Pattern Explorer <span>·</span> Illustrative geometry study <span>·</span> Editable presets, calculated observation windows</footer>
+  </section>
+</main>
+<noscript><div class="fatal">Enable JavaScript to run the interactive model. Everything is included in this file.</div></noscript>
+<script>/* Generic, invented demonstrator geometry. No operational asset performance data. */
+(function (root) {
+  'use strict';
+  const PI = Math.PI, TAU = 2 * PI, D = PI / 180, G = 9.80665;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const mod = (v, n) => ((v % n) + n) % n;
+  const num = (v, fallback) => Number.isFinite(Number(v)) ? Number(v) : fallback;
+  const dot = (a, b) => a.x*b.x + a.y*b.y + a.z*b.z;
+  const cross = (a,b) => ({x:a.y*b.z-a.z*b.y,y:a.z*b.x-a.x*b.z,z:a.x*b.y-a.y*b.x});
+  const add = (a,b) => ({x:a.x+b.x,y:a.y+b.y,z:a.z+b.z});
+  const mul = (a,s) => ({x:a.x*s,y:a.y*s,z:a.z*s});
+  const unit = a => {const n=Math.hypot(a.x,a.y,a.z)||1;return mul(a,1/n);};
+  const dist = (a,b) => Math.hypot(a.x-b.x,a.y-b.y,(a.z||0)-(b.z||0));
+  const p2 = (x,y) => ({x,y,z:0});
+  const copy = o => JSON.parse(JSON.stringify(o));
+
+  const patterns = [
+    {id:'circle',name:'Circular orbit',description:'A circular route about the route origin; observation depends on sensor geometry.',periodic:true,usesAspect:false,scaleLabel:'Orbit radius',scaleHelp:'Horizontal distance from route origin to aircraft.',defaultSensorMode:'track'},
+    {id:'ellipse',name:'Elliptical orbit',description:'A smooth ellipse sampled by distance for constant speed.',periodic:true,usesAspect:true,scaleLabel:'Semimajor axis',scaleHelp:'Half the full length of the ellipse.',aspectLabel:'Length / width',aspectHelp:'Semimajor axis divided by semiminor axis.',defaultSensorMode:'track'},
+    {id:'racetrack',name:'Racetrack',description:'Two parallel straight legs with semicircular ends.',periodic:true,usesAspect:true,scaleLabel:'Half overall length',scaleHelp:'Half the outside length, including the turns.',aspectLabel:'Length / width',aspectHelp:'Overall length divided by outside width; turn radius is scale divided by aspect.',defaultSensorMode:'track'},
+    {id:'figure8',name:'Figure eight',description:'A smooth mathematical two-lobe path, not an exact doctrinal diagram.',periodic:true,usesAspect:true,scaleLabel:'Half overall length',scaleHelp:'Half the total major-axis extent of the two lobes.',aspectLabel:'Length / width',aspectHelp:'Overall length divided by overall width.',defaultSensorMode:'track'},
+    {id:'box',name:'Rounded box',description:'Generic rectangular perimeter with finite-radius corners; not an area sweep.',periodic:true,usesAspect:true,scaleLabel:'Half overall length',scaleHelp:'Half the outside length of the rounded rectangle.',aspectLabel:'Length / width',aspectHelp:'Outside length divided by outside width.',defaultSensorMode:'track'},
+    {id:'cloverleaf',name:'Cloverleaf geometry',description:'Smooth four-petal mathematical route; no attack or evasion behavior is modeled.',periodic:true,usesAspect:false,scaleLabel:'Petal radius',scaleHelp:'Greatest distance of a petal from the shared route origin.',defaultSensorMode:'track'},
+    {id:'parallel',name:'Parallel-track search',description:'One five-leg area sweep with semicircular turns; no automatic return or repeat.',periodic:false,usesAspect:true,scaleLabel:'Half search-leg length',scaleHelp:'Each straight search leg is twice this length; turn arcs extend beyond its ends.',aspectLabel:'Length / search width',aspectHelp:'Straight leg length divided by total separation between outer tracks.',defaultSensorMode:'nadir'},
+    {id:'expanding',name:'Expanding-square search',description:'One outward search using paired increasing legs and rounded corners.',periodic:false,usesAspect:false,scaleLabel:'Leg increment',scaleHelp:'Nominal lengths are S, S, 2S, 2S, and so on for twelve legs.',defaultSensorMode:'nadir'},
+    {id:'sector',name:'Sector search',description:'One illustrative radial search pass with rounded outer corners; not an asserted standard procedure.',periodic:false,usesAspect:false,scaleLabel:'Search radius',scaleHelp:'Nominal radial extent before corner smoothing.',defaultSensorMode:'nadir'},
+    {id:'hover',name:'Stationary hover',description:'A stationary 10-minute demonstration interval.',periodic:false,usesAspect:false,scaleLabel:'Route scale (unused)',scaleHelp:'Hover remains at the route origin.',defaultSensorMode:'track'}
+  ];
+  const common = {headingDeg:0,clockwise:true,sensorMode:'track',target:{x:0,y:0,z:0}};
+  const profiles = [
+    {id:'scout',name:'Scout fixed-wing',subtitle:'Small tactical-style demonstrator',description:'Invented 28 m/s, 600 m example with a steerable downward-looking camera. These are demonstration values, not an aircraft specification.',bankLimitDeg:35,sensor:{azMinDeg:-180,azMaxDeg:180,depMinDeg:5,depMaxDeg:90,description:'Full azimuth pointing; 5–90° body-relative depression.'},sensorModes:['track','nadir'],supportedPatterns:['circle','racetrack','figure8','box','parallel','expanding','sector'],recommendedPatterns:['circle','racetrack','parallel'],defaults:{...common,pattern:'circle',scaleM:1400,aspect:2,altitudeM:600,speedMps:28,fovDeg:35,maxRangeM:4500},patternDefaults:{parallel:{scaleM:1800,aspect:1.6},expanding:{scaleM:550},sector:{scaleM:1600},cloverleaf:{scaleM:1800},figure8:{scaleM:2200,aspect:1.6}}},
+    {id:'endurance',name:'Endurance fixed-wing',subtitle:'Persistent observation demonstrator',description:'Invented 65 m/s, 3,200 m example with a steerable camera. Larger geometry and longer travel times illustrate scale, not validated sensor performance.',bankLimitDeg:35,sensor:{azMinDeg:-180,azMaxDeg:180,depMinDeg:5,depMaxDeg:90,description:'Full azimuth pointing; 5–90° body-relative depression.'},sensorModes:['track','nadir'],supportedPatterns:['circle','ellipse','racetrack','figure8','cloverleaf','parallel'],recommendedPatterns:['circle','ellipse','racetrack'],defaults:{...common,pattern:'circle',scaleM:4500,aspect:2,altitudeM:3200,speedMps:65,fovDeg:30,maxRangeM:18000},patternDefaults:{parallel:{scaleM:6000,aspect:1.5},expanding:{scaleM:2500},sector:{scaleM:5000},cloverleaf:{scaleM:6000},figure8:{scaleM:9000,aspect:1.6},box:{scaleM:6000,aspect:1.6}}},
+    {id:'crewed',name:'Crewed side-looking',subtitle:'Restricted starboard-view demonstrator',description:'Invented 110 m/s, 2,500 m example. Its optical axis is restricted to a starboard sector, making aircraft heading and bank relevant to observation gaps.',bankLimitDeg:30,sensor:{azMinDeg:45,azMaxDeg:135,depMinDeg:10,depMaxDeg:65,description:'Optical axis: 45–135° to starboard; 10–65° body-relative depression.'},sensorModes:['track'],supportedPatterns:['racetrack','ellipse','circle','figure8','parallel'],recommendedPatterns:['racetrack','ellipse','circle'],defaults:{...common,pattern:'racetrack',scaleM:8500,aspect:3.5,altitudeM:2500,speedMps:110,fovDeg:25,maxRangeM:22000},patternDefaults:{circle:{scaleM:6500,aspect:2},ellipse:{scaleM:10000,aspect:1.6},parallel:{scaleM:15000,aspect:1.4},expanding:{scaleM:9000},sector:{scaleM:13000},cloverleaf:{scaleM:13000},figure8:{scaleM:23000,aspect:1.6},box:{scaleM:15000,aspect:1.5}}},
+    {id:'vtol',name:'VTOL observer',subtitle:'Slow flight and stationary-view demonstrator',description:'Invented 12 m/s, 250 m example with a steerable downward-looking camera and a stationary hover preset. It does not model rotorcraft aerodynamics.',bankLimitDeg:30,sensor:{azMinDeg:-180,azMaxDeg:180,depMinDeg:5,depMaxDeg:90,description:'Full azimuth pointing; 5–90° body-relative depression.'},sensorModes:['track','nadir'],supportedPatterns:['hover','circle','box','cloverleaf','parallel','expanding','sector'],recommendedPatterns:['hover','circle','parallel'],defaults:{...common,pattern:'hover',scaleM:600,aspect:1.7,altitudeM:250,speedMps:12,fovDeg:45,maxRangeM:2500},patternDefaults:{parallel:{scaleM:700,aspect:1.5},expanding:{scaleM:180},sector:{scaleM:600},cloverleaf:{scaleM:700},figure8:{scaleM:900,aspect:1.6}}}
+  ];
+  function getProfile(id){return profiles.find(p=>p.id===id)||profiles[1];}
+  function getPattern(id){return patterns.find(p=>p.id===id)||patterns[0];}
+  function supportedPatterns(id){const p=getProfile(id);return patterns.filter(x=>p.supportedPatterns.includes(x.id));}
+  function defaultsFor(id,patternId){
+    const p=getProfile(id), chosen=p.supportedPatterns.includes(patternId)?patternId:p.defaults.pattern;
+    const pat=getPattern(chosen), mode=p.sensorModes.includes(pat.defaultSensorMode)?pat.defaultSensorMode:'track';
+    return {...copy(p.defaults),...(copy(p.patternDefaults[chosen]||{})),profileId:p.id,pattern:chosen,sensorMode:mode};
+  }
+  function line(out,a,b,step=60){const n=Math.max(1,Math.ceil(dist(a,b)/step));for(let i=1;i<=n;i++)out.push(p2(a.x+(b.x-a.x)*i/n,a.y+(b.y-a.y)*i/n));}
+  function arc(out,c,r,a,b,segments=48){for(let i=1;i<=segments;i++){const q=a+(b-a)*i/segments;out.push(p2(c.x+r*Math.cos(q),c.y+r*Math.sin(q)));}}
+  function roundedPolyline(vertices,radius){
+    if(vertices.length<3)return vertices.slice();
+    const out=[vertices[0]];
+    for(let i=1;i<vertices.length-1;i++){
+      const p=vertices[i],prev=vertices[i-1],next=vertices[i+1];
+      const la=dist(prev,p),lb=dist(p,next);
+      if(la<1e-7||lb<1e-7)continue;
+      const u=p2((p.x-prev.x)/la,(p.y-prev.y)/la),v=p2((next.x-p.x)/lb,(next.y-p.y)/lb);
+      const angle=Math.acos(clamp(u.x*v.x+u.y*v.y,-1,1)),turn=u.x*v.y-u.y*v.x;
+      if(angle<1e-5||Math.abs(turn)<1e-6){line(out,out[out.length-1],p);continue;}
+      const cut=Math.min(radius*Math.tan(angle/2),la*.35,lb*.35),r=cut/Math.tan(angle/2),sign=Math.sign(turn);
+      const a=p2(p.x-u.x*cut,p.y-u.y*cut),b=p2(p.x+v.x*cut,p.y+v.y*cut);
+      const c=p2(a.x-sign*u.y*r,a.y+sign*u.x*r),aa=Math.atan2(a.y-c.y,a.x-c.x);
+      line(out,out[out.length-1],a);arc(out,c,r,aa,aa+sign*angle,Math.max(16,Math.ceil(angle*24)));
+      out[out.length-1]=b;
+    }
+    line(out,out[out.length-1],vertices[vertices.length-1]);return out;
+  }
+  function makePath(c){
+    const s=c.scaleM, b=s/c.aspect, pat=getPattern(c.pattern);let pts=[];
+    const curved=(fn,n=720)=>{for(let i=0;i<=n;i++)pts.push(fn(TAU*i/n));};
+    if(c.pattern==='hover')pts=[p2(0,0)];
+    else if(c.pattern==='circle')curved(u=>p2(s*Math.sin(u),s*Math.cos(u)));
+    else if(c.pattern==='ellipse')curved(u=>p2(b*Math.sin(u),s*Math.cos(u)));
+    else if(c.pattern==='figure8')curved(u=>p2(b*Math.sin(2*u),s*Math.sin(u)),1000);
+    else if(c.pattern==='cloverleaf')curved(u=>{const r=s*Math.sin(2*u);return p2(r*Math.sin(u),r*Math.cos(u));},1200);
+    else if(c.pattern==='racetrack'){
+      const r=b,d=Math.max(0,s-r);pts=[p2(r,-d)];line(pts,pts[0],p2(r,d));arc(pts,p2(0,d),r,0,PI,120);line(pts,pts[pts.length-1],p2(-r,-d));arc(pts,p2(0,-d),r,PI,TAU,120);pts.reverse();
+    }else if(c.pattern==='box'){
+      const r=b*.42,x=b,y=s;pts=[p2(x-r,y)];
+      arc(pts,p2(x-r,y-r),r,PI/2,0,48);line(pts,pts[pts.length-1],p2(x,-y+r));
+      arc(pts,p2(x-r,-y+r),r,0,-PI/2,48);line(pts,pts[pts.length-1],p2(-x+r,-y));
+      arc(pts,p2(-x+r,-y+r),r,-PI/2,-PI,48);line(pts,pts[pts.length-1],p2(-x,y-r));
+      arc(pts,p2(-x+r,y-r),r,PI,PI/2,48);line(pts,pts[pts.length-1],pts[0]);
+    }else if(c.pattern==='parallel'){
+      const spacing=2*b/4,r=spacing/2;pts=[p2(-b,-s)];
+      for(let k=0;k<5;k++){
+        const x=-b+k*spacing,top=k%2===0;line(pts,pts[pts.length-1],p2(x,top?s:-s));
+        if(k<4)arc(pts,p2(x+r,top?s:-s),r,PI,top?0:TAU,72);
+      }
+    }else if(c.pattern==='expanding'){
+      let x=0,y=0;const v=[p2(x,y)];
+      for(let k=0;k<12;k++){const len=s*(Math.floor(k/2)+1),a=k*PI/2;x+=Math.sin(a)*len;y+=Math.cos(a)*len;v.push(p2(x,y));}
+      pts=roundedPolyline(v,s*.28);
+    }else if(c.pattern==='sector'){
+      const rad=a=>p2(s*Math.sin(a*D),s*Math.cos(a*D));
+      pts=roundedPolyline([p2(0,0),rad(0),rad(60),p2(0,0),rad(240),rad(300),p2(0,0),rad(120),rad(180),p2(0,0)],s*.18);
+    }
+    if(!c.clockwise&&pat.periodic)pts.reverse();
+    if(!c.clockwise&&!pat.periodic)pts=pts.map(p=>p2(-p.x,p.y));
+    const angle=c.headingDeg*D,co=Math.cos(angle),si=Math.sin(angle);
+    pts=pts.map(p=>({x:p.x*co+p.y*si,y:p.y*co-p.x*si,z:c.altitudeM}));
+    const clean=[];for(const p of pts)if(!clean.length||dist(p,clean[clean.length-1])>1e-7)clean.push(p);
+    if(pat.periodic&&dist(clean[0],clean[clean.length-1])>1e-7)clean.push({...clean[0]});
+    const cumulative=[0];for(let i=1;i<clean.length;i++)cumulative.push(cumulative[i-1]+dist(clean[i-1],clean[i]));
+    const route={points:clean,cumulative,totalLengthM:cumulative[cumulative.length-1],periodic:pat.periodic};
+    const tangents=[],curvatures=[],uniqueCount=pat.periodic?clean.length-1:clean.length;
+    for(let i=0;i<clean.length;i++){
+      const k=pat.periodic?i%uniqueCount:i,p=clean[k];
+      const prev=clean[pat.periodic?mod(k-1,uniqueCount):Math.max(0,k-1)];
+      const next=clean[pat.periodic?(k+1)%uniqueCount:Math.min(clean.length-1,k+1)];
+      const a=dist(prev,p),b=dist(p,next),chord=dist(prev,next);
+      const incoming=a>1e-8?p2((p.x-prev.x)/a,(p.y-prev.y)/a):p2(0,0);
+      const outgoing=b>1e-8?p2((next.x-p.x)/b,(next.y-p.y)/b):p2(0,0);
+      tangents.push(unit(add(incoming,outgoing)));
+      const signed=(p.x-prev.x)*(next.y-p.y)-(p.y-prev.y)*(next.x-p.x);
+      curvatures.push(a*b*chord>1e-8?2*signed/(a*b*chord):0);
+    }
+    Object.defineProperties(route,{_tangents:{value:tangents},_curvatures:{value:curvatures}});
+    return route;
+  }
+  function distanceSegment(route,s){
+    const len=route.totalLengthM;s=route.periodic?mod(s,len):clamp(s,0,len);
+    if(s===len)return {index:route.points.length-2,fraction:1};
+    let lo=0,hi=route.cumulative.length-1;
+    while(lo+1<hi){const m=(lo+hi)>>1;if(route.cumulative[m]<=s)lo=m;else hi=m;}
+    return {index:lo,fraction:(s-route.cumulative[lo])/(route.cumulative[lo+1]-route.cumulative[lo])};
+  }
+  function atDistance(route,s){
+    if(route.points.length===1)return {...route.points[0]};
+    const seg=distanceSegment(route,s),a=route.points[seg.index],b=route.points[seg.index+1],f=seg.fraction;
+    return {x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f,z:a.z};
+  }
+  function poseAt(route,s,c){
+    const position=atDistance(route,s);
+    if(route.totalLengthM<1e-6)return {position,headingDeg:mod(c.headingDeg,360),bankDeg:0};
+    // Interpolate geometric vertex curvature instead of differentiating polygon motion in time.
+    // This keeps a circular orbit's required bank constant between distance samples.
+    const seg=distanceSegment(route,s),i=seg.index,f=seg.fraction;
+    const tangent=add(mul(route._tangents[i],1-f),mul(route._tangents[i+1],f));
+    const curvature=route._curvatures[i]*(1-f)+route._curvatures[i+1]*f;
+    return {position,headingDeg:mod(Math.atan2(tangent.x,tangent.y)/D,360),bankDeg:-Math.atan(c.speedMps*c.speedMps*curvature/G)/D};
+  }
+  function groundFootprint(position,boresight,fovDeg,maxRangeM){
+    const h=position.z;if(h<=0||maxRangeM<=h)return [];
+    const r=Math.sqrt(maxRangeM*maxRangeM-h*h);let poly=[];
+    for(let i=0;i<64;i++){const a=TAU*i/64;poly.push({x:position.x+r*Math.cos(a),y:position.y+r*Math.sin(a),z:0});}
+    let side=unit(cross(boresight,{x:0,y:0,z:1}));if(Math.hypot(side.x,side.y,side.z)<.5)side={x:1,y:0,z:0};
+    const up=unit(cross(side,boresight)),half=fovDeg*D/2;
+    for(let k=0;k<32&&poly.length;k++){
+      const a=TAU*k/32,radial=add(mul(side,Math.cos(a)),mul(up,Math.sin(a)));
+      const n=add(mul(boresight,Math.sin(half)),mul(radial,-Math.cos(half)));
+      const val=p=>n.x*(p.x-position.x)+n.y*(p.y-position.y)-n.z*h;
+      const next=[];
+      for(let j=0;j<poly.length;j++){
+        const p=poly[j],q=poly[(j+1)%poly.length],vp=val(p),vq=val(q),ip=vp>=-1e-7,iq=vq>=-1e-7;
+        if(ip)next.push(p);
+        if(ip!==iq){const f=vp/(vp-vq);next.push({x:p.x+(q.x-p.x)*f,y:p.y+(q.y-p.y)*f,z:0});}
+      }poly=next;
+    }
+    return poly;
+  }
+  function observe(pose,c,profile,withFootprint){
+    const p=pose.position,h=pose.headingDeg*D,bank=pose.bankDeg*D;
+    const forward={x:Math.sin(h),y:Math.cos(h),z:0},right0={x:Math.cos(h),y:-Math.sin(h),z:0},down0={x:0,y:0,z:-1};
+    const right=add(mul(right0,Math.cos(bank)),mul(down0,Math.sin(bank)));
+    const down=add(mul(down0,Math.cos(bank)),mul(right0,-Math.sin(bank)));
+    const delta={x:c.target.x-p.x,y:c.target.y-p.y,z:c.target.z-p.z},rangeM=Math.hypot(delta.x,delta.y,delta.z),toTarget=unit(delta);
+    const desired=c.sensorMode==='nadir'?{x:0,y:0,z:-1}:toTarget;
+    const df=dot(desired,forward),dr=dot(desired,right),dd=dot(desired,down);
+    let az=Math.atan2(dr,df)/D,dep=Math.atan2(dd,Math.hypot(df,dr))/D;
+    // Azimuth is undefined at exact body nadir; retain a reachable value there.
+    if(Math.hypot(df,dr)<1e-9)az=(profile.sensor.azMinDeg+profile.sensor.azMaxDeg)/2;
+    const desiredAzimuthDeg=az,desiredDepressionDeg=dep,env=profile.sensor;
+    az=clamp(az,env.azMinDeg,env.azMaxDeg);dep=clamp(dep,env.depMinDeg,env.depMaxDeg);
+    const pointingLimited=Math.abs(az-desiredAzimuthDeg)>1e-5||Math.abs(dep-desiredDepressionDeg)>1e-5;
+    const boresight=unit(add(add(mul(forward,Math.cos(dep*D)*Math.cos(az*D)),mul(right,Math.cos(dep*D)*Math.sin(az*D))),mul(down,Math.sin(dep*D))));
+    const targetInFov=rangeM>0&&dot(toTarget,boresight)>=Math.cos(c.fovDeg*D/2)-1e-9;
+    const reasons=[];
+    if(rangeM>c.maxRangeM+1e-6)reasons.push('Beyond configured sensor range');
+    if(!targetInFov)reasons.push(pointingLimited?'Pointing limit keeps target outside field of view':'Outside actual sensor field of view');
+    if(c.target.z<0)reasons.push('Target below modeled ground plane');
+    return {rangeM,observable:reasons.length===0,reasons,sensor:{boresight,azimuthDeg:az,depressionDeg:dep,desiredAzimuthDeg,desiredDepressionDeg,pointingLimited,targetInFov,footprint:withFootprint?groundFootprint(p,boresight,c.fovDeg,c.maxRangeM):[]}};
+  }
+  function buildScenario(options={}){
+    const profile=getProfile(options.profileId),initial=defaultsFor(profile.id,options.pattern||options.patternId);
+    const c={...initial,...copy(options),target:{...initial.target,...(options.target||{})}};
+    c.profileId=profile.id;c.pattern=profile.supportedPatterns.includes(c.pattern)?c.pattern:initial.pattern;
+    c.scaleM=clamp(num(c.scaleM,initial.scaleM),30,100000);c.aspect=clamp(num(c.aspect,initial.aspect),1.05,5);
+    c.altitudeM=clamp(num(c.altitudeM,initial.altitudeM),20,20000);c.speedMps=clamp(num(c.speedMps,initial.speedMps),1,250);
+    c.fovDeg=clamp(num(c.fovDeg,initial.fovDeg),2,100);c.maxRangeM=clamp(num(c.maxRangeM,initial.maxRangeM),30,100000);
+    c.headingDeg=mod(num(c.headingDeg,0),360);c.clockwise=c.clockwise!==false;c.sensorMode=c.sensorMode==='nadir'?'nadir':'track';
+    for(const k of ['x','y','z'])c.target[k]=num(c.target[k],0);
+    const pattern=getPattern(c.pattern),route=makePath(c),durationS=c.pattern==='hover'?600:route.totalLengthM/c.speedMps;
+    function evaluate(t,footprint=false){
+      const timeS=clamp(num(t,0),0,durationS),s=timeS*c.speedMps;
+      const pose=poseAt(route,s,c),reading=observe(pose,c,profile,footprint);
+      return {timeS,...pose,...reading};
+    }
+    const n=Math.max(400,Math.min(2400,Math.ceil(durationS/.8))),samples=[];
+    for(let i=0;i<=n;i++)samples.push(evaluate(durationS*i/n));
+    let begin=samples[0].observable?0:null;const intervals=[];
+    function pushInterval(startS,endS){intervals.push({startS,endS,durationS:endS-startS,wraps:false,censoredStart:startS<1e-7,censoredEnd:endS>durationS-1e-7});}
+    for(let i=1;i<samples.length;i++)if(samples[i].observable!==samples[i-1].observable){
+      let lo=samples[i-1].timeS,hi=samples[i].timeS;
+      for(let k=0;k<13;k++){const mid=(lo+hi)/2;if(evaluate(mid).observable===samples[i-1].observable)lo=mid;else hi=mid;}
+      const crossing=(lo+hi)/2;
+      if(samples[i].observable)begin=crossing;else{pushInterval(begin,crossing);begin=null;}
+    }
+    if(begin!==null)pushInterval(begin,durationS);
+    const totalObservedS=intervals.reduce((s,i)=>s+i.durationS,0),continuousObservation=intervals.length===1&&intervals[0].durationS>=durationS-1e-6;
+    const noObservation=intervals.length===0,continuousLookIntervals=intervals.map(i=>({...i}));
+    if(route.periodic&&intervals.length>1&&intervals[0].startS<1e-6&&intervals[intervals.length-1].endS>durationS-1e-6){
+      const first=continuousLookIntervals.shift(),last=continuousLookIntervals.pop();
+      continuousLookIntervals.push({startS:last.startS,endS:first.endS+durationS,durationS:last.durationS+first.durationS,wraps:true,censoredStart:false,censoredEnd:false});
+    }
+    if(route.periodic&&!continuousObservation)for(const i of continuousLookIntervals){i.censoredStart=false;i.censoredEnd=false;}
+    const gaps=[];
+    for(let i=1;i<intervals.length;i++)gaps.push({startS:intervals[i-1].endS,endS:intervals[i].startS,durationS:intervals[i].startS-intervals[i-1].endS,wraps:false,censored:false});
+    if(!noObservation){
+      const first=intervals[0],last=intervals[intervals.length-1];
+      if(route.periodic){const gap=first.startS+durationS-last.endS;if(gap>1e-7)gaps.push({startS:last.endS,endS:first.startS+durationS,durationS:gap,wraps:true,censored:false});}
+      else{if(first.startS>1e-7)gaps.push({startS:0,endS:first.startS,durationS:first.startS,wraps:false,censored:true});if(last.endS<durationS-1e-7)gaps.push({startS:last.endS,endS:durationS,durationS:durationS-last.endS,wraps:false,censored:true});}
+    }else gaps.push({startS:0,endS:durationS,durationS,wraps:false,censored:true});
+    const orderedStarts=continuousLookIntervals.map(i=>i.startS).sort((a,b)=>a-b),startToStartS=[];
+    if(!continuousObservation)for(let i=1;i<orderedStarts.length;i++)startToStartS.push(orderedStarts[i]-orderedStarts[i-1]);
+    if(route.periodic&&!continuousObservation&&orderedStarts.length)startToStartS.push(orderedStarts[0]+durationS-orderedStarts[orderedStarts.length-1]);
+    let maxRequiredBankDeg=0;
+    // Check route curvature independently of the temporal integration step.
+    for(let i=0;i<route.cumulative.length;i++)maxRequiredBankDeg=Math.max(maxRequiredBankDeg,Math.abs(poseAt(route,route.cumulative[i],c).bankDeg));
+    const longestLookS=continuousLookIntervals.reduce((s,i)=>Math.max(s,i.durationS),0),maxGapS=gaps.reduce((s,i)=>Math.max(s,i.durationS),0);
+    const longestLookCensored=continuousObservation||continuousLookIntervals.some(i=>Math.abs(i.durationS-longestLookS)<1e-6&&(i.censoredStart||i.censoredEnd));
+    const maxGapCensored=gaps.some(i=>Math.abs(i.durationS-maxGapS)<1e-6&&i.censored);
+    const metrics={durationS,periodic:route.periodic,totalObservedS,observedFraction:totalObservedS/durationS,longestLookS,maxGapS,meanGapS:gaps.length?gaps.reduce((s,i)=>s+i.durationS,0)/gaps.length:0,startToStartS,timeToFirstObservationS:noObservation?null:intervals[0].startS,observationIntervals:intervals,continuousLookIntervals,gapIntervals:gaps,continuousObservation,noObservation,longestLookCensored,maxGapCensored,maxRequiredBankDeg,withinBankLimit:maxRequiredBankDeg<=profile.bankLimitDeg+.1};
+    const all=route.points.concat([c.target]);
+    const bounds={minX:Math.min(...all.map(p=>p.x)),maxX:Math.max(...all.map(p=>p.x)),minY:Math.min(...all.map(p=>p.y)),maxY:Math.max(...all.map(p=>p.y)),minZ:0,maxZ:c.altitudeM};
+    const warnings=[];
+    if(!metrics.withinBankLimit)warnings.push('Requested route needs up to '+maxRequiredBankDeg.toFixed(1)+'° bank; this demonstrator limit is '+profile.bankLimitDeg+'°. Enlarge the route or reduce speed. Observation results use the requested geometry.');
+    if(!route.periodic)warnings.push(c.pattern==='hover'?'Hover metrics describe the displayed 10-minute interval.':'This is one finite search pass. Playback restart does not establish repeated coverage.');
+    if(c.sensorMode==='nadir'&&!profile.sensorModes.includes('nadir'))warnings.push('Nadir is outside this demonstrator optical-axis envelope; actual pointing is clamped to its limits.');
+    if(noObservation)warnings.push('No observation in this analysis interval. The reported blind time is a lower bound, not a predicted next-look time.');
+    const assumptions=['All asset and sensor numbers are invented demonstration presets.','Available-pattern menus are curated demonstrator selections, not authoritative airframe capabilities or operating restrictions.','Flat clear ground at z=0; no terrain, structures, weather, Earth curvature, wind or hostile systems.','Ideal instantaneous sensor pointing inside the stated body-relative optical-axis envelope; no slew or acquisition delay.','Circular field of view and a hard illustrative range limit; geometric visibility is not identification or detection probability.','No separate detailed airframe masking model; aircraft bank rotates the stated pointing envelope.'];
+    return {config:c,profile,pattern,route,durationS,samples,metrics,bounds,warnings,assumptions,sampleAtTime:t=>evaluate(route.periodic?mod(num(t,0),durationS):clamp(num(t,0),0,durationS),true)};
+  }
+  const api={profiles,patterns,defaultsFor,supportedPatterns,buildScenario,version:'1.0.0'};
+  root.ISRModel=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);
+</script>
+<script>/* Offline, dependency-free exports for the illustrative ISR pattern explorer. */
+(function (global) {
+  'use strict';
+
+  const VERSION = '1.0';
+  const DEFAULT_START = '2026-01-01T00:00:00.000Z';
+  const MAX_EXTENT_M = 100000;
+  const DEG = Math.PI / 180;
+  const WGS84_A = 6378137;
+  const WGS84_E2 = 6.6943799901413165e-3;
+  const encoder = new TextEncoder();
+
+  const REFERENCES = [
+    { title: 'CNATRA P-882, Core Fleet Operations (2018), chapter 8',
+      url: 'https://studylib.net/doc/26943100/fleet-ops-fti',
+      note: 'Reproduced public-release training manual. Pattern names only; explorer dimensions and performance are illustrative.' },
+    { title: 'JP 3-09.3, Close Air Support (25 November 2014), pp. III-85–86 and III-102–104',
+      url: 'https://server.3rd-wing.net/public/Bureau_4thMEG/Procedures_communes/jp3_09_3.pdf',
+      note: 'Historical archived edition; not a claim about current doctrine or platform performance.' },
+    { title: 'Google KML reference', url: 'https://developers.google.com/kml/documentation/kmlreference' },
+    { title: 'Google KMZ file documentation', url: 'https://developers.google.com/kml/documentation/kmzarchives' }
+  ];
+
+  const ASSUMPTIONS = [
+    'Illustrative geometry and sensor presets; no validated aircraft or sensor performance.',
+    'Local coordinates are meters: x east, y north, z up. Flat ground is z = 0.',
+    'Observability is the model result, not a probability of detection, identification, or survival.',
+    'No terrain, buildings, Earth-curvature masking, weather, wind, atmospheric attenuation, or actual threat data.',
+    'KML uses a first-order local projection with WGS84 meridional and prime-vertical radii at the anchor latitude. It is not a geodesic route or an ECEF/ENU transformation.',
+    'KML altitude is absolute, in meters above mean sea level: supplied anchor ground elevation plus local z. No geoid conversion or terrain lookup is performed.',
+    'KML clock timestamps use a synthetic fixed start date unless the caller supplies startTime.',
+    'Non-finite numeric values serialize to null in JSON and to blank values in KML sample arrays.'
+  ];
+
+  function finite(value) { return typeof value === 'number' && Number.isFinite(value); }
+  function numeric(value) {
+    if (value === '' || value === null || value === undefined || typeof value === 'boolean') return NaN;
+    if (typeof value === 'string' && !value.trim()) return NaN;
+    return Number(value);
+  }
+  function escapeXml(value) {
+    return String(value == null ? '' : value)
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+  }
+  function json(value, indent) {
+    return JSON.stringify(value, function (_key, item) {
+      if (typeof item === 'function') return undefined;
+      if (typeof item === 'number' && !Number.isFinite(item)) return null;
+      return item;
+    }, indent);
+  }
+  function position(point) {
+    const p = point && (point.position || point);
+    if (!p || !finite(p.x) || !finite(p.y) || !finite(p.z)) {
+      throw new Error('The route contains an invalid local coordinate. Rebuild the scenario before exporting.');
+    }
+    return { x: p.x, y: p.y, z: p.z };
+  }
+  function checkScenario(scenario) {
+    if (!scenario || !Array.isArray(scenario.samples) || scenario.samples.length < 2) {
+      throw new Error('Build a scenario with at least two timed samples before exporting.');
+    }
+    let lastTime = -Infinity;
+    scenario.samples.forEach(function (s) {
+      position(s);
+      if (!finite(s.timeS) || s.timeS < 0 || s.timeS < lastTime) {
+        throw new Error('Sample times must be finite, nonnegative, and in chronological order.');
+      }
+      lastTime = s.timeS;
+    });
+    return scenario;
+  }
+
+  function normalizeAnchor(anchor) {
+    if (!anchor) throw new Error('Enter an anchor latitude, longitude, and ground elevation to export KML or KMZ. JSON can be exported without a location.');
+    const latitude = numeric(anchor.latitude !== undefined ? anchor.latitude : anchor.lat);
+    const longitude = numeric(anchor.longitude !== undefined ? anchor.longitude : anchor.lon);
+    const elevationM = numeric(anchor.elevationM !== undefined ? anchor.elevationM :
+      (anchor.groundElevationM !== undefined ? anchor.groundElevationM : anchor.elevation_m));
+    if (!finite(latitude) || !finite(longitude) || !finite(elevationM)) {
+      throw new Error('Enter numeric latitude, longitude, and ground elevation in meters above mean sea level.');
+    }
+    if (Math.abs(latitude) > 80) throw new Error('This local map projection supports anchor latitudes between 80° S and 80° N.');
+    if (longitude < -180 || longitude > 180) throw new Error('Longitude must be between −180° and 180°.');
+    return { latitude: latitude, longitude: longitude, elevationM: elevationM };
+  }
+
+  function projectionFor(anchor) {
+    const phi = anchor.latitude * DEG;
+    const denominator = 1 - WGS84_E2 * Math.sin(phi) * Math.sin(phi);
+    const northRadius = WGS84_A * (1 - WGS84_E2) / Math.pow(denominator, 1.5);
+    const eastRadius = WGS84_A * Math.cos(phi) / Math.sqrt(denominator);
+    return function (point) {
+      const p = position(point);
+      const latitude = anchor.latitude + p.y / northRadius / DEG;
+      const longitude = anchor.longitude + p.x / eastRadius / DEG;
+      if (Math.abs(latitude) > 80 || longitude < -180 || longitude > 180) {
+        throw new Error('The anchored route crosses the supported latitude or longitude limits. Move the anchor away from the pole or antimeridian.');
+      }
+      return { longitude: longitude, latitude: latitude, altitudeM: anchor.elevationM + p.z };
+    };
+  }
+
+  function validateAnchor(scenario, anchor) {
+    checkScenario(scenario);
+    const a = normalizeAnchor(anchor);
+    const points = scenario.samples.map(position);
+    if (scenario.route && Array.isArray(scenario.route.points)) points.push.apply(points, scenario.route.points.map(position));
+    const target = scenario.config && scenario.config.target ? position(scenario.config.target) : { x: 0, y: 0, z: 0 };
+    points.push(target);
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity, maxOffsetM = 0;
+    const project = projectionFor(a);
+    points.forEach(function (p) {
+      minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+      minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+      maxOffsetM = Math.max(maxOffsetM, Math.hypot(p.x, p.y));
+      project(p);
+    });
+    const spanM = Math.hypot(maxX - minX, maxY - minY);
+    if (maxOffsetM > MAX_EXTENT_M || spanM > MAX_EXTENT_M) {
+      throw new Error('The route is too large for this local projection: keep its bounding diagonal and distance from the anchor below 100 km.');
+    }
+    return {
+      anchor: a,
+      projection: 'First-order local WGS84 radii; x east / y north; absolute MSL altitude',
+      maxOffsetM: maxOffsetM,
+      spanM: spanM,
+      warnings: Math.max(maxOffsetM, spanM) > 25000 ?
+        ['This route extends beyond 25 km. Local projection distortion grows with distance; use a geodesic conversion for precise geographic work.'] : []
+    };
+  }
+
+  function startDate(options) {
+    const value = options && options.startTime ? options.startTime : DEFAULT_START;
+    const date = new Date(value);
+    if (!Number.isFinite(date.getTime())) throw new Error('The export start time is not a valid date.');
+    return date;
+  }
+  function titleFor(scenario) {
+    const profile = scenario.profile && (scenario.profile.name || scenario.profile.label || scenario.profile.id);
+    const pattern = (scenario.pattern && (scenario.pattern.name || scenario.pattern.label || scenario.pattern.id)) ||
+      (scenario.config && scenario.config.pattern) || 'Pattern';
+    return 'Illustrative ISR — ' + pattern + (profile ? ' — ' + profile : '');
+  }
+
+  function buildJSON(scenario, options) {
+    checkScenario(scenario);
+    options = options || {};
+    const geographic = options.anchor ? validateAnchor(scenario, options.anchor) : null;
+    const project = geographic ? projectionFor(geographic.anchor) : null;
+    const date = startDate(options);
+    const result = {
+      schema: 'illustrative-isr-scenario',
+      schemaVersion: VERSION,
+      title: titleFor(scenario),
+      units: { distance: 'meters', time: 'seconds', angle: 'degrees', speed: 'meters_per_second' },
+      localFrame: { x: 'east', y: 'north', z: 'up', groundZ: 0 },
+      clock: { startTime: date.toISOString(), syntheticStartTime: !options.startTime },
+      geographic: geographic,
+      config: scenario.config,
+      profile: scenario.profile,
+      pattern: scenario.pattern,
+      route: scenario.route,
+      durationS: scenario.durationS,
+      bounds: scenario.bounds,
+      metrics: scenario.metrics,
+      warnings: (scenario.warnings || []).concat(geographic ? geographic.warnings : []),
+      samples: scenario.samples,
+      geographicTrack: project ? scenario.samples.map(function (sample) {
+        const p = project(sample);
+        return { timeS: sample.timeS, longitude: p.longitude, latitude: p.latitude, altitudeM: p.altitudeM };
+      }) : null,
+      assumptions: ASSUMPTIONS.concat(options.assumptions || []),
+      references: REFERENCES.concat(options.references || [])
+    };
+    return json(result, 2);
+  }
+
+  function data(name, value) {
+    return '<Data name="' + escapeXml(name) + '"><value>' + escapeXml(typeof value === 'object' ? json(value) : value) + '</value></Data>';
+  }
+  function coord(p) { return p.longitude.toFixed(8) + ',' + p.latitude.toFixed(8) + ',' + p.altitudeM.toFixed(3); }
+  function trackCoord(p) { return p.longitude.toFixed(8) + ' ' + p.latitude.toFixed(8) + ' ' + p.altitudeM.toFixed(3); }
+  function numberValue(value) { return finite(value) ? String(value) : ''; }
+  function arrayData(name, values) {
+    return '<gx:SimpleArrayData name="' + name + '">' + values.map(function (v) { return '<gx:value>' + escapeXml(v) + '</gx:value>'; }).join('') + '</gx:SimpleArrayData>';
+  }
+
+  function makeKML(scenario, options) {
+    checkScenario(scenario);
+    options = options || {};
+    const geographic = validateAnchor(scenario, options.anchor);
+    const project = projectionFor(geographic.anchor);
+    const samples = scenario.samples;
+    const projected = samples.map(project);
+    const start = startDate(options);
+    const when = function (t) { return new Date(start.getTime() + t * 1000).toISOString(); };
+    const target = scenario.config && scenario.config.target ? position(scenario.config.target) : { x: 0, y: 0, z: 0 };
+    const rawRoute = scenario.route && Array.isArray(scenario.route.points) && scenario.route.points.length > 1 ?
+      scenario.route.points.map(position) : samples.map(position);
+    if (scenario.route && scenario.route.periodic) {
+      const first = rawRoute[0], last = rawRoute[rawRoute.length - 1];
+      if (first.x !== last.x || first.y !== last.y || first.z !== last.z) rawRoute.push(first);
+    }
+    const routeCoords = rawRoute.map(project).map(coord).join(' ');
+    const intervals = scenario.metrics && scenario.metrics.observationIntervals || [];
+    const fields = [
+      ['time_s', 'double'], ['observable', 'bool'], ['range_m', 'double'],
+      ['heading_deg', 'double'], ['bank_deg', 'double'], ['sensor_azimuth_deg', 'double'],
+      ['sensor_depression_deg', 'double'], ['reasons', 'string']
+    ];
+    const arrays = [
+      arrayData('time_s', samples.map(function (s) { return numberValue(s.timeS); })),
+      arrayData('observable', samples.map(function (s) { return s.observable ? '1' : '0'; })),
+      arrayData('range_m', samples.map(function (s) { return numberValue(s.rangeM); })),
+      arrayData('heading_deg', samples.map(function (s) { return numberValue(s.headingDeg); })),
+      arrayData('bank_deg', samples.map(function (s) { return numberValue(s.bankDeg); })),
+      arrayData('sensor_azimuth_deg', samples.map(function (s) { return numberValue(s.sensor && s.sensor.azimuthDeg); })),
+      arrayData('sensor_depression_deg', samples.map(function (s) { return numberValue(s.sensor && s.sensor.depressionDeg); })),
+      arrayData('reasons', samples.map(function (s) { return (s.reasons || []).join('; '); }))
+    ].join('');
+
+    // Visibility segments are a readable static overlay. Samples at transitions are shared.
+    const segments = [];
+    let segmentStart = 0;
+    for (let i = 1; i < samples.length; i += 1) {
+      if (Boolean(samples[i].observable) !== Boolean(samples[i - 1].observable)) {
+        if (i > segmentStart) segments.push({ start: segmentStart, end: i, visible: Boolean(samples[i - 1].observable) });
+        segmentStart = i;
+      }
+    }
+    if (samples.length - 1 > segmentStart) segments.push({ start: segmentStart, end: samples.length - 1, visible: Boolean(samples[segmentStart].observable) });
+    const segmentKml = segments.map(function (segment, index) {
+      const a = samples[segment.start].timeS, b = samples[segment.end].timeS;
+      return '<Placemark><name>' + (segment.visible ? 'Observable' : 'No usable look') + ' ' + (index + 1) +
+        '</name><styleUrl>#' + (segment.visible ? 'look' : 'gap') + '</styleUrl><ExtendedData>' +
+        data('start_s', a) + data('end_s', b) + data('sampled_segment', true) +
+        '</ExtendedData><LineString><altitudeMode>absolute</altitudeMode><coordinates>' +
+        projected.slice(segment.start, segment.end + 1).map(coord).join(' ') + '</coordinates></LineString></Placemark>';
+    }).join('');
+
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2"><Document>' +
+      '<name>' + escapeXml(titleFor(scenario)) + '</name>' +
+      '<description>' + escapeXml('Illustrative local simulation. Green segments have a usable look under the chosen model; orange segments do not. These colors do not represent threat exposure or survivability. ' + ASSUMPTIONS.join(' ')) + '</description>' +
+      '<Style id="route"><LineStyle><color>ffdcad66</color><width>3</width></LineStyle></Style>' +
+      '<Style id="look"><LineStyle><color>ff95d36b</color><width>5</width></LineStyle></Style>' +
+      '<Style id="gap"><LineStyle><color>ff559ce6</color><width>5</width></LineStyle></Style>' +
+      '<Style id="aircraft"><IconStyle><color>ffdcad66</color><scale>1.1</scale></IconStyle><LineStyle><color>ffdcad66</color><width>3</width></LineStyle></Style>' +
+      '<Style id="target"><IconStyle><color>ff95d36b</color><scale>1.1</scale></IconStyle></Style>' +
+      '<ExtendedData>' + data('schema_version', VERSION) + data('configuration', scenario.config) +
+      data('profile', scenario.profile) + data('metrics', scenario.metrics) + data('observation_intervals', intervals) +
+      data('geographic_conversion', geographic) + data('synthetic_clock', !options.startTime) +
+      data('assumptions', ASSUMPTIONS.concat(options.assumptions || [])) + data('references', REFERENCES.concat(options.references || [])) + '</ExtendedData>' +
+      '<Schema id="sensorSamples" name="Sensor samples">' + fields.map(function (f) { return '<gx:SimpleArrayField name="' + f[0] + '" type="' + f[1] + '"/>'; }).join('') + '</Schema>' +
+      '<Placemark><name>Observation target</name><styleUrl>#target</styleUrl><Point><altitudeMode>absolute</altitudeMode><coordinates>' +
+      coord(project(target)) + '</coordinates></Point></Placemark>' +
+      '<Placemark><name>Complete route</name><styleUrl>#route</styleUrl><LineString><altitudeMode>absolute</altitudeMode><coordinates>' + routeCoords + '</coordinates></LineString></Placemark>' +
+      '<Folder><name>Modeled observation availability</name>' + segmentKml + '</Folder>' +
+      '<Placemark><name>Timed aircraft track</name><styleUrl>#aircraft</styleUrl><gx:Track><altitudeMode>absolute</altitudeMode>' +
+      samples.map(function (s) { return '<when>' + when(s.timeS) + '</when>'; }).join('') +
+      projected.map(function (p) { return '<gx:coord>' + trackCoord(p) + '</gx:coord>'; }).join('') +
+      '<ExtendedData><SchemaData schemaUrl="#sensorSamples">' + arrays + '</SchemaData></ExtendedData></gx:Track></Placemark>' +
+      '</Document></kml>\n';
+  }
+
+  const CRC_TABLE = (function () {
+    const table = new Uint32Array(256);
+    for (let n = 0; n < 256; n += 1) {
+      let c = n;
+      for (let k = 0; k < 8; k += 1) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+      table[n] = c >>> 0;
+    }
+    return table;
+  }());
+  function crc32(bytes) {
+    let crc = 0xffffffff;
+    for (let i = 0; i < bytes.length; i += 1) crc = CRC_TABLE[(crc ^ bytes[i]) & 255] ^ (crc >>> 8);
+    return (crc ^ 0xffffffff) >>> 0;
+  }
+  function zipStore(files) {
+    const local = [], central = [];
+    let offset = 0, centralSize = 0;
+    files.forEach(function (file) {
+      const name = encoder.encode(file.name), bytes = typeof file.data === 'string' ? encoder.encode(file.data) : file.data;
+      const crc = crc32(bytes);
+      const header = new Uint8Array(30 + name.length), h = new DataView(header.buffer);
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true);
+      h.setUint16(8, 0, true); h.setUint16(10, 0, true); h.setUint16(12, 23585, true);
+      h.setUint32(14, crc, true); h.setUint32(18, bytes.length, true); h.setUint32(22, bytes.length, true);
+      h.setUint16(26, name.length, true); h.setUint16(28, 0, true); header.set(name, 30);
+      local.push(header, bytes);
+      const record = new Uint8Array(46 + name.length), c = new DataView(record.buffer);
+      c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true);
+      c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true); c.setUint16(12, 0, true); c.setUint16(14, 23585, true);
+      c.setUint32(16, crc, true); c.setUint32(20, bytes.length, true); c.setUint32(24, bytes.length, true);
+      c.setUint16(28, name.length, true); c.setUint32(42, offset, true); record.set(name, 46);
+      central.push(record); centralSize += record.length; offset += header.length + bytes.length;
+    });
+    const end = new Uint8Array(22), e = new DataView(end.buffer);
+    e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true);
+    e.setUint32(12, centralSize, true); e.setUint32(16, offset, true);
+    return new Blob(local.concat(central, [end]), { type: 'application/vnd.google-earth.kmz' });
+  }
+
+  function buildKMZ(scenario, options) {
+    options = options || {};
+    const kml = makeKML(scenario, options);
+    const payload = buildJSON(scenario, options);
+    const readme = 'Illustrative ISR Pattern Explorer\n\n' +
+      'doc.kml: geographic route, sampled observation segments, and timed aircraft track.\n' +
+      'scenario.json: complete local route, sensor samples, metrics, settings, and geographic track.\n\n' +
+      ASSUMPTIONS.join('\n') + '\n\n' +
+      'The KMZ is a standards-compliant ZIP archive using the STORE method (no compression).\n' +
+      'Google Earth may render the timed track; other KML readers may show only static geometry.\n';
+    return zipStore([{ name: 'doc.kml', data: kml }, { name: 'scenario.json', data: payload }, { name: 'README.txt', data: readme }]);
+  }
+
+  function download(filename, content, mime) {
+    const blob = content instanceof Blob ? content : new Blob([content], { type: mime || 'application/octet-stream' });
+    const url = URL.createObjectURL(blob), link = document.createElement('a');
+    link.href = url; link.download = filename; link.style.display = 'none'; document.body.appendChild(link);
+    link.click(); link.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    return blob;
+  }
+
+  global.ISRExport = Object.freeze({
+    version: VERSION,
+    defaultStartTime: DEFAULT_START,
+    buildJSON: buildJSON,
+    makeKML: makeKML,
+    buildKMZ: buildKMZ,
+    validateAnchor: validateAnchor,
+    download: download
+  });
+}(typeof window !== 'undefined' ? window : globalThis));
+</script>
+<script>(function(){
+  'use strict';
+  const $=id=>document.getElementById(id), M=window.ISRModel, X=window.ISRExport;
+  if(!M){document.body.insertAdjacentHTML('beforeend','<div class="fatal">The model could not initialize. This file may be incomplete.</div>');return;}
+  const state={config:null,scenario:null,timeS:0,playing:!matchMedia('(prefers-reduced-motion: reduce)').matches,rate:20,view:'plan',zoom:1,placing:false,showAccess:true,lastFrame:0,projection:null,baseDirty:true};
+  const canvas=$('mapCanvas'),ctx=canvas.getContext('2d'),timeline=$('timelineCanvas'),tc=timeline.getContext('2d'),base=document.createElement('canvas'),bc=base.getContext('2d');
+  let width=600,height=465,dpr=1,timelineWidth=600,timelineHeight=38,recomputeTimer=null;
+  const colors={route:'#79a4d0',observed:'#61cfab',amber:'#edb76d',grid:'#aac7d10b',axis:'#bed8e017'};
+  const finite=(n,f=0)=>Number.isFinite(Number(n))?Number(n):f, clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  const clone=v=>JSON.parse(JSON.stringify(v));
+  const fmtTime=(value,compact=false)=>{const n=Math.max(0,Math.round(finite(value))),h=Math.floor(n/3600),m=Math.floor((n%3600)/60),s=n%60;if(compact){if(h)return h+'h '+m+'m';if(m)return m+'m '+String(s).padStart(2,'0')+'s';return s+'s';}return (h?h+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');};
+  const fmtDist=n=>Math.abs(n)>=1000?(n/1000).toFixed(n>=10000?1:2)+' km':Math.round(n)+' m';
+  const profileBy=id=>M.profiles.find(p=>p.id===id)||M.profiles[0];
+  const patternBy=id=>M.patterns.find(p=>p.id===id)||M.patterns[0];
+  const ico={scout:'<svg viewBox="0 0 40 40"><path d="M19 3h2l2 14 15 7v3l-15-3-1 10 5 3v2l-7-2-7 2v-2l5-3-1-10-15 3v-3l15-7z" stroke="none"/></svg>',endurance:'<svg viewBox="0 0 40 40"><path d="M19 3h2l1 16 17 4v3l-17-2v8l7 5v2l-9-3-9 3v-2l7-5v-8L1 26v-3l17-4z" stroke="none"/></svg>',crewed:'<svg viewBox="0 0 40 40"><path d="M20 2c2 0 3 7 3 13l15 9v4l-15-4v9l6 4v2l-9-2-9 2v-2l6-4v-9L2 28v-4l15-9c0-6 1-13 3-13z" stroke="none"/><path d="M11 19v9M29 19v9" stroke-width="3" stroke-linecap="round"/></svg>',vtol:'<svg viewBox="0 0 40 40" fill="none"><path d="M10 10l20 20M30 10L10 30" fill="none" stroke-width="3"/><circle cx="10" cy="10" r="6" fill="none" stroke-width="2"/><circle cx="30" cy="10" r="6" fill="none" stroke-width="2"/><circle cx="10" cy="30" r="6" fill="none" stroke-width="2"/><circle cx="30" cy="30" r="6" fill="none" stroke-width="2"/><rect x="16" y="15" width="8" height="10" rx="3" stroke="none"/></svg>'};
+  M.profiles.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;$('assetSelect').append(o);});
+  function fillPatterns(){const profile=profileBy(state.config.profileId),ids=M.supportedPatterns(state.config.profileId).map(p=>typeof p==='string'?p:p.id),suggested=profile.recommendedPatterns||[];$('patternSelect').replaceChildren();for(const [label,choices] of [['Suggested examples',ids.filter(id=>suggested.includes(id))],['More example patterns',ids.filter(id=>!suggested.includes(id))]]){if(!choices.length)continue;const group=document.createElement('optgroup');group.label=label;choices.forEach(id=>{const p=patternBy(id),o=document.createElement('option');o.value=id;o.textContent=p.name;group.append(o);});$('patternSelect').append(group);}if(!ids.includes(state.config.pattern))state.config.pattern=ids[0];$('patternSelect').value=state.config.pattern;}
+  function fillSensorModes(){const modes=profileBy(state.config.profileId).sensorModes||['track','nadir'],labels={track:'Track reference point',nadir:'Survey straight down'},el=$('sensorMode');el.replaceChildren();for(const mode of modes){const o=document.createElement('option');o.value=mode;o.textContent=labels[mode]||mode;el.append(o);}if(!modes.includes(state.config.sensorMode))state.config.sensorMode=modes[0];el.value=state.config.sensorMode;el.disabled=modes.length===1;}
+  const bindings={altitudeInput:'altitudeM',speedInput:'speedMps',scaleInput:'scaleM',aspectInput:'aspect',headingInput:'headingDeg',fovInput:'fovDeg',rangeInput:'maxRangeM'};
+  function syncControls(){const c=state.config,p=profileBy(c.profileId),pat=patternBy(c.pattern);$('assetSelect').value=c.profileId;$('patternSelect').value=c.pattern;Object.entries(bindings).forEach(([id,key])=>{const el=$(id);if(Number.isFinite(c[key])){if(c[key]>Number(el.max))el.max=String(Math.ceil(c[key]*1.2));if(c[key]<Number(el.min))el.min=String(Math.max(0,c[key]));el.value=c[key];}});$('sensorMode').value=c.sensorMode||'track';$('directionInput').checked=c.clockwise!==false;$('profileIcon').innerHTML=ico[p.id]||ico.endurance;$('profileTitle').textContent=p.name;$('profileSubtitle').textContent=p.subtitle||'Illustrative asset profile';$('profileDescription').textContent=p.description||'';$('patternDescription').textContent=pat.description||'';$('scaleLabel').textContent=pat.scaleLabel||'Pattern scale';$('scaleHelp').textContent=pat.scaleHelp||'';$('aspectLabel').textContent=pat.aspectLabel||'Shape ratio';$('aspectHelp').textContent=pat.aspectHelp||'';$('aspectControl').hidden=!pat.usesAspect;$('scaleControl').hidden=c.pattern==='hover';$('speedInput').disabled=c.pattern==='hover';$('directionControl').hidden=['hover','parallel','expanding','sector'].includes(c.pattern);const s=p.sensor||{};$('sensorEnvelope').textContent=(s.description||'Ideal pointing within the profile envelope.')+' Assumed bank limit: '+finite(p.bankLimitDeg)+'°.';updateReadouts();}
+  function updateReadouts(){const c=state.config;$('altitudeValue').textContent=Math.round(c.altitudeM).toLocaleString()+' m · '+Math.round(c.altitudeM*3.28084).toLocaleString()+' ft';$('speedValue').textContent=c.pattern==='hover'?'Stationary':Math.round(c.speedMps)+' m/s · '+Math.round(c.speedMps*1.94384)+' kt';$('scaleValue').textContent=fmtDist(c.scaleM);$('aspectValue').textContent=Number(c.aspect).toFixed(1)+'×';$('headingValue').textContent=Math.round(c.headingDeg)+'° true';$('fovValue').textContent=Math.round(c.fovDeg)+'°';$('rangeValue').textContent=fmtDist(c.maxRangeM);$('sensorHint').textContent=c.sensorMode==='nadir'?'The footprint moves across the ground. Metrics still track the amber reference point.':'The sensor aims toward the reference point, limited by its mounting envelope.';}
+  function setAsset(id){state.config={...clone(M.defaultsFor(id)),profileId:id};state.config.target=state.config.target||{x:0,y:0,z:0};fillPatterns();fillSensorModes();state.timeS=0;state.zoom=1;syncControls();recompute(true);}
+  function setPattern(id){const d=M.defaultsFor(state.config.profileId,id);state.config={...state.config,pattern:id,scaleM:d.scaleM,aspect:d.aspect,sensorMode:d.sensorMode||state.config.sensorMode};state.timeS=0;state.zoom=1;syncControls();recompute(true);}
+  function recompute(reset=false){clearTimeout(recomputeTimer);const ratio=state.scenario&&state.scenario.durationS>0?state.timeS/state.scenario.durationS:0;try{const s=M.buildScenario(state.config);state.scenario=s;state.config={...state.config,...s.config};state.timeS=reset?0:clamp(ratio,0,1)*s.durationS;state.baseDirty=true;updateMetrics();draw();}catch(e){$('modelStatus').textContent='Could not calculate this configuration: '+e.message;$('modelStatus').classList.add('warning');console.error(e);}}
+  function scheduleRecompute(){updateReadouts();clearTimeout(recomputeTimer);recomputeTimer=setTimeout(()=>recompute(false),65);}
+  function updateMetrics(){const s=state.scenario,m=s.metrics,pat=patternBy(state.config.pattern),p=profileBy(state.config.profileId);$('scenarioTitle').textContent=pat.name;$('scenarioSubtitle').textContent=p.name+' · '+(state.config.sensorMode==='track'?'tracking one reference point':'survey sensor pointed down');$('patternType').textContent=state.config.pattern==='hover'?'STATIONARY OBSERVATION':s.route.periodic?'REPEATING ROUTE':'SINGLE SEARCH PASS';$('observedFraction').textContent=(100*finite(m.observedFraction)).toFixed(1)+'%';$('totalObserved').textContent=fmtTime(m.totalObservedS,true)+' observed';$('longestLook').textContent=m.continuousObservation?'Continuous':fmtTime(m.longestLookS,true);$('lookNote').textContent=m.continuousObservation?'Throughout the modeled period':m.longestLookCensored?'At least this long within the pass':'Uninterrupted observation';$('maxGap').textContent=m.noObservation?'Full period':fmtTime(m.maxGapS,true);$('gapNote').textContent=m.noObservation?'No observation in this configuration':s.route.periodic?'Includes the circuit boundary':'Includes pass start/end gaps';$('durationLabel').textContent=state.config.pattern==='hover'?'Observation period':s.route.periodic?'Circuit time':'Pass time';$('durationValue').textContent=fmtTime(s.durationS,true);$('routeLength').textContent=fmtDist(s.route.totalLengthM)+' route length';$('timelineDescription').textContent='Green = reference point observed. Slate = no modeled observation.';$('timelineMid').textContent=fmtTime(s.durationS/2);$('timelineEnd').textContent=fmtTime(s.durationS);$('playbackPolicy').textContent=s.route.periodic?'Repeats each circuit':'Stops at the end of the pass';const bank=finite(m.maxRequiredBankDeg),warnings=Array.isArray(s.warnings)?s.warnings:[];const status=$('modelStatus');status.classList.toggle('warning',!m.withinBankLimit||warnings.length>0);const prefix=state.config.pattern==='hover'?'Stationary example.':('Peak modeled bank '+bank.toFixed(1)+'° / profile limit '+finite(p.bankLimitDeg)+'°. ');status.textContent=prefix+(warnings.length?warnings.join(' '):'Turn geometry is within this example profile’s assumed bank limit.')+' Sensor access assumes a flat, unobstructed scene.';const target=state.config.target;$('pointCoordinates').textContent='Point E '+(target.x/1000).toFixed(2)+' · N '+(target.y/1000).toFixed(2)+' km';updateReadouts();drawTimeline();}
+  function setTime(t){if(!state.scenario)return;state.timeS=clamp(finite(t),0,state.scenario.durationS);draw();}
+  function setPlaying(value){state.playing=value;state.lastFrame=performance.now();$('playBtn').textContent=value?'Pause':'Play';$('playBtn').setAttribute('aria-label',value?'Pause playback':'Play scenario');}
+  function sizeCanvas(el,w,h){el.width=Math.max(1,Math.round(w*dpr));el.height=Math.max(1,Math.round(h*dpr));}
+  function resize(){const rect=$('mapStage').getBoundingClientRect();width=Math.max(200,rect.width);height=Math.max(200,rect.height);dpr=Math.min(devicePixelRatio||1,2);sizeCanvas(canvas,width,height);sizeCanvas(base,width,height);const tr=timeline.getBoundingClientRect();timelineWidth=Math.max(100,tr.width);timelineHeight=Math.max(20,tr.height);sizeCanvas(timeline,timelineWidth,timelineHeight);state.baseDirty=true;draw();}
+  function raw(p){if(state.view==='plan')return{x:p.x,y:-p.y};const a=Math.PI/5,c=Math.cos(a),sn=Math.sin(a),e=Math.sin(.55),ce=Math.cos(.55);return{x:p.x*c-p.y*sn,y:-(p.x*sn+p.y*c)*e-p.z*ce};}
+  function makeProjection(){const s=state.scenario;if(!s)return;const points=s.route.points.map(p=>({x:p.x,y:p.y,z:p.z}));if(!points.length)points.push({x:0,y:0,z:state.config.altitudeM});points.push({...state.config.target},{x:0,y:0,z:0});if(state.view==='oblique'){s.route.points.forEach(p=>points.push({x:p.x,y:p.y,z:0}));}const transformed=points.map(raw);let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;transformed.forEach(p=>{minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y);});const minimumSpan=Math.max(state.config.scaleM*.9,500);const spanX=Math.max(maxX-minX,minimumSpan),spanY=Math.max(maxY-minY,minimumSpan);const scale=Math.max(.00001,Math.min((width-100)/spanX,(height-105)/spanY)*state.zoom);state.projection={cu:(minX+maxX)/2,cv:(minY+maxY)/2,scale};}
+  function project(p){const q=raw(p),pr=state.projection;return{x:width/2+(q.x-pr.cu)*pr.scale,y:height/2+(q.y-pr.cv)*pr.scale};}
+  function unprojectGround(px,py){const pr=state.projection,u=(px-width/2)/pr.scale+pr.cu,v=(py-height/2)/pr.scale+pr.cv;if(state.view==='plan')return{x:u,y:-v,z:0};const a=Math.PI/5,c=Math.cos(a),sn=Math.sin(a),q=-v/Math.sin(.55);return{x:c*u+sn*q,y:-sn*u+c*q,z:0};}
+  function niceStep(v){const b=Math.pow(10,Math.floor(Math.log10(Math.max(v,1))));return [1,2,5,10].map(n=>n*b).find(n=>n>=v)||10*b;}
+  function strokeWorld(c,points,color,lineWidth,dash=[]){if(points.length<2)return;c.beginPath();let started=false;for(const p of points){if(!p||!Number.isFinite(p.x)||!Number.isFinite(p.y)||!Number.isFinite(p.z))continue;const q=project(p);if(!started){c.moveTo(q.x,q.y);started=true;}else c.lineTo(q.x,q.y);}c.strokeStyle=color;c.lineWidth=lineWidth;c.setLineDash(dash);c.stroke();c.setLineDash([]);}
+  function drawBase(){if(!state.scenario)return;makeProjection();bc.setTransform(dpr,0,0,dpr,0,0);bc.clearRect(0,0,width,height);const grad=bc.createLinearGradient(0,0,width,height);grad.addColorStop(0,'#112d3e');grad.addColorStop(1,'#0d2230');bc.fillStyle=grad;bc.fillRect(0,0,width,height);const pr=state.projection,span=Math.max(width,height)/pr.scale,step=niceStep(span/11),lim=Math.ceil(span/step)*step;const center=unprojectGround(width/2,height/2);const gx=Math.floor(center.x/step)*step,gy=Math.floor(center.y/step)*step;for(let i=-16;i<=16;i++){const x=gx+i*step,y=gy+i*step;strokeWorld(bc,[{x,y:gy-lim*2,z:0},{x,y:gy+lim*2,z:0}],Math.abs(x)<.01?colors.axis:colors.grid,1);strokeWorld(bc,[{x:gx-lim*2,y,z:0},{x:gx+lim*2,y,z:0}],Math.abs(y)<.01?colors.axis:colors.grid,1);}const s=state.scenario;if(state.view==='oblique'){strokeWorld(bc,s.route.points.map(p=>({x:p.x,y:p.y,z:0})),'#8fb3cc24',1,[4,5]);}strokeWorld(bc,s.route.points,colors.route,2.3);if(state.showAccess&&s.samples.length>1){let segment=[];for(let i=0;i<s.samples.length;i++){const sm=s.samples[i],prev=s.samples[Math.max(0,i-1)];if(sm.observable){if(segment.length===0)segment.push(prev.position);segment.push(sm.position);}else if(segment.length){segment.push(sm.position);strokeWorld(bc,segment,colors.observed,3);segment=[];}}if(segment.length)strokeWorld(bc,segment,colors.observed,3);}if(state.config.pattern==='hover'){const p=project(s.route.points[0]);bc.beginPath();bc.arc(p.x,p.y,16,0,Math.PI*2);bc.strokeStyle='#7fa8c64a';bc.setLineDash([4,4]);bc.lineWidth=1;bc.stroke();bc.setLineDash([]);}drawCompass(bc);$('mapScale').textContent=fmtDist(55/pr.scale);state.baseDirty=false;}
+  function drawCompass(c){const origin={x:0,y:0,z:0},p0=raw(origin),pn=raw({x:0,y:1,z:0});let dx=pn.x-p0.x,dy=pn.y-p0.y;const norm=Math.hypot(dx,dy)||1;dx/=norm;dy/=norm;const x=width-28,y=99;c.save();c.strokeStyle='#9fb9c7';c.fillStyle='#9fb9c7';c.lineWidth=1.2;c.beginPath();c.moveTo(x-dx*9,y-dy*9);c.lineTo(x+dx*11,y+dy*11);c.stroke();c.beginPath();c.moveTo(x+dx*13,y+dy*13);c.lineTo(x+dx*6-dy*3,y+dy*6+dx*3);c.lineTo(x+dx*6+dy*3,y+dy*6-dx*3);c.closePath();c.fill();c.font='bold 9px system-ui';c.textAlign='center';c.fillText('N',x+dx*22,y+dy*22+3);c.restore();}
+  function fillWorld(c,points,fill,stroke){const valid=points.filter(p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&Number.isFinite(p.z));if(valid.length<3)return;c.beginPath();valid.forEach((p,i)=>{const q=project(p);if(i===0)c.moveTo(q.x,q.y);else c.lineTo(q.x,q.y);});c.closePath();c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1;c.stroke();}}
+  function drawFootprint(sm){const sensor=sm.sensor||{},foot=sensor.footprint||[],a=sm.position;const color=sm.observable?colors.observed:colors.amber;if(state.view==='oblique'&&foot.length>2){const every=Math.max(1,Math.floor(foot.length/4));for(let i=0;i<foot.length;i+=every)strokeWorld(ctx,[a,foot[i]],sm.observable?'#68d0ae26':'#edb76d20',.9);fillWorld(ctx,[a,foot[0],foot[Math.floor(foot.length/2)]],sm.observable?'#68d0ae08':'#edb76d06',null);}fillWorld(ctx,foot,sm.observable?'#61cfab24':'#edb76d16',sm.observable?'#61cfab95':'#edb76d75');const b=sensor.boresight;if(b&&b.z<-.0001){const t=-a.z/b.z;if(t>=0&&t<=state.config.maxRangeM*1.001){const hit={x:a.x+b.x*t,y:a.y+b.y*t,z:0};strokeWorld(ctx,[a,hit],color+'70',1,[3,4]);const q=project(hit);ctx.fillStyle=color;ctx.beginPath();ctx.arc(q.x,q.y,2,0,Math.PI*2);ctx.fill();}}}
+  function drawTarget(){const p=project(state.config.target);ctx.save();ctx.translate(p.x,p.y);ctx.strokeStyle='#edb76d60';ctx.lineWidth=1;ctx.beginPath();ctx.arc(0,0,11,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(-16,0);ctx.lineTo(-9,0);ctx.moveTo(9,0);ctx.lineTo(16,0);ctx.moveTo(0,-16);ctx.lineTo(0,-9);ctx.moveTo(0,9);ctx.lineTo(0,16);ctx.stroke();ctx.fillStyle=colors.amber;ctx.beginPath();ctx.moveTo(0,-5);ctx.lineTo(5,0);ctx.lineTo(0,5);ctx.lineTo(-5,0);ctx.closePath();ctx.fill();ctx.font='10px system-ui';ctx.fillStyle='#e5c79c';ctx.textAlign='left';ctx.fillText('Reference',15,-12);ctx.restore();}
+  function drawAircraft(sm){const p=project(sm.position),hd=sm.headingDeg*Math.PI/180,v={x:sm.position.x+Math.sin(hd)*10,y:sm.position.y+Math.cos(hd)*10,z:sm.position.z},end=project(v),angle=Math.atan2(end.y-p.y,end.x-p.x)+Math.PI/2;if(state.view==='oblique')strokeWorld(ctx,[sm.position,{x:sm.position.x,y:sm.position.y,z:0}],'#b7cbd53a',1,[2,5]);ctx.save();ctx.translate(p.x,p.y);ctx.rotate(angle);ctx.shadowColor='#091823';ctx.shadowBlur=8;ctx.fillStyle='#e9f4f8';ctx.strokeStyle='#eef6f9';ctx.lineWidth=1.4;if(state.config.profileId==='vtol'){ctx.beginPath();ctx.moveTo(-7,-7);ctx.lineTo(7,7);ctx.moveTo(7,-7);ctx.lineTo(-7,7);ctx.stroke();for(const x of [-7,7])for(const y of [-7,7]){ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.stroke();}ctx.fillRect(-2,-4,4,8);}else{const wings=state.config.profileId==='endurance'?18:state.config.profileId==='crewed'?15:13;ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(2,-8);ctx.lineTo(2,-2);ctx.lineTo(wings,4);ctx.lineTo(wings,6);ctx.lineTo(3,3);ctx.lineTo(2,10);ctx.lineTo(6,13);ctx.lineTo(6,15);ctx.lineTo(0,13);ctx.lineTo(-6,15);ctx.lineTo(-6,13);ctx.lineTo(-2,10);ctx.lineTo(-3,3);ctx.lineTo(-wings,6);ctx.lineTo(-wings,4);ctx.lineTo(-2,-2);ctx.lineTo(-2,-8);ctx.closePath();ctx.fill();if(state.config.profileId==='crewed'){ctx.fillRect(-9,-1,2,6);ctx.fillRect(7,-1,2,6);}}ctx.restore();}
+  function drawTimeline(){if(!state.scenario)return;const s=state.scenario;tc.setTransform(dpr,0,0,dpr,0,0);tc.clearRect(0,0,timelineWidth,timelineHeight);tc.fillStyle='#e8eef1';tc.fillRect(0,0,timelineWidth,timelineHeight);tc.fillStyle='#40ae95';for(const iv of s.metrics.observationIntervals||[]){const a=finite(iv.startS),b=finite(iv.endS);tc.fillRect(clamp(a/s.durationS,0,1)*timelineWidth,0,Math.max(0,(Math.min(b,s.durationS)-Math.max(a,0))/s.durationS*timelineWidth),timelineHeight);}const px=clamp(state.timeS/s.durationS,0,1)*timelineWidth;tc.fillStyle='#142d3e';tc.fillRect(clamp(px-1,0,timelineWidth-2),0,2,timelineHeight);tc.beginPath();tc.moveTo(px-5,0);tc.lineTo(px+5,0);tc.lineTo(px,6);tc.closePath();tc.fill();$('timeBadge').textContent=fmtTime(state.timeS)+' / '+fmtTime(s.durationS);$('scrubber').value=Math.round(clamp(state.timeS/s.durationS,0,1)*1000);}
+  function draw(){if(!state.scenario)return;if(state.baseDirty)drawBase();ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);ctx.drawImage(base,0,0,base.width,base.height,0,0,width,height);const sm=state.scenario.sampleAtTime(state.timeS);drawFootprint(sm);drawTarget();drawAircraft(sm);$('observationDot').classList.toggle('blind',!sm.observable);$('observationState').textContent=sm.observable?'Reference point observed':'No observation';const reasons=Array.isArray(sm.reasons)?sm.reasons:[];$('observationReason').textContent=sm.observable?(sm.sensor.pointingLimited?'Within field of view at pointing limit':'Within modeled sensor conditions'):(reasons.join(' · ')||'Outside sensor view');$('currentRange').textContent=fmtDist(sm.rangeM);$('currentHeading').textContent=Math.round(sm.headingDeg)+'°';$('currentBank').textContent=finite(sm.bankDeg).toFixed(1)+'°';drawTimeline();}
+  function viewMode(mode){state.view=mode;state.zoom=1;state.baseDirty=true;for(const [id,name] of [['planBtn','plan'],['obliqueBtn','oblique']]){$(id).classList.toggle('selected',mode===name);$(id).setAttribute('aria-pressed',String(mode===name));}draw();}
+  function placement(on){state.placing=on;$('targetToolBtn').classList.toggle('active',on);$('targetToolBtn').setAttribute('aria-pressed',String(on));$('placementHint').hidden=!on;canvas.style.cursor=on?'crosshair':'default';}
+  function exportOptions(){const lat=$('latitudeInput').value.trim(),lon=$('longitudeInput').value.trim(),elev=$('groundElevationInput').value.trim();if(lat===''||lon===''||elev==='')throw new Error('Enter latitude, longitude, and ground-plane elevation for a geographic export.');return{anchor:{latitude:Number(lat),longitude:Number(lon),elevationM:Number(elev)}};}
+  function exportFile(kind){const el=$('exportStatus');el.classList.remove('error');try{if(!X)throw new Error('Export module unavailable.');const stem='isr_'+state.config.profileId+'_'+state.config.pattern;if(kind==='json'){X.download(stem+'.json',X.buildJSON(state.scenario),'application/json');el.textContent='Downloaded scenario JSON with local route and observation data.';}else{const o=exportOptions(),check=X.validateAnchor(state.scenario,o.anchor);if(kind==='kmz')X.download(stem+'.kmz',X.buildKMZ(state.scenario,o),'application/vnd.google-earth.kmz');else X.download(stem+'.kml',X.makeKML(state.scenario,o),'application/vnd.google-earth.kml+xml');el.textContent='Downloaded '+kind.toUpperCase()+'. '+(check.warnings||[]).join(' ');}}catch(e){el.textContent=e.message;el.classList.add('error');}}
+  $('assetSelect').addEventListener('change',e=>setAsset(e.target.value));$('patternSelect').addEventListener('change',e=>setPattern(e.target.value));Object.entries(bindings).forEach(([id,key])=>$(id).addEventListener('input',e=>{state.config[key]=Number(e.target.value);scheduleRecompute();}));$('sensorMode').addEventListener('change',e=>{state.config.sensorMode=e.target.value;updateReadouts();recompute(false);});$('directionInput').addEventListener('change',e=>{state.config.clockwise=e.target.checked;recompute(false);});$('resetProfileBtn').addEventListener('click',()=>setAsset(state.config.profileId));$('playBtn').addEventListener('click',()=>{if(!state.playing&&state.timeS>=state.scenario.durationS&&!state.scenario.route.periodic)state.timeS=0;setPlaying(!state.playing);});$('resetTimeBtn').addEventListener('click',()=>setTime(0));$('playbackRate').addEventListener('change',e=>state.rate=Number(e.target.value));$('scrubber').addEventListener('input',e=>{setPlaying(false);setTime(Number(e.target.value)/1000*state.scenario.durationS);});$('planBtn').addEventListener('click',()=>viewMode('plan'));$('obliqueBtn').addEventListener('click',()=>viewMode('oblique'));$('fitBtn').addEventListener('click',()=>{state.zoom=1;state.baseDirty=true;draw();});$('zoomInBtn').addEventListener('click',()=>{state.zoom=clamp(state.zoom*1.3,.4,8);state.baseDirty=true;draw();});$('zoomOutBtn').addEventListener('click',()=>{state.zoom=clamp(state.zoom/1.3,.4,8);state.baseDirty=true;draw();});$('showAccessInput').addEventListener('change',e=>{state.showAccess=e.target.checked;state.baseDirty=true;draw();});$('targetToolBtn').addEventListener('click',()=>placement(!state.placing));$('recenterTargetBtn').addEventListener('click',()=>{state.config.target={x:0,y:0,z:0};placement(false);recompute(false);});canvas.addEventListener('click',e=>{if(!state.placing||!state.projection)return;const r=canvas.getBoundingClientRect(),p=unprojectGround(e.clientX-r.left,e.clientY-r.top);state.config.target={x:Math.round(p.x),y:Math.round(p.y),z:0};placement(false);recompute(false);});canvas.addEventListener('wheel',e=>{e.preventDefault();state.zoom=clamp(state.zoom*(e.deltaY>0?.9:1.1),.4,8);state.baseDirty=true;draw();},{passive:false});$('exportJsonBtn').addEventListener('click',()=>exportFile('json'));$('exportKmlBtn').addEventListener('click',()=>exportFile('kml'));$('exportKmzBtn').addEventListener('click',()=>exportFile('kmz'));
+  function frame(now){const dt=state.lastFrame?Math.min((now-state.lastFrame)/1000,.2):0;state.lastFrame=now;if(state.playing&&state.scenario){state.timeS+=dt*state.rate;if(state.timeS>=state.scenario.durationS){if(state.scenario.route.periodic)state.timeS%=state.scenario.durationS;else{state.timeS=state.scenario.durationS;setPlaying(false);}}draw();}requestAnimationFrame(frame);}
+  window.ISRApp={get state(){return state;},get config(){return state.config;},get scenario(){return state.scenario;},setAsset,setPattern,recompute,setTime,setPlaying,draw,exportFile};
+  if(window.innerWidth<=800){document.querySelector('.flight-section').open=false;document.querySelector('.advanced-section').open=false;}
+  setAsset(M.profiles.some(p=>p.id==='endurance')?'endurance':M.profiles[0].id);setPlaying(state.playing);new ResizeObserver(resize).observe($('mapStage'));new ResizeObserver(resize).observe($('timelineCanvas').parentElement);resize();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
