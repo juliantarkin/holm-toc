@@ -1,0 +1,56 @@
+<main id="missionPage" class="mission-page" hidden aria-labelledby="missionTitle">
+  <header class="mission-heading">
+    <div><div class="mission-eyebrow">MISSION / PROCESS DEMONSTRATOR</div><div class="mission-title-line"><h2 id="missionTitle">Lifecycle exercise</h2><span class="mission-foundation">Foundation · 0–1</span></div><p>Follow two fictional assets from launch to ready again. Inspect each event and its cause.</p></div>
+    <button id="missionExport" class="mission-button mission-button-secondary" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v10m-4-4 4 4 4-4M3 13v4h14v-4"/></svg>Download run JSON</button>
+  </header>
+
+  <div id="missionError" class="mission-error" role="alert" hidden></div>
+  <section class="mission-brief" aria-label="Exercise brief">
+    <div class="mission-brief-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/></svg></div>
+    <div><strong>A six-minute lifecycle exercise</strong><p>Launch → on station → return → recovery → servicing. Payload modes are scheduled labels; this release creates no contacts or sensing results. Links are ideal exercise assumptions.</p></div>
+    <span class="mission-isolated">Independent of Lab</span>
+  </section>
+
+  <section class="mission-controls" aria-label="Mission playback and run controls">
+    <div class="mission-clock-block"><div class="mission-clock-label">Exercise time <span id="missionRunStatus" class="mission-run-status">Ready</span></div><div class="mission-clock-readout"><strong id="missionClock">00:00</strong><span>/ <span id="missionDuration">06:00</span></span></div><progress id="missionProgress" max="360" value="0" aria-label="Exercise progress"></progress></div>
+    <div class="mission-playback">
+      <div class="mission-playback-buttons"><button id="missionPlay" class="mission-button mission-button-primary" type="button">Start exercise</button><button id="missionStep" class="mission-button mission-button-secondary" type="button" title="Advance one simulation second while paused">+1 s</button><button id="missionNext" class="mission-button mission-button-secondary" type="button">Next event →</button></div>
+      <div class="mission-playback-options"><label for="missionRate">Playback</label><select id="missionRate"><option value="1">1×</option><option value="5">5×</option><option value="20" selected>20×</option><option value="60">60×</option></select><button id="missionRestart" class="mission-text-button" type="button">Restart same seed</button></div>
+    </div>
+    <div class="mission-seed-block"><label for="missionSeed">Run seed</label><div class="mission-seed-row"><input id="missionSeed" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="42" maxlength="10" aria-describedby="missionSeedHelp missionSeedError"><button id="missionNew" class="mission-button mission-button-secondary" type="button">New run</button></div><p id="missionSeedHelp" class="mission-small">Recorded for reproducibility; timings are fixed.</p><p id="missionSeedError" class="mission-field-error" role="alert" hidden></p></div>
+    <div class="mission-control-foot"><span id="missionNextHint">Start to record the first actual events.</span><span>Restart or new run clears Activity. <button id="missionPreviousExport" class="mission-text-button" type="button" hidden>Download previous run</button><span id="missionExportHint">Export first to keep a copy.</span></span></div>
+  </section>
+  <div id="missionAnnouncement" class="mission-sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="mission-viewbar"><div class="mission-view-buttons" role="group" aria-label="Mission view"><button id="missionOverviewTab" class="mission-view-button mission-selected" type="button" aria-pressed="true" aria-controls="missionOverviewPanel">Overview</button><button id="missionActivityTab" class="mission-view-button" type="button" aria-pressed="false" aria-controls="missionActivityPanel">Activity <span id="missionActivityBadge">0</span></button></div><span id="missionRunIdentity" class="mission-run-identity">Seed 42 · lifecycle-v1</span></div>
+
+  <div id="missionOverviewPanel">
+    <section class="mission-assets-section" aria-labelledby="missionAssetsTitle">
+      <div class="mission-section-heading"><div><h3 id="missionAssetsTitle">Live assets</h3><p>One shared clock. Two independent sorties in a fixed exercise.</p></div><span id="missionAssetSummary" class="mission-quiet-badge">2 ready · 0 airborne</span></div>
+      <div id="missionAssetCards" class="mission-asset-grid"></div>
+      <p class="mission-resource-note">Flight allowance is an illustrative time budget. Servicing retains the landing balance; full allowance returns only when the asset becomes ready.</p>
+    </section>
+
+    <section class="mission-plan-card" aria-labelledby="missionPlanTitle">
+      <div class="mission-plan-heading"><div><div class="mission-eyebrow">PLANNED / FIXED SCENARIO</div><h3 id="missionPlanTitle">Lifecycle schedule</h3><p>These phase bars include future plans. Actual events are recorded in Activity as the clock advances.</p></div><span id="missionPlanNow" class="mission-plan-now">Now 00:00</span></div>
+      <div class="mission-plan-legend"><span><i class="mission-phase-outbound"></i>Outbound</span><span><i class="mission-phase-on_station"></i>On station</span><span><i class="mission-phase-returning"></i>Returning</span><span><i class="mission-phase-servicing"></i>Servicing</span></div>
+      <div id="missionPlanRows" class="mission-plan-rows"></div>
+      <div class="mission-plan-axis"><span></span><div id="missionPlanAxis"></div></div>
+    </section>
+
+    <div class="mission-lower-grid">
+      <section class="mission-recent-card" aria-labelledby="missionRecentTitle"><div class="mission-section-heading"><div><h3 id="missionRecentTitle">Latest actual activity</h3><p id="missionRecentSummary">Nothing has happened yet.</p></div><button id="missionViewActivity" class="mission-text-button" type="button">View all →</button></div><div id="missionRecentList"></div></section>
+      <aside class="mission-roadmap" aria-labelledby="missionRoadmapTitle"><div class="mission-eyebrow">NEXT IN THE PLAN</div><h3 id="missionRoadmapTitle">Build the process in stages</h3><ol><li><span>02</span><div><strong>Scenario & hidden world</strong><p>Authored exercises with a separate player view.</p></div></li><li><span>2A</span><div><strong>Waypoints & transitions</strong><p>Continuous inbound, pattern and recovery routes.</p></div></li><li><span>03</span><div><strong>First observation exercise</strong><p>A sensor measurement delivered as a report.</p></div></li></ol><p class="mission-small">These stages are planned. This release demonstrates lifecycle and event causality.</p></aside>
+    </div>
+
+    <section class="mission-catalogue-section" aria-labelledby="missionCatalogueTitle"><div class="mission-section-heading"><div><h3 id="missionCatalogueTitle">Fictional stock catalogue</h3><p>Capability definitions are separate from the behavior implemented in this exercise.</p></div><span id="missionCatalogueCount" class="mission-quiet-badge">2 demo · 7 planned</span></div><div id="missionCatalogue" class="mission-catalogue-grid"></div><p class="mission-small">Visible and thermal describe camera modes. FMV describes a video product. An asset’s own BLOS connection does not imply that it can relay another asset’s traffic.</p></section>
+  </div>
+
+  <section id="missionActivityPanel" hidden aria-labelledby="missionActivityTitle">
+    <div class="mission-section-heading"><div><h3 id="missionActivityTitle">Actual activity</h3><p>Recorded events only. Select a row to inspect its source and cause.</p></div><span id="missionJournalThrough" class="mission-quiet-badge">Through 00:00</span></div>
+    <div class="mission-activity-filters"><div><label for="missionAssetFilter">Asset</label><select id="missionAssetFilter"><option value="all">All assets</option></select></div><div><label for="missionFamilyFilter">Event family</label><select id="missionFamilyFilter"><option value="all">All families</option><option value="mission">Mission</option><option value="command">Command</option><option value="lifecycle">Lifecycle</option><option value="payload">Payload</option></select></div><div class="mission-event-count"><strong id="missionFilteredCount">0 events</strong><span>Newest first</span></div><button id="missionClearFilters" class="mission-text-button" type="button">Clear filters</button></div>
+    <div class="mission-activity-layout"><div class="mission-journal-card"><div id="missionJournalList" class="mission-journal-list"></div></div><aside id="missionEventInspector" class="mission-event-inspector" aria-labelledby="missionInspectorTitle"><div class="mission-eyebrow">EVENT INSPECTOR</div><h3 id="missionInspectorTitle">Select an event</h3><p class="mission-inspector-empty">Its timestamp, actor, source and cause will appear here.</p></aside></div>
+  </section>
+
+  <footer class="mission-footer"><span>Fictional educational exercise · Lifecycle foundation</span><span id="missionVersion"></span></footer>
+</main>

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>ISR Pattern Explorer</title>
+<style>/*__STYLES__*/
+/*__FLEET_STYLES__*/
+/*__TRACKER_STYLES__*/
+/*__MISSION_STYLES__*/</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><ellipse cx="16" cy="16" rx="13" ry="7" transform="rotate(-30 16 16)"/><circle cx="16" cy="16" r="3"/><path d="M23 4l5 5-7 1z"/></svg></span><div><div class="eyebrow">COLLECTION GEOMETRY</div><h1>ISR Pattern Explorer</h1></div></div>
+  <div class="header-note"><span class="badge">Illustrative profiles</span><span>Single file · Works offline</span></div>
+</header>
+<nav class="page-tabs" aria-label="Explorer pages"><a href="#patterns" id="navPatterns" data-page="patterns"><span>01</span> Pattern explorer</a><a href="#schedule" id="navSchedule" data-page="schedule"><span>02</span> Fleet & schedule</a><a href="#tracker" id="navTracker" data-page="tracker"><span>03</span> Asset tracker</a><a href="#mission" id="navMission" data-page="mission"><span>04</span> Mission</a><span class="page-tabs-note">GEOMETRY · FLEET · MISSION</span></nav>
+<main class="workspace" id="patternsPage">
+  <aside class="controls" aria-label="Scenario controls">
+    <section class="control-section asset-section">
+      <div class="section-kicker"><span>01</span> Platform & pattern</div>
+      <label for="assetSelect">ISR asset</label>
+      <select id="assetSelect"></select>
+      <div class="profile-card"><div id="profileIcon" class="profile-icon" aria-hidden="true"></div><div><h2 id="profileTitle">Loading profile</h2><p id="profileSubtitle"></p></div></div>
+      <p class="subtle" id="profileDescription"></p>
+      <label for="patternSelect">Flight pattern</label>
+      <select id="patternSelect"></select>
+      <p class="pattern-description" id="patternDescription"></p>
+      <div class="sensor-mode-row"><label for="sensorMode">Sensor task</label><select id="sensorMode"><option value="track">Track reference point</option><option value="nadir">Survey straight down</option></select></div>
+      <p class="small-note" id="sensorHint"></p>
+      <a href="#scene" class="mobile-scene-link">View animation ↓</a>
+    </section>
+    <details class="control-section flight-section" open>
+      <summary><span class="section-kicker"><span>02</span> Flight geometry</span></summary>
+      <div class="range-control"><div class="range-label"><label for="altitudeInput">Altitude above plane</label><output id="altitudeValue" for="altitudeInput"></output></div><input id="altitudeInput" type="range" min="50" max="10000" step="50"></div>
+      <div class="range-control" id="speedControl"><div class="range-label"><label for="speedInput">Groundspeed</label><output id="speedValue" for="speedInput"></output></div><input id="speedInput" type="range" min="5" max="180" step="1"></div>
+      <div class="range-control" id="scaleControl"><div class="range-label"><label id="scaleLabel" for="scaleInput">Pattern scale</label><output id="scaleValue" for="scaleInput"></output></div><input id="scaleInput" type="range" min="100" max="18000" step="50"><p class="small-note" id="scaleHelp"></p></div>
+      <div class="range-control" id="aspectControl"><div class="range-label"><label id="aspectLabel" for="aspectInput">Shape ratio</label><output id="aspectValue" for="aspectInput"></output></div><input id="aspectInput" type="range" min="1" max="5" step="0.1"><p class="small-note" id="aspectHelp"></p></div>
+      <div class="range-control"><div class="range-label"><label for="headingInput">Pattern orientation</label><output id="headingValue" for="headingInput"></output></div><input id="headingInput" type="range" min="0" max="359" step="1"></div>
+      <label class="checkbox-row" id="directionControl"><input type="checkbox" id="directionInput"><span>Clockwise / right turns</span></label>
+    </details>
+    <details class="control-section advanced-section" open>
+      <summary><span class="section-kicker"><span>03</span> Sensor assumptions</span></summary>
+      <div class="range-control"><div class="range-label"><label for="fovInput">Full field of view</label><output id="fovValue" for="fovInput"></output></div><input id="fovInput" type="range" min="4" max="80" step="1"></div>
+      <div class="range-control"><div class="range-label"><label for="rangeInput">Assumed observation range</label><output id="rangeValue" for="rangeInput"></output></div><input id="rangeInput" type="range" min="500" max="40000" step="100"></div>
+      <div class="assumption-readout" id="sensorEnvelope"></div>
+      <p class="small-note">Range is an illustrative slant-range cutoff. It is not a detection or identification rating.</p>
+    </details>
+    <div class="control-actions"><button id="resetProfileBtn" class="button secondary">Reset asset example</button></div>
+    <details class="control-section export-section">
+      <summary><span class="section-kicker"><span>04</span> Export scenario</span></summary>
+      <p class="subtle">JSON includes local coordinates, sensor settings, observation intervals, and assumptions.</p>
+      <button id="exportJsonBtn" class="button primary wide">Download JSON</button>
+      <div class="export-divider">Optional geographic anchor for KML / KMZ</div>
+      <div class="input-pair"><div><label for="latitudeInput">Latitude °</label><input id="latitudeInput" type="number" step="any" min="-80" max="80" placeholder="e.g. 0.0"></div><div><label for="longitudeInput">Longitude °</label><input id="longitudeInput" type="number" step="any" min="-180" max="180" placeholder="e.g. 0.0"></div></div>
+      <label for="groundElevationInput">Ground plane elevation, m MSL</label><input id="groundElevationInput" type="number" step="1" value="0">
+      <div class="input-pair export-buttons"><button id="exportKmlBtn" class="button secondary">KML</button><button id="exportKmzBtn" class="button primary">KMZ</button></div>
+      <p class="small-note">Local route anchor = (0, 0). Export timestamps use a synthetic start time. Geographic conversion is a local approximation.</p>
+      <div id="exportStatus" class="export-status" role="status" aria-live="polite"></div>
+    </details>
+  </aside>
+  <section class="visualization" id="scene" aria-label="Flight and observation visualization">
+    <div class="viz-heading"><div><h2 id="scenarioTitle">Observation geometry</h2><p id="scenarioSubtitle">Change the asset to load its pattern menu and example settings.</p></div><span class="mode-badge" id="patternType">LOCAL SCENE</span></div>
+    <div class="map-card">
+      <div class="map-toolbar"><div class="segmented" aria-label="View mode"><button id="planBtn" class="selected" aria-pressed="true">Plan</button><button id="obliqueBtn" aria-pressed="false">Oblique</button></div><div class="map-tools"><button id="targetToolBtn" title="Choose a new point on the ground plane">Move point</button><button id="recenterTargetBtn" title="Return reference point to the route anchor">Center point</button><button id="fitBtn" title="Fit the route and point in view">Fit</button></div></div>
+      <div class="map-stage" id="mapStage"><canvas id="mapCanvas" aria-label="Animated aircraft route, reference point, and sensor footprint"></canvas><div class="map-state"><span class="status-dot" id="observationDot"></span><div><strong id="observationState">Preparing model</strong><span id="observationReason"></span></div></div><div class="map-conditions">FLAT PLANE <span>·</span> CLEAR VIEW <span>·</span> NO WIND</div><div class="zoom-controls"><button id="zoomInBtn" aria-label="Zoom in">+</button><button id="zoomOutBtn" aria-label="Zoom out">−</button></div><div class="map-scale" id="mapScale"></div><div class="map-placement-hint" id="placementHint" hidden>Tap the ground plane to move the reference point</div></div>
+      <div class="map-footer"><div class="legend"><span><i class="line blue"></i>Route</span><span><i class="line green"></i>Observation</span><span><i class="point"></i>Reference point</span><span><i class="area"></i>Sensor footprint</span></div><label class="checkbox-row small"><input id="showAccessInput" type="checkbox" checked><span>Color look windows</span></label></div>
+    </div>
+    <div class="telemetry"><span>Slant range <strong id="currentRange">—</strong></span><span>Heading <strong id="currentHeading">—</strong></span><span>Bank <strong id="currentBank">—</strong></span><span id="pointCoordinates">Point E 0.00 · N 0.00 km</span></div>
+    <div class="metrics" aria-label="Observation statistics"><div class="metric"><span>Observed time</span><strong id="observedFraction">—</strong><small id="totalObserved">of the pass</small></div><div class="metric"><span>Longest look</span><strong id="longestLook">—</strong><small id="lookNote">Uninterrupted observation</small></div><div class="metric"><span>Longest blind gap</span><strong id="maxGap">—</strong><small id="gapNote">Between usable looks</small></div><div class="metric"><span id="durationLabel">Circuit time</span><strong id="durationValue">—</strong><small id="routeLength">—</small></div></div>
+    <section class="timeline-card" aria-label="Playback and observation timeline"><div class="timeline-heading"><div><h3>Observation timeline</h3><p id="timelineDescription">Green intervals indicate that the reference point meets the modeled sensor conditions.</p></div><span class="time-badge" id="timeBadge">00:00 / 00:00</span></div><div class="timeline-track"><canvas id="timelineCanvas" aria-label="Look windows throughout the route"></canvas><input id="scrubber" type="range" min="0" max="1000" value="0" step="1" aria-label="Scrub scenario time"></div><div class="timeline-ticks"><span>Start</span><span id="timelineMid">—</span><span id="timelineEnd">—</span></div><div class="playback-controls"><button id="playBtn" class="button primary small-button">Pause</button><button id="resetTimeBtn" class="button secondary small-button" title="Return to the start">Restart</button><label for="playbackRate">Playback</label><select id="playbackRate"><option value="1">1×</option><option value="5">5×</option><option value="20" selected>20×</option><option value="60">60×</option><option value="120">120×</option></select><span id="playbackPolicy" class="small-note"></span></div></section>
+    <div class="model-status" id="modelStatus" role="status"></div>
+    <details class="reference-panel"><summary>How this model works & source references</summary><div class="reference-content"><div><h3>What the green intervals mean</h3><p>Observation is calculated from the actual route, aircraft attitude, sensor pointing envelope, field of view, and the assumed slant-range cutoff. The sensor uses ideal pointing within its envelope. Terrain, cloud, atmospheric quality, acquisition delay, and tracking-rate limits are not modeled.</p><p>These four editable profiles are examples, not specifications for named operational aircraft. Their pattern menus are demonstration choices. A field of view is an instantaneous footprint; a pointing envelope is the region a sensor can aim into.</p><p>For a repeating route, an observation spanning the start/end seam is merged. Open area searches stop after one pass. A completely visible route is labeled continuous within the modeled duration.</p></div><div><h3>Reading the display</h3><p>The amber point is the object being observed. Move it to compare an orbit around a point with an offset observation geometry. Survey mode points the sensor down; its footprint moves with the aircraft. The metrics describe this one reference point, not complete coverage of the surrounding area.</p><p>Bank checks are a simplified coordinated-turn feasibility check. When a route exceeds the profile's assumed bank limit, the displayed access describes the geometric route only.</p><h3>Public foundations</h3><ul><li><a href="https://studylib.net/doc/26943100/fleet-ops-fti" target="_blank" rel="noopener">CNATRA P-882 (2018), Ch. 8</a> — observation and search patterns.</li><li><a href="https://irp.fas.org/doddir/dod/jp3_09_3.pdf" target="_blank" rel="noopener">JP 3-09.3 (2014), pp. III-85–86</a> — observation and holding geometry.</li><li><a href="https://help.agi.com/stk/Content/stk/AccessConstraints.htm" target="_blank" rel="noopener">STK access constraints</a> — intersecting visibility conditions.</li><li><a href="https://developers.google.com/kml/documentation/kmlreference#gxtrack" target="_blank" rel="noopener">Google KML reference</a> — timed geographic tracks.</li></ul></div></div></details>
+    <footer class="page-footer">ISR Pattern Explorer <span>·</span> Illustrative geometry study <span>·</span> Editable presets, calculated observation windows</footer>
+  </section>
+</main>
+<!--__SCHEDULE_PAGE__-->
+<!--__TRACKER_PAGE__-->
+<!--__MISSION_PAGE__-->
+<noscript><div class="fatal">Enable JavaScript to run the interactive model. Everything is included in this file.</div></noscript>
+<script>/*__MODEL__*/</script>
+<script>/*__EXPORTS__*/</script>
+<script>/*__APP__*/</script>
+<script>/*__FLEET_ENGINE__*/</script>
+<script>/*__FLEET_APP__*/</script>
+<script>/*__TRACKER_APP__*/</script>
+<script>/*__MISSION_CATALOGUE__*/</script>
+<script>/*__MISSION_ENGINE__*/</script>
+<script>/*__MISSION_APP__*/</script>
+<script>/*__NAVIGATION__*/</script>
+</body>
+</html>

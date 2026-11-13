@@ -1,0 +1,66 @@
+{
+  "release": "Mission foundation 0.1",
+  "userDate": "2026-11-12",
+  "timezone": "America/Los_Angeles",
+  "htmlSha256": "1dbded58849a5874e472ed0bd115d669d450a6a2f8e7c7b9b6a77ca4a6d1e4a1",
+  "htmlGitBlob": "318f948b4012483a24e9f95e5d3e5c0ff0dfb456",
+  "implemented": [
+    "deterministic fixed lifecycle engine",
+    "separate Mission clock",
+    "actual event journal with cause inspection",
+    "nine stock capability definitions, two exercise profiles",
+    "run JSON export"
+  ],
+  "validation": {
+    "missionEngine": {
+      "assertions": 6909,
+      "testGroups": 6,
+      "failures": 0
+    },
+    "missionDom": {
+      "checks": 98,
+      "failures": 0
+    },
+    "fleetEngine": {
+      "checks": 689,
+      "failures": 0
+    },
+    "fleetDom": {
+      "checks": 66,
+      "failures": 0
+    },
+    "patternDom": {
+      "checks": 160,
+      "failures": 0
+    },
+    "portableRebuild": "byte-identical",
+    "duplicateMarkupIds": 0,
+    "unexpandedBuildTokens": 0,
+    "externalScripts": 0
+  },
+  "hostedPreview": {
+    "commit": "082740bc575dbab0e8c1f1d4a85c7b6d2c0f204d",
+    "pagesRun": 43381042308,
+    "pagesResult": "success",
+    "url": "https://juliantarkin.github.io/holm-toc/isr_pattern_explorer_mission_v01.html#mission",
+    "desktopChecks": [
+      "initial zero-event state",
+      "next event to40s with6actual events",
+      "lifecycle filter2of6",
+      "on-station event cause is launch",
+      "60x playback completes at360s with20events",
+      "both aircraft ready with restored allowance",
+      "navigation to existing tracker and back preserves mission",
+      "browser JSON download contains360s,20events,complete=true,two ready assets",
+      "no app errors observed in filtered browser logs"
+    ],
+    "mobileLayout": "not verified"
+  },
+  "limits": [
+    "fixed fictional sorties",
+    "ideal communications assumption",
+    "payload status only; no target detection",
+    "balloon, radar/RF, relay and USV behavior planned",
+    "no full replay/import in this release"
+  ]
+}
